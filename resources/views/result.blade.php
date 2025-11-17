@@ -32,11 +32,6 @@
             <img src="{{ asset('images/logo.png') }}" alt="Primakara University" class="h-10">
             <span class="font-bold text-blue-700 text-lg">PRIME LEARN</span>
         </div>
-
-        <div class="space-x-6 text-blue-700 font-medium">
-            <a href="{{ url('/') }}#home" class="hover:text-blue-500 transition">Home</a>
-            <a href="{{ url('/apply') }}" class="hover:text-blue-500 transition">Apply</a>
-        </div>
     </nav>
 
     <div class="max-w-4xl mx-auto p-8 md:p-12 rounded-xl main-card my-10">
