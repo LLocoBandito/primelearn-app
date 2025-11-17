@@ -16,6 +16,7 @@
     </header>
 
     <nav class="secondary-nav">
+        {{-- Asumsi: Ganti # dengan route yang benar --}}
         <a href="#" class="nav-item active">HOME</a>
         <a href="#" class="nav-item">ABOUT US</a>
         <a href="#" class="nav-item">FAQ</a>
@@ -43,7 +44,8 @@
                 <h2 class="main-segment-title">Jelajahi Segmen Pembelajaran</h2>
                 <div class="segment-cards-grid-new">
                     @foreach ($segments as $segment)
-                        <a href="#" class="segment-post-item">
+                        {{-- PERUBAHAN UTAMA DI SINI: MENGGUNAKAN route('course.show') --}}
+                        <a href="{{ route('course.show', ['segment' => $segment['title']]) }}" class="segment-post-item">
                             <img src="{{ asset($segment['image_path']) }}" alt="{{ $segment['title'] }} Image" class="segment-item-image">
                             <div class="segment-item-overlay">
                                 <span class="category-tag">{{ $segment['category'] }}</span>
