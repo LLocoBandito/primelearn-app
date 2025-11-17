@@ -13,4 +13,14 @@ Route::get('/peminatan', [PeminatanController::class, 'index'])->name('peminatan
 
 // Rute untuk memproses pengiriman formulir dan menyimpan ke DB
 Route::post('/peminatan', [PeminatanController::class, 'store'])->name('peminatan.store');
+Route::get('/segment', function () {
+    // Fungsi ini akan memuat (return) view yang bernama 'apply'
+    return view('segment'); 
+});
+
+Route::get('/segment', function () {
+    return view('segment');
+})->name('segment.index');
+
+
 

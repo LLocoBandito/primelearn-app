@@ -95,9 +95,9 @@
 
         <div class="mt-12 text-center space-y-4 md:space-y-0 md:space-x-4">
             
-            <a href="{{ url('/courses?interest=' . urlencode($recommendation)) }}" 
-               class="inline-flex items-center px-8 py-3 bg-green-600 text-white rounded-full font-bold shadow-xl hover:bg-green-700 transition transform hover:scale-105 duration-300">
-                LIHAT REKOMENDASI COURSE
+            <a href="{{ route('segment.index') }}" 
+                class="inline-flex items-center px-8 py-3 bg-green-600 text-white rounded-full font-bold shadow-xl hover:bg-green-700 transition transform hover:scale-105 duration-300">
+                Masuk Course
             </a>
             
             <a href="{{ route('peminatan.form') }}" 
