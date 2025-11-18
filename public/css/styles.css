@@ -24,6 +24,8 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 15px 40px;
+    position: relative; 
+    z-index: 100;
 }
 
 .logo {
@@ -49,6 +51,11 @@ body {
     padding: 0;
     border-radius: 0 0 5px 5px;
     margin-bottom: 30px;
+    position: absolute;
+    top: 60px; /* UBAH: Sesuaikan agar tepat di bawah header (asumsi header 60px) */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99;
 }
 
 .secondary-nav .nav-item {
@@ -74,8 +81,12 @@ body {
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 10px 15px;
+    width: 100%;
+    margin-top: 75px; /*mengatur jarak dari header*/
     margin-bottom: 30px;
-    max-width: 70%;
+    max-width: 600px;
+    margin-left: auto; /* Rata tengah */
+    margin-right: auto;
     background-color: white;
 }
 
@@ -298,6 +309,7 @@ body {
 
     .main-header {
         padding: 15px 20px;
+        position: relative; z-index: 100;
     }
 
     .footer-content {
@@ -317,4 +329,62 @@ body {
         display: block; /* Membuat tautan menjadi vertikal di mobile */
         margin: 5px 0;
     }
+
+}
+/* NAVBAR DEFAULT (TERSEMBUNYI) */
+.secondary-nav {
+/* --- POSITIONING UNTUK MENU DI TENGAH --- */ 
+position: absolute;
+top: 75px; /* Tinggi header + padding-top/bottom: 15px+15px + content. Sesuaikan jika header 60px, maka top: 60px */
+ left: 50%; /* Posisikan 50% dari kiri */
+  transform: translateX(-50%); /* Geser ke kiri 50% lebarnya sendiri (MEMBUAT DI TENGAH) */
+
+ /* --- GAYA VISUAL (disesuaikan agar mirip gambar) --- */
+  background-color: #215978; /* Warna biru gelap-hijau */
+ padding: 10px 15px;
+border-radius: 0 0 10px 10px;
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+ z-index: 99; /* Di bawah header (100) tapi di atas konten lain */
+white-space: nowrap; /* Penting agar item tidak patah baris */
+
+ /* --- SEMBUNYIKAN AWAL --- */
+ display: none; 
+ opacity: 0;
+ transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.secondary-nav.show {
+/* Tidak perlu mengubah posisi vertical lagi */
+transform: translateX(-50%); /* Pertahankan posisi tengah horizontal */
+display: flex; /* Tampilkan elemen dan tata item secara horizontal */
+opacity: 1; /* Tampilkan dengan transisi */
+}
+/* Item nav */
+.secondary-nav .nav-item {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transform: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+    padding: 8px 15px; 
+    margin: 0 5px; /* Jarak antar item */
+    border-radius: 5px;
+}
+.secondary-nav .nav-item.active {
+    background-color: #1aaeae; /* Warna biru-hijau yang mencolok */
+    font-weight: 700;
+}
+.secondary-nav .nav-item:hover {
+    background-color: #0b2239; /* Warna hover gelap, mirip header */
+    color: white; /* Teks tetap putih saat hover */
+    transform: none;
+}
+
+/* Menu Button */
+.menu-icon {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.menu-icon:hover {
+    transform: scale(1.2);
 }

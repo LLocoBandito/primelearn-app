@@ -16,9 +16,14 @@
     </header>
 
     <nav class="secondary-nav">
-        <a href="#" class="nav-item active">HOME</a>
-        <a href="#" class="nav-item">ABOUT US</a>
-        <a href="#" class="nav-item">FAQ</a>
+        <!-- Tautan HOME/Segment ditandai aktif -->
+        <a href="{{ route('home') }}" class="nav-item active">HOME</a> 
+        
+        <!-- Tautan ABOUT US sudah benar -->
+        <a href="{{ route('aboutus') }}" class="nav-item">ABOUT US</a>
+        
+        <!-- Diubah dari # menjadi URL placeholder -->
+        <a href="/faq" class="nav-item">FAQ</a>
     </nav>
 
     <main class="container">
@@ -89,6 +94,18 @@
             </div>
         </div>
     </footer>
+
+   <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const menuBtn = document.querySelector(".menu-icon");
+        const nav = document.querySelector(".secondary-nav");
+
+        menuBtn.addEventListener("click", () => {
+            nav.classList.toggle("show");
+        });
+    });
+</script>
+
 
 </body>
 </html>
