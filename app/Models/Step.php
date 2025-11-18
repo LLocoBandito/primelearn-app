@@ -1,17 +1,25 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Step extends Model
 {
     use HasFactory;
     
-    protected $fillable = ['materi_id', 'order', 'title', 'content', 'image_path'];
+    // Pastikan semua kolom yang diisi oleh seeder ada di sini
+    protected $fillable = [
+        'materi_id',
+        'order',
+        'title',
+        'content',
+        'image_path',
+    ];
 
-    public function materi(): BelongsTo
+    // Definisikan relasi ke Materi (Parent)
+    public function materi()
     {
         return $this->belongsTo(Materi::class);
     }

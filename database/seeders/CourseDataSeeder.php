@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Segment;
 use App\Models\Fase;
 use App\Models\Materi;
+use Illuminate\Support\Facades\DB;
 
 class CourseDataSeeder extends Seeder
 {
@@ -14,6 +15,14 @@ class CourseDataSeeder extends Seeder
      */
     public function run(): void
     {
+        // === PEMBESIHAN DATA LEVEL 1, 2, 3 ===
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Segment::truncate(); 
+        Fase::truncate(); 
+        Materi::truncate(); 
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        // ======================================
+
         // Data Learning Path yang Anda sediakan
         $learningPaths = [
             'Software Development' => [
