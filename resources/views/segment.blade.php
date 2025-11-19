@@ -16,7 +16,6 @@
     </header>
 
     <nav class="secondary-nav">
-        {{-- Asumsi: Ganti # dengan route yang benar --}}
         <a href="#" class="nav-item active">HOME</a>
         <a href="#" class="nav-item">ABOUT US</a>
         <a href="#" class="nav-item">FAQ</a>
@@ -28,34 +27,33 @@
             <i class="search-icon">🔍</i>
         </div>
 
-        @php
-            $segments = [
-                ['title' => 'Software Development', 'image_path' => 'images/dev.jpg', 'category' => 'Code', 'description' => 'Membangun aplikasi web, mobile, dan sistem.'],
-                ['title' => 'Data & AI (Data Science)', 'image_path' => 'images/data.jpg', 'category' => 'Analytics', 'description' => 'Menganalisis data, machine learning, dan AI.'],
-                ['title' => 'Jaringan & Infrastruktur', 'image_path' => 'images/network.jpg', 'category' => 'IT Ops', 'description' => 'Mengelola server, cloud, dan arsitektur jaringan.'],
-                ['title' => 'Keamanan Siber', 'image_path' => 'images/security.jpg', 'category' => 'Hacking', 'description' => 'Melindungi sistem dari ancaman dan serangan siber.'],
-                ['title' => 'UX/UI Design', 'image_path' => 'images/design.jpg', 'category' => 'Creative', 'description' => 'Merancang pengalaman dan antarmuka pengguna.'],
-            ];
-        @endphp
-        
         <div class="content-wrapper">
             
             <section class="main-segment-area">
                 <h2 class="main-segment-title">Jelajahi Segmen Pembelajaran</h2>
                 <div class="segment-cards-grid-new">
+
                     @foreach ($segments as $segment)
-                        {{-- PERUBAHAN UTAMA DI SINI: MENGGUNAKAN route('course.show') --}}
-                        <a href="{{ route('course.show', ['segment' => $segment['title']]) }}" class="segment-post-item">
-                            <img src="{{ asset($segment['image_path']) }}" alt="{{ $segment['title'] }} Image" class="segment-item-image">
+                        <a href="{{ route('course.show', ['segment' => $segment->name]) }}" class="segment-post-item">
+
+                            {{-- TAMPILKAN GAMBAR DARI STORAGE --}}
+                            <img 
+                                src="{{ asset('storage/' . $segment->image_path) }}" 
+                                alt="{{ $segment->name }} Image" 
+                                class="segment-item-image"
+                            >
+
                             <div class="segment-item-overlay">
-                                <span class="category-tag">{{ $segment['category'] }}</span>
-                                <h3 class="segment-item-title-small">{{ $segment['title'] }}</h3>
+                                <span class="category-tag">Category</span>
+                                <h3 class="segment-item-title-small">{{ $segment->name }}</h3>
                                 <div class="segment-item-description-small">
-                                    {{ $segment['description'] }}
+                                    {{ $segment->description }}
                                 </div>
                             </div>
+
                         </a>
                     @endforeach
+
                 </div>
             </section>
             
@@ -74,6 +72,7 @@
                     Selengkapnya →
                 </div>
             </aside>
+
         </div>
 
     </main>
@@ -92,25 +91,16 @@
         </div>
     </footer>
 
-     <script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const menuBtn = document.querySelector(".menu-icon");
+            const nav = document.querySelector(".secondary-nav");
 
-    document.addEventListener("DOMContentLoaded", function () {
-
-        const menuBtn = document.querySelector(".menu-icon");
-
-        const nav = document.querySelector(".secondary-nav");
-
-
-
-        menuBtn.addEventListener("click", () => {
-
-            nav.classList.toggle("show");
-
+            menuBtn.addEventListener("click", () => {
+                nav.classList.toggle("show");
+            });
         });
-
-    });
-
-</script>
+    </script>
 
 </body>
 </html>

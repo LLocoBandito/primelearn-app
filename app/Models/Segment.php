@@ -17,6 +17,7 @@ class Segment extends Model
     protected $fillable = [
         'name', 
         'description',
+        'image_path',
     ];
 
     /**

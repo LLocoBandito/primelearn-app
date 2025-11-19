@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\FileUpload;
 
 class SegmentResource extends Resource
 {
@@ -21,15 +22,21 @@ class SegmentResource extends Resource
     {
         return $form
             ->schema([
-                // Field ini digunakan saat membuat data baru (Create) dan mengedit data lama (Edit)
                 Forms\Components\TextInput::make('name')
+                    ->label('Nama Segment/Jalur Pembelajaran')
                     ->required()
-                    ->maxLength(255)
-                    ->label('Nama Segment/Jalur Pembelajaran'),
-                
+                    ->maxLength(255),
+
                 Forms\Components\Textarea::make('description')
-                    ->rows(3)
-                    ->label('Deskripsi Jalur'),
+                    ->label('Deskripsi Jalur')
+                    ->rows(3),
+
+                FileUpload::make('image_path')
+                    ->label('Segment Image')
+                    ->directory('segments')     // folder penyimpanan: storage/app/public/segments
+                    ->image()                  // hanya gambar
+                    ->imagePreviewHeight('150')
+                    ->required(false),
             ]);
     }
 
@@ -37,19 +44,24 @@ class SegmentResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('image_path')
+                    ->label('Gambar') 
+                    ->disk('public')
+                    ->height(50)
+                    ->width(50),
+
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Segment')
                     ->searchable()
-                    ->sortable()
-                    ->label('Segment'),
-                
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('description')
-                    ->limit(50)
-                    ->label('Deskripsi Singkat'),
-                
-                // Menghitung jumlah Fase yang terhubung
+                    ->label('Deskripsi Singkat')
+                    ->limit(50),
+
                 Tables\Columns\TextColumn::make('fases_count')
-                    ->counts('fases') 
-                    ->label('Jumlah Fase'),
+                    ->label('Jumlah Fase')
+                    ->counts('fases'),
             ])
             ->filters([
                 //
@@ -68,8 +80,7 @@ class SegmentResource extends Resource
     {
         return [
             'index' => Pages\ListSegments::route('/'),
-            // 'create' mengarah ke form yang didefinisikan di method form() untuk membuat entri baru
-            'create' => Pages\CreateSegment::route('/create'), 
+            'create' => Pages\CreateSegment::route('/create'),
             'edit' => Pages\EditSegment::route('/{record}/edit'),
         ];
     }
