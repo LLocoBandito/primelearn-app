@@ -20,9 +20,12 @@ body {
 .main-header {
     background-color: #0b2239;
     color: white;
+    height: 60px;
+    padding: 0 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 10;
     padding: 15px 40px;
 }
 
@@ -34,33 +37,66 @@ body {
 .site-title {
     font-size: 1.8rem;
     font-weight: 700;
+    flex-grow: 1; 
+    text-align: center;
 }
 
+
 .menu-icon {
-    font-size: 2rem;
     cursor: pointer;
+    transition: transform 0.2s ease;
+    font-size: 1.8em;
 }
 
 /* 2. NAVIGASI BARIS KEDUA */
 .secondary-nav {
     background-color: #315e86;
     display: flex;
-    justify-content: center;
-    padding: 0;
-    border-radius: 0 0 5px 5px;
-    margin-bottom: 30px;
+    justify-content:space-evenly;
+    padding: 8px 15px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+    position: absolute; 
+    top: 60px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    transform: translateY(-100%);
+    width: 400px;
+    max-width: 90%;
+    z-index: 9;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.secondary-nav.show {
+    transform: translateY(0) translateY(0); /* Tetap di posisi tengah horizontal */
+    opacity: 1;
+    visibility: visible;
 }
 
 .secondary-nav .nav-item {
-    color: white;
-    text-decoration: none;
-    padding: 10px 25px;
+    color: #fff;
     font-weight: 600;
-    transition: background-color 0.3s;
+    text-decoration: none;
+    padding: 6px 15px; /* Tambahkan padding untuk area klik */
+    margin: 0 5px; /* Sedikit margin antar item */
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    border-radius: 15px; /* Untuk background hover/active */
+
 }
 
 .secondary-nav .nav-item.active {
-    background-color: #27496d;
+    background-color: #1aaeae; /* Warna biru-hijau pada gambar */
+    font-weight: 700;
+}
+
+.secondary-nav .nav-item:hover {
+    background-color: #0b253b; /* Warna hover gelap */
+    color: #fff; /* Pastikan warna teks tetap putih */
+    transform: none; /* Hapus transform: scale(1.1) jika tidak diinginkan */
 }
 
 .secondary-nav .nav-item:hover:not(.active) {
@@ -72,10 +108,10 @@ body {
     display: flex;
     align-items: center;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px 15px;
-    margin-bottom: 30px;
-    max-width: 70%;
+    border-radius: 15px;
+    padding: 8px 15px;
+    margin: 80px auto 30px auto;
+    max-width: 50%;
     background-color: white;
 }
 

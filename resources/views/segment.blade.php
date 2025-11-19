@@ -92,5 +92,25 @@
         </div>
     </footer>
 
+     <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const menuBtn = document.querySelector(".menu-icon");
+
+        const nav = document.querySelector(".secondary-nav");
+
+
+
+        menuBtn.addEventListener("click", () => {
+
+            nav.classList.toggle("show");
+
+        });
+
+    });
+
+</script>
+
 </body>
 </html>
