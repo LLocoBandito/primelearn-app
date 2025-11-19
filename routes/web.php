@@ -19,6 +19,7 @@ Route::post('/peminatan', [PeminatanController::class, 'store'])->name('peminata
 
 // Segments
 Route::get('/segments', [SegmentController::class, 'index'])->name('segments.index');
+Route::get('/segment', [SegmentController::class, 'index'])->name('segment.index');
 
 // Course
 Route::get('/course/{segment}', [CourseController::class, 'show'])->name('course.show');
