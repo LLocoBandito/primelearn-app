@@ -10,7 +10,6 @@
 <body>
 
     <header class="main-header">
-        <div class="logo">LOGO</div>
         <div class="site-title">PrimeLearn</div>
         <div class="menu-icon">☰</div>
     </header>

@@ -52,12 +52,17 @@
 </head>
 <body class="bg-blue-50 text-gray-800 font-sans min-h-screen">
 
-    <nav class="flex items-center justify-between px-8 py-4 navbar-dark shadow-md fixed top-0 left-0 w-full z-50">
+    <nav class="flex items-center justify-between px-8 py-4 navbar-dark fixed top-0 left-0 w-full z-50 shadow-xl">
         <div class="flex items-center space-x-3">
-            <img src="{{ asset('images/logo.png') }}" alt="Primakara University" class="h-10">
-            <span class="font-bold text-white text-lg">PRIME LEARN</span> 
+            <img src="{{ asset('images/logo_putih.png') }}" alt="PrimeLearn Logo" class="h-8" />
+            <span class="font-bold text-white text-2xl tracking-wide md:hidden">PrimeLearn</span>
+        </div>
+
+        <div class="absolute left-1/2 transform -translate-x-1/2 hidden md:block">
+            <span class="font-bold text-white text-2xl tracking-wide">PrimeLearn</span>
         </div>
     </nav>
+    
     <section class="pt-24 pb-12 px-6 md:px-20">
         <div class="max-w-6xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-2xl">
 

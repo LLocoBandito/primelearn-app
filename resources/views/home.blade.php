@@ -58,7 +58,7 @@
 
     <nav class="flex items-center justify-between px-8 py-4 navbar-dark fixed top-0 left-0 w-full z-50 shadow-xl">
         <div class="flex items-center space-x-3">
-            <img src="{{ asset('images/logo.png') }}" alt="PrimeLearn Logo" class="h-8" />
+            <img src="{{ asset('images/logo_putih.png') }}" alt="PrimeLearn Logo" class="h-8" />
             <span class="font-bold text-white text-2xl tracking-wide md:hidden">PrimeLearn</span>
         </div>
 

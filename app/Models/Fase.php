@@ -19,6 +19,7 @@ class Fase extends Model
         'segment_id',
         'name',
         'order',
+        'featured_image',
     ];
 
     /**
