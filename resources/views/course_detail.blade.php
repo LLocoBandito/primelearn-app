@@ -43,14 +43,9 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
-    
-    <header class="bg-blue-900 text-white p-4 shadow-lg">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            {{-- Asumsi Anda memiliki route 'segment.index' untuk kembali ke daftar segment --}}
-            <a href="{{ route('segment.index') }}" class="text-2xl font-bold">PrimeLearn</a> 
-            <p class="text-base hidden sm:block">Anda berada di Learning Path: **{{ $segmentData->name }}**</p>
-        </div>
-    </header>
+
+@include('components.navbar', ['segmentData' => $segmentData])
+
 
     <main class="max-w-7xl mx-auto p-6 md:p-10">
         <h1 class="text-3xl md:text-4xl font-extrabold text-blue-800 mb-2">
@@ -156,6 +151,7 @@
                         if (activeLink) {
                             activeLink.classList.add('active');
                         }
+                        
                     }
                 });
             }, { 

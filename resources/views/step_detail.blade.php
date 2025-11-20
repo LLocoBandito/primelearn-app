@@ -17,11 +17,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
     
-    <header class="bg-blue-900 text-white p-4 shadow-lg">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <p class="text-base hidden sm:block">Fase: {{ $fase->name }}</p>
-        </div>
-    </header>
+    @include('components.navbar')
 
     <main class="max-w-4xl mx-auto p-6 md:p-10">
         <div class="text-sm text-gray-500 mb-4">
