@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'interest_completed', // <-- PERUBAHAN 1: Tambahkan kolom ini
     ];
 
     /**
@@ -43,6 +44,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'interest_completed' => 'boolean', // <-- PERUBAHAN 2: Tentukan tipenya
         ];
     }
 }

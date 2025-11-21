@@ -6,232 +6,258 @@
     <title>Form Peminatan IT | PRIME LEARN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .question-step {
-            display: none;
+        /* Tambahan gaya navbar dari halaman Home */
+        .navbar-dark {
+            background-color: #06192A; /* Biru tua navbar utama */
+        }
+
+        /* Gaya tambahan untuk responsif dan tampilan skala Likert */
+        .likert-option {
+            width: 15%; /* Atur lebar opsi agar terlihat rapi */
+            text-align: center;
+        }
+        .likert-row {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .likert-row:last-child {
+            border-bottom: none; /* Hilangkan garis di baris terakhir */
+        }
+        .likert-label {
+            width: 70%;
+            font-weight: 500;
+        }
+        /* Responsif untuk likert-label */
+        @media (max-width: 768px) {
+            .likert-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .likert-label {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .likert-option-container {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+            }
+            .likert-option {
+                width: 25%;
+            }
         }
     </style>
 </head>
 <body class="bg-blue-50 text-gray-800 font-sans min-h-screen">
 
-    <nav class="flex items-center justify-between px-8 py-4 bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <nav class="flex items-center justify-between px-8 py-4 navbar-dark fixed top-0 left-0 w-full z-50 shadow-xl">
         <div class="flex items-center space-x-3">
-            <a href="{{ url('/') }}">
-                <img src="{{ asset('images/logo.png') }}" alt="Primakara University" class="h-10">
-            </a>
-            <span class="font-bold text-blue-700 text-lg">PRIME LEARN</span>
+            <img src="{{ asset('images/logo_putih.png') }}" alt="PrimeLearn Logo" class="h-8" />
+            <span class="font-bold text-white text-2xl tracking-wide md:hidden">PrimeLearn</span>
         </div>
-        <div class="space-x-6 text-blue-700 font-medium">
-            <a href="#home" class="hover:text-blue-500 transition">Home</a>
-            <a href="{{ url('/apply') }}" class="hover:text-blue-500 transition">Apply</a>
+
+        <div class="absolute left-1/2 transform -translate-x-1/2 hidden md:block">
+            <span class="font-bold text-white text-2xl tracking-wide">PrimeLearn</span>
         </div>
     </nav>
-
+    
     <section class="pt-24 pb-12 px-6 md:px-20">
-        <div class="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-2xl">
+        <div class="max-w-6xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-2xl">
 
             <h1 class="text-3xl font-bold text-blue-700 mb-2 text-center">
-                Tes Minat dan Bakat Bidang IT
+                Tes Minat dan Bakat Bidang IT (Skala Likert)
             </h1>
             <p class="text-gray-600 mb-8 text-center border-b pb-4">
-                Jawab 7 pertanyaan di bawah ini untuk mendapatkan rekomendasi jalur belajar yang paling sesuai dengan passion Anda.
+                Pilih tingkat persetujuan Anda untuk setiap pernyataan: **Sangat Setuju (SS), Setuju (S), Cukup Setuju (CS), atau Tidak Setuju (TS).**
             </p>
 
-            <form id="peminatanForm" action="{{ url('/result') }}" method="GET" class="space-y-8">
+            <form id="peminatanForm" action="{{ route('peminatan.store') }}" method="POST" class="space-y-8">
                 @csrf 
                 
-                <div id="step-0" class="space-y-4 mb-8">
+                <div class="space-y-4 mb-8 p-4 border border-gray-200 rounded-lg">
                     <h2 class="text-xl font-semibold text-gray-800 border-b pb-2">Informasi Dasar</h2>
                     <div>
                         <label for="nama" class="block text-sm font-medium text-gray-700 mb-1">
                             Nama Lengkap
                         </label>
                         <input type="text" id="nama" name="nama" required
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition"
-                               placeholder="Masukkan nama Anda">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition"
+                            placeholder="Masukkan nama Anda">
                     </div>
-                    <button type="button" onclick="nextStep(0)" id="startBtn"
-                            class="w-full px-6 py-3 bg-green-600 text-white rounded-lg font-semibold shadow-lg hover:bg-green-700 transition">
-                        Mulai Kuesioner
+                </div>
+
+                <div class="flex font-bold text-sm text-gray-700 bg-gray-100 p-3 rounded-t-lg hidden md:flex">
+                    <div class="likert-label">Pernyataan</div>
+                    <div class="likert-option">SS</div>
+                    <div class="likert-option">S</div>
+                    <div class="likert-option">CS</div>
+                    <div class="likert-option">TS</div>
+                </div>
+                
+                <div class="flex font-bold text-xs text-gray-700 bg-gray-100 p-3 rounded-t-lg md:hidden justify-end">
+                    <div class="likert-option w-1/4">SS</div>
+                    <div class="likert-option w-1/4">S</div>
+                    <div class="likert-option w-1/4">CS</div>
+                    <div class="likert-option w-1/4">TS</div>
+                </div>
+
+                <div id="likertQuestions" class="space-y-1 border border-gray-200 p-4 rounded-lg">
+
+                    <div class="text-blue-700 font-bold pt-4 pb-2 border-b-2 border-blue-100">I. Logika dan Pemrograman (Software Development)</div>
+                    
+                    <div class="likert-row">
+                        <label for="q1" class="likert-label">1. Saya menikmati proses menerjemahkan ide abstrak menjadi instruksi langkah demi langkah yang sangat spesifik (algoritma).</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q1" value="4" required class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q1" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q1" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q1" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+                    <div class="likert-row">
+                        <label for="q2" class="likert-label">2. Mencari dan memperbaiki kesalahan (*bug*) dalam kode atau sistem adalah kegiatan yang menantang dan memuaskan bagi saya.</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q2" value="4" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q2" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q2" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q2" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+                    <div class="likert-row">
+                        <label for="q3" class="likert-label">3. Saya tertarik untuk menciptakan sesuatu yang fungsional, seperti aplikasi web atau perangkat lunak yang bisa digunakan orang lain.</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q3" value="4" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q3" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q3" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q3" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+
+                    <div class="text-blue-700 font-bold pt-6 pb-2 border-b-2 border-blue-100">II. Jaringan dan Infrastruktur</div>
+                    <div class="likert-row">
+                        <label for="q4" class="likert-label">4. Saya tertarik pada cara kerja koneksi internet, server, dan bagaimana data bergerak melalui jaringan.</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q4" value="4" required class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q4" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q4" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q4" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+                    <div class="likert-row">
+                        <label for="q5" class="likert-label">5. Saya menyukai tugas yang melibatkan pengaturan, konfigurasi, dan pemeliharaan perangkat keras dan sistem operasi (*server*).</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q5" value="4" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q5" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q5" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q5" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+                    <div class="likert-row">
+                        <label for="q6" class="likert-label">6. Saya memiliki perhatian tinggi pada stabilitas sistem dan memastikan bahwa layanan teknologi terus berjalan tanpa gangguan (*uptime*).</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q6" value="4" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q6" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q6" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q6" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+
+                    <div class="text-blue-700 font-bold pt-6 pb-2 border-b-2 border-blue-100">III. Keamanan Siber</div>
+                    <div class="likert-row">
+                        <label for="q7" class="likert-label">7. Saya penasaran dan tertarik untuk mengetahui titik lemah atau celah keamanan dalam sebuah sistem atau aplikasi.</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q7" value="4" required class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q7" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q7" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q7" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+                    <div class="likert-row">
+                        <label for="q8" class="likert-label">8. Saya tertarik pada konsep enkripsi, firewall, dan teknik-teknik yang digunakan untuk melindungi informasi rahasia.</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q8" value="4" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q8" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q8" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q8" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+                    <div class="likert-row">
+                        <label for="q9" class="likert-label">9. Saya siap untuk terus belajar tentang taktik peretasan terbaru agar saya dapat merancang pertahanan yang lebih baik.</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q9" value="4" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q9" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q9" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q9" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+
+                    <div class="text-blue-700 font-bold pt-6 pb-2 border-b-2 border-blue-100">IV. Analisis Data dan AI</div>
+                    <div class="likert-row">
+                        <label for="q10" class="likert-label">10. Saya suka bekerja dengan angka dan data yang besar untuk menemukan pola, tren, atau anomali yang tersembunyi.</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q10" value="4" required class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q10" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q10" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q10" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+                    <div class="likert-row">
+                        <label for="q11" class="likert-label">11. Saya tertarik menggunakan matematika dan statistik untuk membuat prediksi atau memberikan wawasan yang mendukung keputusan bisnis.</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q11" value="4" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q11" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q11" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q11" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+                    <div class="likert-row">
+                        <label for="q12" class="likert-label">12. Saya memiliki kesabaran yang tinggi dalam membersihkan dan menganalisis *dataset* yang kompleks dan berantakan.</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q12" value="4" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q12" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q12" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q12" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+
+                    <div class="text-blue-700 font-bold pt-6 pb-2 border-b-2 border-blue-100">V. Desain Pengalaman Pengguna (UX/UI)</div>
+                    <div class="likert-row">
+                        <label for="q13" class="likert-label">13. Saya sangat memperhatikan apakah sebuah aplikasi mudah, intuitif, dan nyaman digunakan oleh orang lain.</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q13" value="4" required class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q13" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q13" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q13" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+                    <div class="likert-row">
+                        <label for="q14" class="likert-label">14. Saya memiliki ketertarikan pada estetika visual, tata letak (*layout*), dan bagaimana warna memengaruhi interaksi pengguna.</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q14" value="4" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q14" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q14" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q14" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+                    <div class="likert-row">
+                        <label for="q15" class="likert-label">15. Saya suka mengamati dan memahami perilaku pengguna untuk merancang solusi teknologi yang benar-benar mereka butuhkan.</label>
+                        <div class="likert-option-container flex-grow flex justify-end md:justify-start">
+                            <div class="likert-option"><input type="radio" name="q15" value="4" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q15" value="3" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q15" value="2" class="form-radio text-blue-600 h-5 w-5"></div>
+                            <div class="likert-option"><input type="radio" name="q15" value="1" class="form-radio text-blue-600 h-5 w-5"></div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="pt-8">
+                    <button type="submit"
+                        class="w-full px-6 py-3 bg-blue-700 text-white rounded-lg font-semibold shadow-lg hover:bg-blue-800 transition transform hover:scale-[1.01]">
+                        Lihat Hasil Rekomendasi Peminatan
                     </button>
-                </div>
-
-                <div id="progressContainer" class="hidden">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-2">
-                        <span id="currentStepDisplay">1</span> dari 7 Pertanyaan
-                    </h2>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
-                        <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                </div>
-
-
-                <div id="step-1" class="question-step p-6 border border-blue-200 rounded-xl shadow-lg">
-                    <label class="block text-base font-semibold text-gray-800 mb-3">
-                        1. Ketika Anda memulai suatu proyek IT, hal apa yang membuat Anda paling puas?
-                    </label>
-                    <div class="space-y-3" onchange="nextStep(1)">
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q1" value="dev" required class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Melihat hasil nyata berupa **aplikasi/website** yang dapat digunakan oleh orang banyak.</span>
-                        </label>
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q1" value="data" class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Menemukan **pola atau insight tersembunyi** dari kumpulan data yang besar.</span>
-                        </label>
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q1" value="net" class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Memastikan **sistem berjalan aman, stabil, dan cepat** tanpa gangguan.</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div id="step-2" class="question-step p-6 border border-blue-200 rounded-xl shadow-lg">
-                    <label class="block text-base font-semibold text-gray-800 mb-3">
-                        2. Anda menemukan sistem yang berjalan lambat. Apa fokus utama Anda?
-                    </label>
-                    <div class="space-y-3" onchange="nextStep(2)">
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q2" value="dev" required class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Menulis ulang atau mengoptimalkan **kode program** agar lebih efisien.</span>
-                        </label>
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q2" value="data_net" class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Menganalisis **alur data atau konfigurasi jaringan** untuk mencari *bottleneck*.</span>
-                        </label>
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q2" value="uiux" class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Menanyakan ke pengguna apakah **tampilan** atau navigasi yang mempersulit mereka.</span>
-                        </label>
-                    </div>
-                    <div class="mt-6 flex justify-start">
-                        <button type="button" onclick="prevStep(2)" class="px-4 py-2 text-sm font-semibold text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-50 transition">
-                            ← Kembali
-                        </button>
-                    </div>
-                </div>
-
-                <div id="step-3" class="question-step p-6 border border-blue-200 rounded-xl shadow-lg">
-                    <label class="block text-base font-semibold text-gray-800 mb-3">
-                        3. Bagaimana reaksi Anda terhadap ancaman keamanan siber?
-                    </label>
-                    <div class="space-y-3" onchange="nextStep(3)">
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q3" value="security" required class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Tertarik mempelajari **cara kerja peretasan** untuk membangun pertahanan yang lebih kuat.</span>
-                        </label>
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q3" value="other" class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Saya tahu itu penting, tapi **fokus saya lebih ke fungsionalitas**.</span>
-                        </label>
-                    </div>
-                    <div class="mt-6 flex justify-start">
-                        <button type="button" onclick="prevStep(3)" class="px-4 py-2 text-sm font-semibold text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-50 transition">
-                            ← Kembali
-                        </button>
-                    </div>
-                </div>
-
-                <div id="step-4" class="question-step p-6 border border-blue-200 rounded-xl shadow-lg">
-                    <label class="block text-base font-semibold text-gray-800 mb-3">
-                        4. Seberapa nyaman Anda bekerja dengan statistik, grafik, dan angka-angka besar?
-                    </label>
-                    <div class="space-y-3" onchange="nextStep(4)">
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q4" value="data" required class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Sangat nyaman, saya suka menganalisis data untuk **membuat prediksi** atau kesimpulan.</span>
-                        </label>
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q4" value="dev_net" class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Netral, saya menggunakan data seperlunya **untuk membuat atau menjalankan sistem**.</span>
-                        </label>
-                    </div>
-                    <div class="mt-6 flex justify-start">
-                        <button type="button" onclick="prevStep(4)" class="px-4 py-2 text-sm font-semibold text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-50 transition">
-                            ← Kembali
-                        </button>
-                    </div>
-                </div>
-
-                <div id="step-5" class="question-step p-6 border border-blue-200 rounded-xl shadow-lg">
-                    <label class="block text-base font-semibold text-gray-800 mb-3">
-                        5. Dalam proyek tim, Anda lebih suka mengambil peran...
-                    </label>
-                    <div class="space-y-3" onchange="nextStep(5)">
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q5" value="frontend" required class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Berinteraksi langsung dengan pengguna, membuat **tampilan (UI)** yang menarik dan mudah dipahami.</span>
-                        </label>
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q5" value="backend" class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Bekerja di balik layar, mengurus **logika, database, dan infrastruktur** sistem.</span>
-                        </label>
-                    </div>
-                    <div class="mt-6 flex justify-start">
-                        <button type="button" onclick="prevStep(5)" class="px-4 py-2 text-sm font-semibold text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-50 transition">
-                            ← Kembali
-                        </button>
-                    </div>
-                </div>
-                
-                <div id="step-6" class="question-step p-6 border border-blue-200 rounded-xl shadow-lg">
-                    <label class="block text-base font-semibold text-gray-800 mb-3">
-                        6. Anda menghabiskan waktu berjam-jam mencari satu *error* kecil di sebuah kode atau konfigurasi. Bagaimana perasaan Anda?
-                    </label>
-                    <div class="space-y-3" onchange="nextStep(6)">
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q6" value="positive" required class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Puas saat akhirnya menemukan dan menyelesaikan masalah tersebut; saya suka tantangan ini.</span>
-                        </label>
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q6" value="negative" class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">Frustrasi dan lebih memilih tugas yang hasilnya lebih cepat terlihat.</span>
-                        </label>
-                    </div>
-                    <div class="mt-6 flex justify-start">
-                        <button type="button" onclick="prevStep(6)" class="px-4 py-2 text-sm font-semibold text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-50 transition">
-                            ← Kembali
-                        </button>
-                    </div>
-                </div>
-                
-                <div id="step-7" class="question-step p-6 border border-blue-200 rounded-xl shadow-lg">
-                    <label class="block text-base font-semibold text-gray-800 mb-3">
-                        7. Anda lebih tertarik untuk memahami cara kerja...
-                    </label>
-                    <div class="space-y-3" onchange="nextStep(7)">
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q7" value="software" required class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">**Logika dan kode** di dalam sebuah aplikasi.</span>
-                        </label>
-                        <label class="flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-100 transition">
-                            <input type="radio" name="q7" value="hardware" class="form-radio text-blue-600 h-5 w-5">
-                            <span class="ml-3 text-gray-700">**Jaringan, server, dan perangkat keras** komputer.</span>
-                        </label>
-                    </div>
-                    <div class="mt-6 flex justify-start">
-                        <button type="button" onclick="prevStep(7)" class="px-4 py-2 text-sm font-semibold text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-50 transition">
-                            ← Kembali
-                        </button>
-                    </div>
-                </div>
-
-                <div id="step-8" class="question-step p-6 border border-blue-200 rounded-xl shadow-lg">
-                    <h2 class="text-2xl font-bold text-blue-700 mb-4 text-center">🎉 Kuesioner Selesai!</h2>
-                    <div class="flex flex-col space-y-4">
-                        <button type="submit"
-                                class="w-full px-6 py-3 bg-blue-700 text-white rounded-lg font-semibold shadow-lg hover:bg-blue-800 transition transform hover:scale-[1.01]">
-                            Lihat Hasil Rekomendasi Peminatan
-                        </button>
-                        <button type="button" onclick="prevStep(8)"
-                                class="w-full px-6 py-3 text-sm font-semibold text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
-                            ← Periksa Ulang Jawaban Terakhir
-                        </button>
-                        
-                        <a href="{{ url('/') }}"
-                           class="w-full text-center px-6 py-3 text-sm font-semibold text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition">
-                            Batalkan & Kembali ke Beranda
-                        </a>
-                    </div>
                 </div>
 
             </form>
@@ -243,81 +269,42 @@
     </footer>
 
     <script>
-        const totalSteps = 7;
-        let currentStep = 0; 
-
-        function showStep(stepIndex) {
-            document.querySelectorAll('.question-step').forEach(step => {
-                step.style.display = 'none';
-            });
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Formulir Skala Likert siap.");
             
-            const activeStep = document.getElementById(`step-${stepIndex}`);
-            if (activeStep) {
-                activeStep.style.display = 'block';
-            }
-
-            // Update Progress Bar dan Display
-            if (stepIndex > 0 && stepIndex <= totalSteps) {
-                const progress = ((stepIndex - 1) / totalSteps) * 100;
-                document.getElementById('progressBar').style.width = `${progress}%`;
-                document.getElementById('currentStepDisplay').textContent = stepIndex;
-            } else if (stepIndex === totalSteps + 1) {
-                // Selesai (Step 8)
-                document.getElementById('progressBar').style.width = '100%';
-            } else if (stepIndex === 1) {
-                 // Kembali ke step 1
-                document.getElementById('progressBar').style.width = '0%';
-                document.getElementById('currentStepDisplay').textContent = 1;
-            } else {
-                 // Kembali ke Informasi Dasar (progress bar disembunyikan)
-                 document.getElementById('progressContainer').classList.add('hidden');
-            }
-        }
-
-        function nextStep(currentStepIndex) {
-            if (currentStepIndex === 0) {
-                // Logic Start Button
+            const form = document.getElementById('peminatanForm');
+            form.addEventListener('submit', function(e) {
+                // Periksa input Nama Lengkap
                 const namaInput = document.getElementById('nama');
-                if (namaInput.value.trim() === '') {
-                    alert('Mohon isi Nama Lengkap Anda terlebih dahulu.');
+                if (!namaInput.value.trim()) {
+                    e.preventDefault();
+                    alert('Mohon masukkan Nama Lengkap Anda.');
                     return;
                 }
-                document.getElementById('step-0').style.display = 'none';
-                document.getElementById('progressContainer').classList.remove('hidden');
-                currentStep = 1;
-                showStep(currentStep);
-                return;
-            }
-            
-            // Logic Pindah ke Pertanyaan Berikutnya
-            currentStep = currentStepIndex + 1;
+                
+                // Periksa semua pertanyaan Likert
+                const requiredNames = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15'];
+                let allAnswered = true;
+                
+                requiredNames.forEach(name => {
+                    const radios = document.getElementsByName(name);
+                    let isChecked = false;
+                    for (let i = 0; i < radios.length; i++) {
+                        if (radios[i].checked) {
+                            isChecked = true;
+                            break;
+                        }
+                    }
+                    if (!isChecked) {
+                        allAnswered = false;
+                    }
+                });
 
-            if (currentStep <= totalSteps) {
-                setTimeout(() => showStep(currentStep), 300);
-            } else {
-                // Semua pertanyaan selesai (Tampilkan Step 8/Submit)
-                setTimeout(() => showStep(totalSteps + 1), 300);
-            }
-        }
-
-        function prevStep(currentStepIndex) {
-            currentStep = currentStepIndex - 1;
-            
-            if (currentStep >= 1) {
-                // Kembali ke pertanyaan sebelumnya (Step 1 hingga 7)
-                showStep(currentStep);
-            } else if (currentStep === 0) {
-                // Kembali ke Informasi Dasar (Step 0)
-                document.getElementById('step-0').style.display = 'block';
-                document.getElementById('progressContainer').classList.add('hidden');
-                document.getElementById('step-1').style.display = 'none'; 
-                currentStep = 0; 
-            }
-        }
-
-        // Inisialisasi: Tampilkan hanya Informasi Dasar (step 0)
-        document.addEventListener('DOMContentLoaded', () => {
-            showStep(0);
+                if (!allAnswered) {
+                    e.preventDefault();
+                    alert('Mohon lengkapi semua 15 pernyataan sebelum melihat hasil.');
+                }
+            });
         });
     </script>
 </body>
