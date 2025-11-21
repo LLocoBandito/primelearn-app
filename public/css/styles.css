@@ -37,10 +37,9 @@ body {
 .site-title {
     font-size: 1.8rem;
     font-weight: 700;
-    flex-grow: 1; 
+    flex-grow: 1;
     text-align: center;
 }
-
 
 .menu-icon {
     cursor: pointer;
@@ -52,12 +51,12 @@ body {
 .secondary-nav {
     background-color: #315e86;
     display: flex;
-    justify-content:space-evenly;
+    justify-content: space-evenly;
     padding: 8px 15px;
     border-radius: 0 0 10px 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     white-space: nowrap;
-    position: absolute; 
+    position: absolute;
     top: 60px;
     left: 0;
     right: 0;
@@ -85,7 +84,6 @@ body {
     margin: 0 5px; /* Sedikit margin antar item */
     transition: background-color 0.2s ease, transform 0.2s ease;
     border-radius: 15px; /* Untuk background hover/active */
-
 }
 
 .secondary-nav .nav-item.active {
@@ -315,6 +313,32 @@ body {
 .footer-copyright {
     font-size: 0.85rem;
     color: #b0b0b0;
+}
+/* Tambahkan ke file 'css/styles.css' Anda */
+/* Mengatur elemen di dalam search-bar agar sejajar */
+.search-form-flex {
+    display: flex;
+    width: 100%; /* Agar form mengisi search-bar */
+}
+
+/* Mengatur input agar fleksibel */
+.search-bar input[type="text"] {
+    flex-grow: 1; /* Input mengambil sisa ruang */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px; /* Mengatur sudut kiri */
+    outline: none;
+}
+
+/* Mengatur tombol ikon */
+.search-icon-btn {
+    background-color: #f8f8f8; /* Sesuaikan warna latar belakang */
+    border: 1px solid #ccc;
+    border-left: none; /* Menghapus batas kiri untuk menyambung dengan input */
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 0 5px 5px 0; /* Mengatur sudut kanan */
+    font-size: 16px;
 }
 
 /* Responsif */
