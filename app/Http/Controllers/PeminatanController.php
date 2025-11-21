@@ -12,7 +12,7 @@ class PeminatanController extends Controller
      */
     public function index()
     {
-        return view('apply'); // Pastikan path view sesuai (peminatan/form.blade.php)
+        return view('apply'); // Pastikan path view sesuai
     }
 
     /**
@@ -40,16 +40,18 @@ class PeminatanController extends Controller
             'q15' => 'required|integer|between:1,4',
         ]);
 
-        // 2. Simpan Data ke Database
+        // 2. Simpan Data ke DB
         $result = PeminatanResult::create($validatedData);
 
-        // 3. Hitung Skor Peminatan dan Tentukan Hasil (Logika Utama)
+        // 3. Hitung Skor
         $scores = $this->calculateScores($validatedData);
         $recommendation = $this->getRecommendation($scores);
 
-        // 4. Redirect atau Tampilkan Hasil
+        // 4. Set session bahwa user sudah mengisi form
+        session(['form_completed' => true]);
+
+        // 5. Tampilkan hasil
         return view('result', compact('result', 'scores', 'recommendation'));
-        // return redirect()->route('peminatan.result', $result->id)->with('success', 'Formulir berhasil disimpan!');
     }
 
     /**
@@ -57,24 +59,13 @@ class PeminatanController extends Controller
      */
     private function calculateScores(array $data): array
     {
-        $scores = [];
-
-        // I. Logika dan Pemrograman (Software Development)
-        $scores['Software Development'] = $data['q1'] + $data['q2'] + $data['q3'];
-
-        // II. Jaringan dan Infrastruktur
-        $scores['Network & Infrastructure'] = $data['q4'] + $data['q5'] + $data['q6'];
-
-        // III. Keamanan Siber
-        $scores['Cyber Security'] = $data['q7'] + $data['q8'] + $data['q9'];
-
-        // IV. Analisis Data dan AI
-        $scores['Data Analytics & AI'] = $data['q10'] + $data['q11'] + $data['q12'];
-
-        // V. Desain Pengalaman Pengguna (UX/UI)
-        $scores['UX/UI Design'] = $data['q13'] + $data['q14'] + $data['q15'];
-
-        return $scores;
+        return [
+            'Software Development' => $data['q1'] + $data['q2'] + $data['q3'],
+            'Network & Infrastructure' => $data['q4'] + $data['q5'] + $data['q6'],
+            'Cyber Security' => $data['q7'] + $data['q8'] + $data['q9'],
+            'Data Analytics & AI' => $data['q10'] + $data['q11'] + $data['q12'],
+            'UX/UI Design' => $data['q13'] + $data['q14'] + $data['q15'],
+        ];
     }
 
     /**
@@ -82,14 +73,10 @@ class PeminatanController extends Controller
      */
     private function getRecommendation(array $scores): string
     {
-        // Cari skor tertinggi
         $maxScore = max($scores);
-        // Ambil kategori yang memiliki skor tertinggi
         $highInterests = array_keys($scores, $maxScore);
-        
-        // Gabungkan semua peminatan tertinggi dalam satu string
+
         if (count($highInterests) > 1) {
-            // Jika ada lebih dari satu, pisahkan dengan koma dan "dan" di akhir
             $last = array_pop($highInterests);
             return implode(', ', $highInterests) . ' dan ' . $last;
         }
@@ -99,11 +86,9 @@ class PeminatanController extends Controller
 
     /**
      * Menampilkan halaman hasil.
-     * Anda perlu membuat view peminatan/result.blade.php
      */
     public function showResult(PeminatanResult $result)
     {
-        // Untuk menampilkan hasil jika tidak langsung redirect
         $scores = $this->calculateScores($result->toArray());
         $recommendation = $this->getRecommendation($scores);
         return view('result', compact('result', 'scores', 'recommendation'));

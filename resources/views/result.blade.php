@@ -11,6 +11,9 @@
             font-family: 'Poppins', sans-serif;
             background-color: #f3f4f6; /* Warna latar belakang yang lebih netral */
         }
+        .navbar-dark {
+            background-color: #06192A; /* Biru tua navbar utama */
+        }
         .main-card {
             background-color: #ffffff;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.04);
@@ -27,10 +30,14 @@
     </style>
 </head>
 <body class="text-gray-900 min-h-screen pt-24">
-    <nav class="flex items-center justify-between px-8 py-4 bg-white shadow-md fixed top-0 left-0 w-full z-50">
+    <nav class="flex items-center justify-between px-8 py-4 navbar-dark fixed top-0 left-0 w-full z-50 shadow-xl">
         <div class="flex items-center space-x-3">
-            <img src="{{ asset('images/logo.png') }}" alt="Primakara University" class="h-10">
-            <span class="font-bold text-blue-700 text-lg">PRIME LEARN</span>
+            <img src="{{ asset('images/logo_putih.png') }}" alt="PrimeLearn Logo" class="h-8" />
+            <span class="font-bold text-white text-2xl tracking-wide md:hidden">PrimeLearn</span>
+        </div>
+
+        <div class="absolute left-1/2 transform -translate-x-1/2 hidden md:block">
+            <span class="font-bold text-white text-2xl tracking-wide">PrimeLearn</span>
         </div>
     </nav>
 
