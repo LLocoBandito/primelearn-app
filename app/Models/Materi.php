@@ -29,8 +29,21 @@ class Materi extends Model
         return $this->belongsTo(Fase::class);
     }
 
+    /**
+     * Hubungan HasMany: Materi memiliki banyak Steps (langkah-langkah).
+     */
     public function steps(): HasMany
     {
         return $this->hasMany(Step::class)->orderBy('order');
+    }
+
+    /**
+     * Hubungan HasMany: Materi memiliki banyak External Links (sumber eksternal).
+     * Relasi ini akan digunakan untuk menyimpan link dokumentasi resmi yang ditambahkan 
+     * oleh admin melalui Filament.
+     */
+    public function externalLinks(): HasMany
+    {
+        return $this->hasMany(ExternalLink::class);
     }
 }
