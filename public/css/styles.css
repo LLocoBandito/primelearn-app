@@ -59,22 +59,20 @@ body {
     white-space: nowrap;
     position: absolute; 
     top: 60px;
-    left: 0;
-    right: 0;
-    margin-left: auto;
-    margin-right: auto;
-    transform: translateY(-100%);
+    left: 50%;
+    transform: translateX(-50%);
     width: 400px;
     max-width: 90%;
     z-index: 9;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-.secondary-nav.show {
-    transform: translateY(0) translateY(0); /* Tetap di posisi tengah horizontal */
     opacity: 1;
     visibility: visible;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.secondary-nav.hide {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-20px);
+    pointer-events: none; /* agar tidak bisa diklik saat tersembunyi */
 }
 
 .secondary-nav .nav-item {

@@ -6,10 +6,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SegmentController;
 use App\Models\Segment;
 
-Route::get('/', function () {
-    return view('home');
-});
-
+// Apply Page
 Route::get('/apply', function () {
     return view('apply');
 });
@@ -34,3 +31,7 @@ Route::get('/segment/{id}', function ($id) {
     return view('course_detail', compact('segmentData'));
 })->name('segment.show');
 
+Route::get('/', function () {
+    $segments = Segment::all(); // Ambil semua data segments dari DB
+    return view('segment', compact('segments')); // Tampilkan segmen.blade.php
+})->name('home');

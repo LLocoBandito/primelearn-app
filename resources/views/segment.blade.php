@@ -97,7 +97,7 @@
             const nav = document.querySelector(".secondary-nav");
 
             menuBtn.addEventListener("click", () => {
-                nav.classList.toggle("show");
+                nav.classList.toggle("hide");
             });
         });
     </script>
