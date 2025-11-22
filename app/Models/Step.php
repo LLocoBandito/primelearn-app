@@ -8,19 +8,36 @@ use Illuminate\Database\Eloquent\Model;
 class Step extends Model
 {
     use HasFactory;
-    
-    // Pastikan semua kolom yang diisi oleh seeder ada di sini
+
     protected $fillable = [
         'materi_id',
         'order',
         'title',
         'content',
-        'image_path',
+        // HAPUS 'image_path' karena sekarang gambar disimpan di tabel step_images
     ];
 
-    // Definisikan relasi ke Materi (Parent)
+    /**
+     * Relasi ke model Materi (Parent)
+     */
     public function materi()
     {
         return $this->belongsTo(Materi::class);
+    }
+
+    /**
+     * Relasi ke banyak gambar
+     */
+    public function images()
+    {
+        return $this->hasMany(StepImage::class);
+    }
+
+    /**
+     * Mengambil gambar pertama (opsional untuk thumbnail)
+     */
+    public function firstImage()
+    {
+        return $this->hasOne(StepImage::class)->oldest();
     }
 }
