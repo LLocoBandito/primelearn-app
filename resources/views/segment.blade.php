@@ -28,7 +28,7 @@
     {{-- NAVIGASI SEKUNDER --}}
     <nav class="secondary-nav">
         <a href="#" class="nav-item active">HOME</a>
-        <a href="#" class="nav-item">ABOUT US</a>
+        <a href="{{ route("about") }}" class="nav-item">ABOUT US</a>
         <a href="#" class="nav-item">FAQ</a>
     </nav>
 

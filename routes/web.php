@@ -19,6 +19,10 @@ Route::get('/apply', function () {
     return view('apply');
 });
 
+Route::get('/faq', function () {
+    return view('faq');
+})-> name('faq');
+
 // Peminatan
 Route::get('/peminatan', [PeminatanController::class, 'index'])->name('peminatan.form');
 Route::post('/peminatan', [PeminatanController::class, 'store'])->name('peminatan.store');
@@ -39,6 +43,11 @@ Route::get('/segment/{id}', function ($id) {
     $segmentData = Segment::with(['fases.materis'])->findOrFail($id);
     return view('course_detail', compact('segmentData'));
 })->name('segment.show');
+
+Route::get('/about', function () {
+    // Fungsi 'view()' akan mencari file resources/views/about.blade.php
+    return view('about_us');
+})->name('about');
 
 Route::get('/sidebar-courses/load-more', [CourseController::class, 'loadMoreSidebar'])
     ->name('sidebar.loadMore');
