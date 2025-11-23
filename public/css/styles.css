@@ -16,6 +16,12 @@ body {
     padding: 0 20px;
 }
 
+/* Memberikan jarak konten utama agar tidak tertutup navbar */
+main.container {
+    margin-top: 80px; /* kira-kira 2cm dari header */
+}
+
+
 /* 1. HEADER / NAVBAR */
 .main-header {
     background-color: #0b2239;
@@ -87,6 +93,7 @@ body {
 .secondary-nav .nav-item.active {
     background-color: #1aaeae; /* Warna biru-hijau pada gambar */
     font-weight: 700;
+    color: #fff;
 }
 
 .secondary-nav .nav-item:hover {

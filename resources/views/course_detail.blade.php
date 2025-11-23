@@ -42,6 +42,33 @@
 
 @include('components.navbar', ['segmentData' => $segmentData])
 
+{{-- BREADCRUMBS --}}
+<div class="max-w-7xl mx-auto px-6 md:px-10 mt-4">
+    <nav class="text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+        <ol class="list-none p-0 inline-flex">
+
+            {{-- Home selalu bisa diklik --}}
+            <li class="flex items-center">
+                <a href="{{ route('home') }}" class="hover:underline">Home</a>
+                <svg class="fill-current w-3 h-3 mx-3 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0l194.344 194.343c9.373 9.372 9.373 24.568 0 33.941z"/></svg>
+            </li>
+
+            {{-- Segment sebelumnya jika ada --}}
+            @if(isset($segmentParent))
+            <li class="flex items-center">
+                <a href="{{ route('segments.index') }}" class="hover:underline">{{ $segmentParent->name }}</a>
+                <svg class="fill-current w-3 h-3 mx-3 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0l194.344 194.343c9.373 9.372 9.373 24.568 0 33.941z"/></svg>
+            </li>
+            @endif
+
+            {{-- Halaman aktif --}}
+            <li class="flex items-center">
+                <span class="text-blue-700 font-semibold">{{ $segmentData->name }}</span>
+            </li>
+        </ol>
+    </nav>
+</div>
+
 <main class="max-w-7xl mx-auto p-6 md:p-10">
     <h1 class="text-3xl md:text-4xl font-extrabold text-blue-800 mb-2">
         🎯 {{ $segmentData->name }}

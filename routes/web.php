@@ -5,14 +5,24 @@ use App\Http\Controllers\PeminatanController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SegmentController;
 use App\Models\Segment;
+use App\Models\Materi; 
+
 
 // Landing Page
 Route::get('/', function () {
     if (session('form_completed')) {
         return redirect()->route('segments.index');
     }
-    return view('home');
-});
+
+    // ⬅ SOLUSI A — Tambahkan $sidebarCourses
+    $sidebarCourses = Materi::latest()->take(5)->get();
+
+    // ⬅ Ambil segment jika halamannya pakai segment.blade.php
+    $segments = Segment::all();
+
+    return view('segment', compact('segments', 'sidebarCourses'));
+})->name('home');
+
 
 // Apply form
 
