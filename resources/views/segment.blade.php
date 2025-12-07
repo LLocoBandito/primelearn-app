@@ -123,11 +123,6 @@
     <footer class="main-footer">
         <div class="container footer-content">
             <div class="footer-logo">PrimeLearn</div>
-            <div class="footer-links">
-                <a href="#">Privacy Policy</a> | 
-                <a href="#">Terms of Use</a> | 
-                <a href="#">Contact</a>
-            </div>
             <div class="footer-copyright">
                 &copy; {{ date('Y') }} PrimeLearn. All Rights Reserved.
             </div>

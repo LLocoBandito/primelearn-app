@@ -18,22 +18,32 @@
             font-weight: 600;
             border-radius: 0.5rem 0.5rem 0 0; /* rounded-t-lg */
         }
+        
         /* Style untuk tim kami agar terlihat seperti di desain */
         .team-box {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
+            gap: 1.5rem; /* Sedikit dilebarkan */
         }
+        
+        /* --- STYLE BARU UNTUK FOTO ANGGOTA TIM --- */
+        .team-member-photo {
+            width: 8rem; 
+            height: 8rem; 
+            object-fit: cover; /* Memastikan foto tidak terdistorsi */
+            border-radius: 50%; /* Membuat foto menjadi lingkaran */
+            margin-left: auto; /* Untuk menengahkan foto */
+            margin-right: auto; /* Untuk menengahkan foto */
+            border: 4px solid #0b2239; /* Border teal-500 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Menyembunyikan placeholder yang lama */
         .team-member-placeholder {
-            height: 8rem;
-            background-color: #d1d5db; /* gray-300 */
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem; /* text-xs */
-            color: #6b7280; /* gray-500 */
+            display: none !important;
         }
+        /* --- END STYLE BARU --- */
+        
     </style>
 </head>
 <body class="bg-gray-100">
@@ -63,7 +73,7 @@
                 <div class="bg-white rounded-xl shadow-xl overflow-hidden mb-8">
                     <div class="relative">
                         {{-- GAMBAR BESAR --}}
-                        <img src="https://via.placeholder.com/800x400.png?text=Gambar+Rapat+Tim" 
+                        <img src="images/team.jpg" 
                              alt="Tim Sedang Rapat" 
                              class="w-full h-80 object-cover">
                         
@@ -71,7 +81,7 @@
                         <div class="absolute bottom-0 left-0 p-6 sm:p-10 text-white bg-black bg-opacity-60 w-full">
                             <h3 class="text-3xl font-bold mb-4">Visi & Misi Kami</h3>
                             <p class="text-sm leading-relaxed">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                Menjadi platform digital terdepan dalam penyebaran pengetahuan dan keterampilan di bidang Informatika dan Teknologi Informasi, yang mampu menjembatani kesenjangan antara teori akademik dan praktik industri, serta berkontribusi nyata dalam mencetak generasi unggul dan siap bersaing di era digital.
                             </p>
                         </div>
                     </div>
@@ -99,7 +109,7 @@
                     </div>
                 </div>
 
-                {{-- 3. Garis Abu-abu di bagian bawah --}}
+                {{-- 3. Garis Abu-abu di bagian bawah (Bisa ditambahkan jika diperlukan styling tambahan) --}}
 
             </div>
 
@@ -110,39 +120,50 @@
                 {{-- Grid Anggota Tim --}}
                 <div class="team-box">
                     
-                    {{-- Anggota Tim Item 1 --}}
+                    {{-- Anggota Tim Item 1 (Foto: Mas Heri) --}}
                     <div class="text-center">
-                        <div class="team-member-placeholder"></div>
+                        <img src="{{ asset('images/heri.webp') }}" 
+                             alt="Foto Mas Heri" 
+                             class="team-member-photo">
                         <p class="text-sm font-semibold mt-2">Mas Heri</p>
                     </div>
 
-                    {{-- Anggota Tim Item 2 --}}
+                    {{-- Anggota Tim Item 2 (Foto: William) --}}
                     <div class="text-center">
-                        <div class="team-member-placeholder"></div>
-                        <p class="text-sm font-semibold mt-2">William</p>
+                        <img src="{{ asset('images/william.webp') }}" 
+                             alt="Foto William" 
+                             class="team-member-photo">
+                        <p class="text-sm font-semibold mt-2">Nyoman Bagus</p>
                     </div>
 
-                    {{-- Anggota Tim Item 3 --}}
+                    {{-- Anggota Tim Item 3 (Foto: Dinda Dev) --}}
                     <div class="text-center">
-                        <div class="team-member-placeholder"></div>
+                        <img src="{{ asset('images/dinda.webp') }}" 
+                             alt="Foto Dinda Dev" 
+                             class="team-member-photo">
                         <p class="text-sm font-semibold mt-2">Dinda Dev</p>
                     </div>
 
-                    {{-- Anggota Tim Item 4 --}}
+                    {{-- Anggota Tim Item 4 (Foto: Yasa) --}}
                     <div class="text-center">
-                        <div class="team-member-placeholder"></div>
+                         <img src="{{ asset('images/yasa.webp') }}" 
+                             alt="Foto Yasa" 
+                             class="team-member-photo">
                         <p class="text-sm font-semibold mt-2">Yasa</p>
                     </div>
 
-                    {{-- Anggota Tim Item 5 --}}
+                    {{-- Anggota Tim Item 5 (Foto: Ananda) --}}
                     <div class="text-center">
-                        <div class="team-member-placeholder"></div>
-                        <p class="text-sm font-semibold mt-2">Ananda</p>
+                        <img src="{{ asset('images/satya.webp') }}" 
+                             alt="Foto Ananda" 
+                             class="team-member-photo">
+                        <p class="text-sm font-semibold mt-2">Bang Sat</p>
                     </div>
                     
                     {{-- Anggota Tim Item 6 (Kosong sesuai desain asli) --}}
                     <div class="text-center">
-                        <div class="team-member-placeholder opacity-0"></div>
+                        {{-- Anggota Kosong --}}
+                        <div class="w-32 h-32 bg-transparent mx-auto"></div> 
                         <p class="text-sm font-semibold mt-2"></p>
                     </div>
                 </div>
