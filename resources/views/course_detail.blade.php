@@ -117,25 +117,6 @@
             @endforeach
 
         </section>
-
-        <aside class="related-content-area bg-white p-5 rounded-lg shadow-xl lg:sticky lg:top-4 lg:h-fit">
-            <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">📚 Materi Terkait</h2>
-            <p class="text-sm text-gray-500 mb-5">
-                Rekomendasi topik dari segmen yang relevan untuk meningkatkan pemahaman Anda.
-            </p>
-
-            @for ($i = 0; $i < 5; $i++)
-                <div class="flex space-x-3 mb-4 p-3 border-b border-gray-100 hover:bg-gray-50 rounded-md cursor-pointer transition">
-                    <div class="w-12 h-8 bg-blue-100 rounded-md flex items-center justify-center text-xs text-blue-600 font-bold flex-shrink-0">
-                        {{ $segmentData->id }}{{ $i+1 }}
-                    </div>
-                    <div>
-                        <p class="text-sm font-semibold text-gray-800">Review Materi Ekstra #{{ $i+1 }}</p>
-                        <p class="text-xs text-gray-500">Video: Implementasi terbaru di {{ $segmentData->name }}.</p>
-                    </div>
-                </div>
-            @endfor
-        </aside>
         
     </div>
 </main>

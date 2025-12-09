@@ -9,11 +9,14 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Forms\Components\Repeater;
 
 class StepResource extends Resource
 {
     protected static ?string $model = Step::class;
-    
+
     protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
     protected static ?string $navigationGroup = 'Struktur Pembelajaran';
 
@@ -21,8 +24,9 @@ class StepResource extends Resource
     {
         return $form
             ->schema([
+
                 Forms\Components\Select::make('materi_id')
-                    ->relationship('materi', 'title') 
+                    ->relationship('materi', 'title')
                     ->required()
                     ->label('Parent Materi'),
 
@@ -36,48 +40,69 @@ class StepResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->label('Judul Langkah')
-                    ->columnSpanFull(), 
+                    ->columnSpanFull(),
 
-                // Menggunakan extraAttributes untuk kompatibilitas versi lama
                 Forms\Components\RichEditor::make('content')
                     ->required()
                     ->label('Konten Detail Langkah')
                     ->fileAttachmentsDisk('public')
                     ->fileAttachmentsDirectory('steps-attachments')
-                    ->toolbarButtons([ 
-                        'attachFiles', 'blockquote', 'bold', 'bulletList', 'codeBlock', 
-                        'h2', 'h3', 'italic', 'link', 'orderedList', 'redo', 
+                    ->toolbarButtons([
+                        'attachFiles', 'blockquote', 'bold', 'bulletList', 'codeBlock',
+                        'h2', 'h3', 'italic', 'link', 'orderedList', 'redo',
                         'strike', 'underline', 'undo',
                     ])
                     ->extraAttributes([
-                        'style' => 'min-height: 40vh;', // Mengatur tinggi editor
+                        'style' => 'min-height: 40vh;',
                     ])
                     ->columnSpanFull(),
 
-                Forms\Components\TextInput::make('image_path')
-                    ->label('Image Path (Opsional)'),
-            ])->columns(2); 
+                Repeater::make('images')
+                    ->relationship('images')
+                    ->label('Gambar Langkah (Multiple)')
+                    ->schema([
+                        FileUpload::make('path')
+                            ->label('Upload Gambar')
+                            ->image()
+                            ->directory('steps')
+                            ->disk('public')
+                            ->previewable(true)
+                            ->openable()
+                            ->downloadable()
+                            ->required(),
+                    ])
+                    ->addActionLabel('Tambah Gambar')
+                    ->minItems(0)
+                    ->maxItems(10)
+                    ->columnSpanFull(),
+            ])->columns(2);
     }
-    
+
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+
                 Tables\Columns\TextColumn::make('order')
                     ->sortable()
                     ->label('No.')
                     ->width(50),
-                
+
+                ImageColumn::make('images.0.path')
+                    ->label('Gambar')
+                    ->disk('public')
+                    ->size(60),
+
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
                     ->label('Judul Langkah'),
-                
+
                 Tables\Columns\TextColumn::make('materi.title')
                     ->sortable()
                     ->label('Parent Materi'),
-                
+
                 Tables\Columns\TextColumn::make('content')
-                    ->html() 
+                    ->html()
                     ->limit(50)
                     ->label('Preview Konten'),
             ])

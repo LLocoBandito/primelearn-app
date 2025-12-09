@@ -41,7 +41,7 @@
                         <li class="p-2 rounded transition border-l-4 
                             @if($materi->id === $currentMateri->id) bg-teal-100 border-teal-600 font-bold @else hover:bg-gray-50 border-transparent @endif">
                             <a href="{{ route('materi.show', ['materiId' => $materi->id]) }}" 
-                               class="@if($materi->id === $currentMateri->id) text-teal-800 @else text-gray-800 @endif block">
+                                class="@if($materi->id === $currentMateri->id) text-teal-800 @else text-gray-800 @endif block">
                                 {{ $materi->title }}
                             </a>
                         </li>
@@ -56,7 +56,7 @@
                 @forelse ($currentMateri->steps as $step)
                     {{-- SETIAP STEP ADALAH LINK KE HALAMAN STEP DETAIL (LEVEL 4) --}}
                     <a href="{{ route('step.show', ['stepId' => $step->id]) }}" 
-                       class="block mb-8 p-6 bg-white rounded-xl shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition duration-300 transform hover:scale-[1.01]">
+                        class="block mb-8 p-6 bg-white rounded-xl shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition duration-300 transform hover:scale-[1.01]">
                         
                         <h3 class="text-xl font-bold text-blue-700 mb-3">
                             Langkah {{ $step->order }}: {{ $step->title }}
@@ -88,18 +88,42 @@
                     Link ke dokumentasi resmi atau video tutorial terkait.
                 </p>
 
-                {{-- SIMULASI LINK EKSTERNAL --}}
-                @for ($i = 0; $i < 4; $i++)
-                    <div class="flex space-x-3 mb-4 p-3 border-b hover:bg-gray-50 cursor-pointer">
-                        <div class="w-12 h-8 bg-pink-100 rounded-md flex-shrink-0 flex items-center justify-center text-pink-600">
-                            DOC
+                {{-- START: LOOPING DATA AKTUAL DARI externalLinks --}}
+                @php
+                    $iconStyles = [
+                        'doc' => ['bg-pink-100', 'text-pink-600', 'DOC'],
+                        'video' => ['bg-red-100', 'text-red-600', 'VID'],
+                        'article' => ['bg-blue-100', 'text-blue-600', 'ART'],
+                        'other' => ['bg-gray-100', 'text-gray-600', 'LINK'],
+                    ];
+                @endphp
+                
+                @forelse ($currentMateri->externalLinks as $link)
+                    @php
+                        // Ambil style berdasarkan tipe link, default ke 'other' jika tipe tidak ada
+                        $type = $link->type ?? 'other';
+                        [$bgColor, $textColor, $iconText] = $iconStyles[$type];
+                    @endphp
+
+                    <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer" class="block">
+                        <div class="flex space-x-3 mb-4 p-3 border-b hover:bg-gray-50 transition rounded-md">
+                            {{-- Ikon/Warna dinamis berdasarkan tipe --}}
+                            <div class="w-12 h-8 {{ $bgColor }} rounded-md flex-shrink-0 flex items-center justify-center text-sm font-bold {{ $textColor }}">
+                                {{ $iconText }}
+                            </div>
+                            <div class="truncate">
+                                <p class="text-sm font-semibold text-gray-700 truncate">{{ $link->title }}</p>
+                                <p class="text-xs text-gray-500 truncate">{{ $link->url }}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-sm font-semibold text-pink-700">Official Docs: Topik X</p>
-                            <p class="text-xs text-gray-500">Kebutuhan untuk {{ $currentMateri->title }}.</p>
-                        </div>
+                    </a>
+                @empty
+                    <div class="p-3 bg-gray-50 text-gray-500 rounded-md border-dashed border">
+                        <p class="text-sm italic">Belum ada sumber eksternal yang ditambahkan untuk materi ini.</p>
                     </div>
-                @endfor
+                @endforelse
+                {{-- END: LOOPING DATA AKTUAL --}}
+
             </aside>
             
         </div>
