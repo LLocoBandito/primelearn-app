@@ -260,6 +260,13 @@
                     </button>
                 </div>
 
+                <div class="pt-4">
+                    <a href="{{ route('peminatan.skip') }}"
+                        class="w-full block text-center px-6 py-3 bg-gray-300 text-gray-700 rounded-lg font-semibold shadow hover:bg-gray-400 transition">
+                        Lewati Tes (Skip)
+                    </a>
+                </div>
+
             </form>
         </div>
     </section>
