@@ -67,7 +67,7 @@
         <div class="max-w-6xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-2xl">
 
             <h1 class="text-3xl font-bold text-blue-700 mb-2 text-center">
-                Tes Minat dan Bakat Bidang IT (Skala Likert)
+                Tes Minat dan Bakat Bidang IT
             </h1>
             <p class="text-gray-600 mb-8 text-center border-b pb-4">
                 Pilih tingkat persetujuan Anda untuk setiap pernyataan: **Sangat Setuju (SS), Setuju (S), Cukup Setuju (CS), atau Tidak Setuju (TS).**
