@@ -49,6 +49,13 @@ Route::get('/about', function () {
     return view('about_us');
 })->name('about');
 
+Route::get('/peminatan/skip', function () {
+    // Jika ingin menandai bahwa form dilewati
+    session(['form_completed' => true]);
+
+    return redirect()->route('segments.index');
+})->name('peminatan.skip');
+
 Route::get('/sidebar-courses/load-more', [CourseController::class, 'loadMoreSidebar'])
     ->name('sidebar.loadMore');
 

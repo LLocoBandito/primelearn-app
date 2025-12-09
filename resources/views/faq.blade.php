@@ -130,9 +130,9 @@
 
     {{-- NAVIGASI SEKUNDER --}}
     <nav class="secondary-nav">
-        <a href="{{ route ("segments.index") }}" class="nav-item active">HOME</a>
-        <a href="{{ route('about') }}" class="nav-item">ABOUT US</a>
-        <a href="{{ route ('faq') }}" class="nav-item">FAQ</a>
+        <a href="{{ route('segments.index') }}" class="nav-item {{ request()->routeIs('segments.index') ? 'active' : '' }}">HOME</a>
+        <a href="{{ route('about') }}" class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">ABOUT US</a>
+        <a href="{{ route('faq') }}" class="nav-item {{ request()->routeIs('faq') ? 'active' : '' }}">FAQ</a>
     </nav>
 
     <!-- FAQ SECTION -->
@@ -223,7 +223,7 @@
     </div>
 
     <!-- WhatsApp Button (High Z-Index) -->
-    <a id="wa-button" href="https://wa.me/6281234567890?text=Halo%20saya%20ingin%20bertanya%20tentang%20PrimeLearn" 
+    <a id="wa-button" href="https://wa.me/6282277277484?text=Halo%20saya%20ingin%20bertanya%20tentang%20PrimeLearn" 
         target="_blank"
         class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-xl transition" style="z-index: 1000;">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="w-8 h-8" alt="WhatsApp">
@@ -233,11 +233,6 @@
     <footer class="main-footer">
         <div class="container footer-content">
             <div class="footer-logo">PrimeLearn</div>
-            <div class="footer-links">
-                <a href="#">Privacy Policy</a> | 
-                <a href="#">Terms of Use</a> | 
-                <a href="#">Contact</a>
-            </div>
             <div class="footer-copyright">
                 &copy; 2024 PrimeLearn. All Rights Reserved.
             </div>

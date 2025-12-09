@@ -67,7 +67,7 @@
         <div class="max-w-6xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-2xl">
 
             <h1 class="text-3xl font-bold text-blue-700 mb-2 text-center">
-                Tes Minat dan Bakat Bidang IT (Skala Likert)
+                Tes Minat dan Bakat Bidang IT
             </h1>
             <p class="text-gray-600 mb-8 text-center border-b pb-4">
                 Pilih tingkat persetujuan Anda untuk setiap pernyataan: **Sangat Setuju (SS), Setuju (S), Cukup Setuju (CS), atau Tidak Setuju (TS).**
@@ -258,6 +258,13 @@
                         class="w-full px-6 py-3 bg-blue-700 text-white rounded-lg font-semibold shadow-lg hover:bg-blue-800 transition transform hover:scale-[1.01]">
                         Lihat Hasil Rekomendasi Peminatan
                     </button>
+                </div>
+
+                <div class="pt-4">
+                    <a href="{{ route('peminatan.skip') }}"
+                        class="w-full block text-center px-6 py-3 bg-gray-300 text-gray-700 rounded-lg font-semibold shadow hover:bg-gray-400 transition">
+                        Lewati Tes (Skip)
+                    </a>
                 </div>
 
             </form>

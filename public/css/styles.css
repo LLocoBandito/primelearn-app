@@ -47,6 +47,19 @@ body {
     font-size: 1.8em;
 }
 
+html,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main.container {
+    flex: 1; /* Ini mendorong footer tetap di bawah */
+}
 /* 2. NAVIGASI BARIS KEDUA */
 .secondary-nav {
     background-color: #315e86;
