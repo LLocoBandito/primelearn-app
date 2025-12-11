@@ -26,6 +26,7 @@ Route::get('/faq', function () {
 // Peminatan
 Route::get('/peminatan', [PeminatanController::class, 'index'])->name('peminatan.form');
 Route::post('/peminatan', [PeminatanController::class, 'store'])->name('peminatan.store');
+Route::get('/peminatan/result/{result}', [PeminatanController::class, 'showResult'])->name('peminatan.result');
 
 // Segments
 Route::get('/segments', [SegmentController::class, 'index'])->name('segments.index');

@@ -6,25 +6,27 @@
     <title>Hasil Peminatan IT | PRIME LEARN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    {{-- Tambahkan ikon Heroicons untuk centang dan silang --}}
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f3f4f6; /* Warna latar belakang yang lebih netral */
+            background-color: #f3f4f6;
         }
         .navbar-dark {
-            background-color: #06192A; /* Biru tua navbar utama */
+            background-color: #06192A;
         }
         .main-card {
             background-color: #ffffff;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.04);
         }
         .recommendation-box {
-            background-color: #e0f2fe; /* light blue */
+            background-color: #e0f2fe;
             border-radius: 0.75rem;
-            border-left: 6px solid #06b6d4; /* Cyan border */
+            border-left: 6px solid #06b6d4;
         }
         .highlight-row {
-            background-color: #fef3c7 !important; /* light yellow for highlight */
+            background-color: #fef3c7 !important;
             font-weight: 600;
         }
     </style>
@@ -67,7 +69,7 @@
 
         <section>
             <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
-                📊 Detail Skor Peminatan (Skala 3 - 12)
+                ✅ Status Kecocokan Minat
             </h2>
             
             <div class="overflow-x-auto shadow-lg rounded-lg">
@@ -75,15 +77,33 @@
                     <thead class="bg-blue-600 text-white">
                         <tr>
                             <th class="px-6 py-3 text-left text-sm font-bold uppercase tracking-wider rounded-tl-lg">Kategori Peminatan</th>
-                            <th class="px-6 py-3 text-left text-sm font-bold uppercase tracking-wider rounded-tr-lg">Skor Total</th>
+                            <th class="px-6 py-3 text-center text-sm font-bold uppercase tracking-wider rounded-tr-lg">Status Kecocokan</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach ($scores as $category => $score)
+                        {{-- Iterasi menggunakan $matchStatus --}}
+                        @foreach ($matchStatus as $category => $isMatch)
                         {{-- Menambahkan kelas highlight-row jika kategori adalah rekomendasi --}}
-                        <tr class="{{ $category === $recommendation ? 'highlight-row' : 'hover:bg-gray-50' }}">
+                        {{-- Perhatikan bahwa $recommendation bisa mengandung kata 'dan', sehingga kita gunakan str_contains --}}
+                        <tr class="{{ str_contains($recommendation, $category) ? 'highlight-row' : 'hover:bg-gray-50' }}">
                             <td class="px-6 py-4 whitespace-nowrap text-base text-gray-900">{{ $category }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-base font-extrabold text-blue-700">{{ $score }} / 12</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-xl">
+                                @if ($isMatch)
+                                    {{-- Centang Hijau --}}
+                                    <span class="text-green-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </span>
+                                @else
+                                    {{-- Silang Merah --}}
+                                    <span class="text-red-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </span>
+                                @endif
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -91,7 +111,7 @@
             </div>
             
             <p class="text-sm text-gray-500 mt-4">
-                Skor dihitung dari total 3 pernyataan per kategori. Semakin tinggi skor, semakin kuat minat Anda.
+                **Status Kecocokan** ditentukan oleh ambang batas (threshold) skor (Skor >= 9 dianggap cocok). Rekomendasi utama didasarkan pada skor tertinggi.
             </p>
         </section>
 

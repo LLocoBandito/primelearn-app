@@ -17,8 +17,12 @@ class PeminatanResult extends Model
         'nama',
         'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 
         'q10', 'q11', 'q12', 'q13', 'q14', 'q15',
+        // --- BARIS BARU ---
+        'matched_categories', // Kolom untuk menyimpan array kategori yang cocok (JSON)
     ];
-
-    // Tambahkan accessor untuk menghitung total skor per kategori (opsional)
-    // Cth: public function getSoftwareDevelopmentScoreAttribute() { ... }
+    
+    // Opsional: Laravel secara otomatis melakukan casting jika tipe kolom diset ke 'json' di migrasi
+    protected $casts = [
+        'matched_categories' => 'array', 
+    ];
 }
