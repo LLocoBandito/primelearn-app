@@ -4,10 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PeminatanController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SegmentController;
-use App\Http\Controllers\StepController;
-use App\Http\Controllers\MateriController;  
 use App\Models\Segment;
-use app\models\Materi;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,9 +72,7 @@ Route::get('/segments', [SegmentController::class, 'index'])
 | COURSE, MATERI & STEP
 |--------------------------------------------------------------------------
 */
-// 🎯 PENAMBAHAN ROUTE UNTUK FASE (Diasumsikan ditangani CourseController)
-Route::get('/fase/{faseId}', [CourseController::class, 'showFaseDetail'])
-    ->name('fase.show'); // <-- Nama route yang dicari
+
 // Halaman course per segment
 Route::get('/course/{segment}', [CourseController::class, 'show'])
     ->name('course.show');
@@ -108,35 +103,3 @@ Route::get('/segment/{id}', function ($id) {
 */
 Route::get('/ajax/load-more-sidebar', [CourseController::class, 'loadMoreSidebar'])
     ->name('ajax.load_more_sidebar');
-
-/* steps */
-Route::get('/materi/{materi}/step/{order}', [StepController::class, 'show'])
-    ->name('steps.show');
-
-// Route untuk menyelesaikan materi (juga dibutuhkan di navigasi)
-Route::get('/materi/{materi}/complete', function() {
-    // Logika penyelesaian materi
-    return redirect('/')->with('success', 'Materi selesai!');
-})->name('materi.complete');
-
-Route::get('/materi/{materi}/step/{order}', [StepController::class, 'show']) // Panggil StepController
-    ->name('steps.show');
-
-    /* Rute untuk Menampilkan Detail Materi (Setelah Selesai Step) */
-/* Rute Langkah-Langkah yang sudah Anda miliki */
-Route::get('/materi/{materi}/step/{order}', [StepController::class, 'show'])
-    ->name('steps.show');
-
-/* Rute Langkah-Langkah (Sudah Benar) */
-Route::get('/materi/{materi}/step/{order}', [StepController::class, 'show'])
-    ->name('steps.show');
-
-    Route::get('/materi/{materi}', function (Materi $materi) {
-    // Memuat relasi steps, externalLinks, dll.
-    $materi->load(['steps', 'externalLinks', 'fase']); 
-    
-    // Tampilkan view materi_detail yang sudah ada
-    return view('materi_detail', [
-        'materi' => $materi
-    ]);
-})->name('materi.show'); 

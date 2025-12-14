@@ -110,7 +110,7 @@ class PeminatanController extends Controller
             'Network & Security' => 
                 $data['q2'] + $data['q6'] + $data['q10'] + $data['q12'] + $data['q15'] + $data['q18'],
 
-            'UX-UI Design' => 
+            'UX/UI Design' => 
                 $data['q5'] + $data['q8'] + ($data['q13'] * 0.5) + $data['q19'],
 
             'Data Analytics & AI' => 

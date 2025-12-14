@@ -14,22 +14,8 @@ class Step extends Model
         'order',
         'title',
         'content',
-        'video_url',    // <-- BARU: Untuk URL embed video (String)
-        'quiz_data',    // <-- BARU: Untuk data kuis terstruktur (JSON/Array)
-        'total_steps',  // <-- BARU: Untuk jumlah langkah dalam materi (Integer)
-        // 'image_path' telah dihapus (sudah benar)
+        // HAPUS 'image_path' karena sekarang gambar disimpan di tabel step_images
     ];
-
-    /**
-     * Casting kolom ke tipe data spesifik.
-     * Kita menggunakan 'array' agar Laravel otomatis mengkonversi JSON dari database
-     * menjadi array PHP saat diakses ($step->quiz_data).
-     */
-    protected $casts = [
-        'quiz_data' => 'array',
-        'is_interactive' => 'boolean',
-    ];
-
 
     /**
      * Relasi ke model Materi (Parent)
