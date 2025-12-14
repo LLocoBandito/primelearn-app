@@ -3,20 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\PeminatanResult;
 
 class PeminatanController extends Controller
 {
-    private const MATCH_THRESHOLD = 9; 
+    /**
+     * Tampilkan form peminatan (multi-step)
+     * Ini juga berfungsi sebagai proses "Retake" atau "Reset".
+     */
+    public function index()
+    {
+        // 🎯 LOGIKA PERBAIKAN: Hapus semua data session hasil tes lama
+        // Ini memastikan form ditampilkan dari awal (reset)
+        session()->forget(['peminatan_result', 'form_completed', 'matched_categories']);
+
+        return view('apply');
+    }
 
     /**
-     * Menyimpan data formulir ke database dan mengarahkan ke halaman hasil.
+     * Simpan jawaban peminatan dan redirect ke halaman hasil
      */
     public function store(Request $request)
     {
-        // 1. Validasi Data
+        // 1️⃣ Validasi input
         $validatedData = $request->validate([
-            'nama' => 'required|string|max:255',
             'q1' => 'required|integer|between:1,4',
             'q2' => 'required|integer|between:1,4',
             'q3' => 'required|integer|between:1,4',
@@ -32,108 +41,106 @@ class PeminatanController extends Controller
             'q13' => 'required|integer|between:1,4',
             'q14' => 'required|integer|between:1,4',
             'q15' => 'required|integer|between:1,4',
+            'q16' => 'required|integer|between:1,4',
+            'q17' => 'required|integer|between:1,4',
+            'q18' => 'required|integer|between:1,4',
+            'q19' => 'required|integer|between:1,4',
+            'q20' => 'required|integer|between:1,4',
         ]);
 
-        // 2. Hitung Skor & Status
+        // 2️⃣ Hitung skor per kategori
         $scores = $this->calculateScores($validatedData);
-        $recommendation = $this->getRecommendation($scores); 
-        $matchStatus = $this->calculateMatchStatus($scores); 
 
-        // 3. Ambil kategori yang status kecocokannya TRUE (Centang Hijau)
-        $matchedCategories = array_keys(array_filter($matchStatus, function($match) {
-            return $match === true;
-        }));
+        // 3️⃣ Tentukan rekomendasi utama
+        $recommendation = $this->getRecommendation($scores);
 
-        // 4. Tambahkan kategori yang cocok ke data yang akan disimpan (dalam format JSON)
-        $dataToStore = array_merge($validatedData, [
-            'matched_categories' => json_encode($matchedCategories), // Simpan ke DB
+        // 4️⃣ Tentukan match status (strong / less dominant)
+        $matchStatus = $this->calculateMatchStatus($scores);
+
+        // 🎯 Ambil hanya nama kategori yang Strong Match (status TRUE)
+        $matchedCategories = array_keys(array_filter($matchStatus, fn($isMatch) => $isMatch));
+
+        // 5️⃣ Simpan semua data ke session, termasuk matched_categories
+        session([
+            'form_completed' => true,
+            'peminatan_result' => [
+                'answers' => $validatedData,
+                'scores' => $scores,
+                'recommendation' => $recommendation,
+                'matchStatus' => $matchStatus,
+                'matched_categories' => $matchedCategories,
+            ]
         ]);
 
-        // 5. Simpan Data ke DB
-        $result = PeminatanResult::create($dataToStore); 
-        
-        // 6. Set Session flash (hanya untuk notifikasi yang muncul sekali di halaman hasil/segmen)
-        $request->session()->flash('recommendation', $recommendation); 
-
-        // 7. Redirect ke halaman hasil
-        return redirect()->route('peminatan.result', ['result' => $result->id]);
+        // 6️⃣ Redirect ke halaman hasil
+        return redirect()->route('peminatan.result');
     }
 
+    /**
+     * Tampilkan hasil peminatan
+     */
+    public function showResult()
+    {
+        if (!session()->has('peminatan_result')) {
+            return redirect()->route('peminatan.form');
+        }
+
+        $data = session('peminatan_result');
+
+        return view('result', [
+            'recommendation' => $data['recommendation'],
+            'matchStatus' => $data['matchStatus'],
+            'scores' => $data['scores'],
+        ]);
+    }
 
     /**
-     * Menghitung total skor per kategori.
+     * =========================
+     * Helper Methods
+     * =========================
      */
+
     private function calculateScores(array $data): array
     {
+        // Pastikan alokasi skor ini sesuai dengan pertanyaan Anda
         return [
-            'Software Development' => $data['q1'] + $data['q2'] + $data['q3'],
-            'Network & Infrastructure' => $data['q4'] + $data['q5'] + $data['q6'],
-            'Cyber Security' => $data['q7'] + $data['q8'] + $data['q9'],
-            'Data Analytics & AI' => $data['q10'] + $data['q11'] + $data['q12'],
-            'UX/UI Design' => $data['q13'] + $data['q14'] + $data['q15'],
+            'Software Development' => 
+            $data['q1'] + $data['q7'] + $data['q11'] + ($data['q13'] * 0.5) + $data['q16'] + $data['q20'],
+
+            'Network & Security' => 
+                $data['q2'] + $data['q6'] + $data['q10'] + $data['q12'] + $data['q15'] + $data['q18'],
+
+            'UX/UI Design' => 
+                $data['q5'] + $data['q8'] + ($data['q13'] * 0.5) + $data['q19'],
+
+            'Data Analytics & AI' => 
+                $data['q3'] + $data['q4'] + $data['q9'] + $data['q14'] + $data['q17'],
         ];
     }
     
-    /**
-     * Menentukan status kecocokan (centang hijau) berdasarkan DUA skor tertinggi.
-     */
+    // ... (metode calculateMatchStatus dan getRecommendation tidak berubah)
     private function calculateMatchStatus(array $scores): array
     {
-        $sortedScores = $scores;
-        arsort($sortedScores);
+        $maxScore = max($scores);
+        $threshold = $maxScore * 0.7; // 70% dari skor tertinggi
 
-        $topTwo = array_slice($sortedScores, 0, 2, true);
-        $minScoreForMatch = 0;
-        
-        if (!empty($topTwo)) {
-             $minScoreForMatch = end($topTwo); 
-        }
-        
-        $matchCategories = [];
-        
+        $matchStatus = [];
         foreach ($scores as $category => $score) {
-            if ($score >= $minScoreForMatch && $minScoreForMatch > 0) {
-                 $matchCategories[$category] = true;
-            } else {
-                 $matchCategories[$category] = false;
-            }
+            $matchStatus[$category] = $score >= $threshold;
         }
-        
-        return $matchCategories;
+        return $matchStatus;
     }
 
-
-    /**
-     * Menentukan rekomendasi peminatan berdasarkan skor tertinggi.
-     */
     private function getRecommendation(array $scores): string
     {
         $maxScore = max($scores);
-        $highInterests = array_keys($scores, $maxScore);
+        $topCategories = array_keys($scores, $maxScore);
 
-        if (count($highInterests) > 1) {
-            $last = array_pop($highInterests);
-            return implode(', ', $highInterests) . ' dan ' . $last;
+        if (count($topCategories) > 1) {
+            $last = array_pop($topCategories);
+            return implode(', ', $topCategories) . ' dan ' . $last;
         }
 
-        return $highInterests[0];
-    }
-
-    /**
-     * Menampilkan halaman hasil.
-     */
-    public function showResult(PeminatanResult $result)
-    {
-        // Data diambil dari DB $result, tetapi perhitungan diulang untuk akurasi
-        $dataForCalculation = $result->only([
-            'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 
-            'q11', 'q12', 'q13', 'q14', 'q15', 'nama'
-        ]);
-
-        $scores = $this->calculateScores($dataForCalculation);
-        $recommendation = $this->getRecommendation($scores);
-        $matchStatus = $this->calculateMatchStatus($scores); 
-
-        return view('result', compact('result', 'scores', 'recommendation', 'matchStatus'));
+        return $topCategories[0];
     }
 }
