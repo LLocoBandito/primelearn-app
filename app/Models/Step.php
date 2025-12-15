@@ -16,6 +16,7 @@ class Step extends Model
         'content',
         'video_url', // Pastikan ini ada jika Anda menambahkannya di Filament
         'quiz_data',
+        'external_links',
         // HAPUS 'image_path' karena sekarang gambar disimpan di tabel step_images
     ];
 
@@ -44,6 +45,7 @@ class Step extends Model
     }
 
     protected $casts = [
-        'quiz_data' => 'array', // PENTING: Untuk kemudahan akses data kuis
+        'quiz_data' => 'array',
+        'external_links' => 'array', // PENTING: Untuk kemudahan akses data kuis
     ];
 }
