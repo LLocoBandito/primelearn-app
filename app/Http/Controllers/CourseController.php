@@ -23,7 +23,6 @@ class CourseController extends Controller
             abort(404, 'Segmen pembelajaran tidak ditemukan.');
         }
 
-        // 👉 Perbaikan: tidak ada relasi 'courses'
         // Jika sidebar butuh list segmen saja:
         $segmentsWithCourses = Segment::with('fases.materis')->get();
 
@@ -44,7 +43,7 @@ class CourseController extends Controller
         $fase = $currentMateri->fase;
         $segmentName = $fase->segment->name;
 
-        // 👉 Perbaikan relasi sidebar
+        // Perbaikan relasi sidebar
         $segmentsWithCourses = Segment::with('fases.materis')->get();
         
         return view('materi_detail', [
@@ -55,18 +54,40 @@ class CourseController extends Controller
         ]);
     }
 
+    // ⭐ METODE BARU: Menampilkan halaman ringkasan materi (Tujuan redirect dari StepController)
+    public function showMateriSummary($materiId)
+    {
+        $materi = Materi::with('fase.segment', 'steps')->findOrFail($materiId);
+        
+        // Perbaikan relasi sidebar
+        $segmentsWithCourses = Segment::with('fases.materis')->get();
+        
+        // Anda bisa menambahkan logika atau data lain di sini (misalnya, sertifikat, progress, dll.)
+
+        return view('materi_summary', [ // Pastikan Anda memiliki view ini!
+            'materi' => $materi,
+            'segmentsWithCourses' => $segmentsWithCourses,
+            'completion_status' => session('success') // Menerima pesan "Selamat" dari redirect
+        ]);
+    }
+
     /**
      * Level 4: Halaman detail Step
+     * CATATAN: Metode ini seharusnya dihapus atau diubah namanya
+     * karena Anda sudah memindahkannya ke StepController@show.
+     * Jika Anda ingin tetap menggunakan CourseController:
      */
     public function showStepContent($stepId)
     {
+        // Peringatan: Metode ini bertentangan dengan StepController@show.
+        // Sebaiknya hapus rute yang menunjuk ke sini dan hanya gunakan StepController.
         $step = Step::with('materi.fase.segment')->findOrFail($stepId);
 
         $materi = $step->materi;
         $fase = $materi->fase;
         $segmentName = $fase->segment->name;
 
-        // 👉 Perbaikan relasi sidebar
+        // Perbaikan relasi sidebar
         $segmentsWithCourses = Segment::with('fases.materis')->get();
         
         return view('step_detail', [
@@ -86,7 +107,7 @@ class CourseController extends Controller
         $page = $request->get('page', 1);
 
         $courses = Materi::orderBy('created_at', 'desc')
-                         ->paginate(3, ['*'], 'page', $page);
+                          ->paginate(3, ['*'], 'page', $page);
 
         $html = view('partials.sidebar_course_item', compact('courses'))->render();
 

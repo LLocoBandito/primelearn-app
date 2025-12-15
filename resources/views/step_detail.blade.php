@@ -4,40 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Langkah {{ $step->order }}: {{ $step->title }} | PrimeLearn</title>
+    {{-- Asumsi Anda menggunakan asset() untuk memuat CSS Tailwind Anda --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+        // Konfigurasi Tailwind CSS untuk mengaktifkan typography
         tailwind.config = {
             theme: {
                 extend: {},
             },
-            plugins: [
-                require('@tailwindcss/typography'), 
-            ],
+            // Tambahkan plugin typography jika Anda menggunakannya (memerlukan instalasi jika tidak via CDN)
+            // plugins: [
+            //     require('@tailwindcss/typography'), 
+            // ],
         }
     </script>
 </head>
 <body class="bg-gray-100 min-h-screen">
 
-    {{-- KOMPONEN: Navbar --}}
-    @include('components.navbar') 
+    {{-- Anda perlu memastikan komponen ini ada atau ganti dengan HTML navbar statis Anda --}}
+    {{-- @include('components.navbar') --}} 
 
-    @php
-        use Illuminate\Support\Facades\Storage;
-        use Illuminate\Support\Str;
-        
-        // Asumsi relasi Model Step sudah di-cast:
-        // $step->images adalah koleksi relasi (Repeater relasi)
-        // $step->external_links adalah array (Repeater JSON)
-        // $step->quiz_data adalah array (Repeater JSON)
+@php 
+    use Illuminate\Support\Facades\Storage;
+    use Illuminate\Support\Str;
+    
+    // Asumsi: Model Step memiliki relasi materi, dan materi memiliki relasi fase, dst.
+    $materi = $step->materi;
+    $fase = $materi->fase;
+    $segment = $fase->segment;
+    
+    // Ambil data external links, utamakan dari Step, fallback ke Materi
+    $externalLinks = $step->external_links ?? ($step->materi->externalLinks ?? []); 
+    $quizData = $step->quiz_data ?? []; 
+    
+    // Tentukan apakah tombol next harus dinonaktifkan (karena ada kuis)
+    $isQuizRequired = !empty($quizData);
 
-        $materi = $step->materi;
-        $fase = $materi->fase;
-        $segment = $fase->segment;
-        
-        // **PERBAIKAN UTAMA DI SINI:** Ambil data dari kolom JSON
-        $externalLinks = $step->external_links ?? []; // Ambil dari kolom JSON, default array kosong
-        $quizData = $step->quiz_data ?? []; // Ambil dari kolom JSON, default array kosong
-    @endphp
+    // Tentukan rute default. Jika ada kuis, default-nya ke '#'.
+    $nextRoute = $nextStep ? route('step.show', ['stepId' => $nextStep->id]) : '#';
+    $defaultNextHref = $isQuizRequired ? '#' : $nextRoute;
+@endphp
 
     <main class="max-w-7xl mx-auto p-6 md:p-10 md:flex md:space-x-8">
 
@@ -56,14 +62,13 @@
                 </nav>
             </div>
 
-            {{-- Bagian External Links (Sekarang menggunakan array JSON $externalLinks) --}}
+            {{-- Bagian External Links --}}
             @if (!empty($externalLinks))
                 <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mt-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
                         Sumber Daya Eksternal 🔗
                     </h3>
                     <ul class="space-y-2 text-sm">
-                        {{-- PERUBAHAN: Mengakses $link sebagai array asosiatif --}}
                         @foreach ($externalLinks as $link)
                             <li>
                                 <a href="{{ $link['url'] }}" target="_blank" rel="noopener noreferrer" 
@@ -83,19 +88,19 @@
         {{-- KOLOM KANAN: KONTEN UTAMA --}}
         <div class="w-full md:w-3/4">
 
-            {{-- Breadcrumb --}}
+            {{-- Breadcrumb Navigasi --}}
             <nav class="text-sm mb-4 text-gray-600">
                 <ol class="list-none p-0 inline-flex">
                     <li class="flex items-center">
-                        <a href="#" class="text-blue-600 hover:text-blue-800">{{ $segment->name }}</a>
+                        <a href="{{ route('segments.index') }}" class="text-blue-600 hover:text-blue-800">{{ $segment->name }}</a>
                         <span class="mx-2">/</span>
                     </li>
                     <li class="flex items-center">
-                        <a href="#" class="text-blue-600 hover:text-blue-800">{{ $fase->title }}</a>
+                        <a href="{{ route('course.show', $segment->name) }}" class="text-blue-600 hover:text-blue-800">{{ $fase->title }}</a>
                         <span class="mx-2">/</span>
                     </li>
                     <li class="flex items-center">
-                        <a href="#" class="text-blue-600 hover:text-blue-800">{{ $materi->title }}</a>
+                        <a href="{{ route('materi.show', $materi->id) }}" class="text-blue-600 hover:text-blue-800">{{ $materi->title }}</a>
                         <span class="mx-2">/</span>
                     </li>
                     <li class="text-gray-500">{{ $step->title }}</li>
@@ -110,7 +115,7 @@
 
                 <hr class="my-6">
                 
-                {{-- BAGIAN SLIDER GAMBAR --}}
+                {{-- BAGIAN SLIDER GAMBAR (Galeri) --}}
                 @if ($step->images && $step->images->count() > 0)
                     <div class="relative mb-10 w-full overflow-hidden">
                         <div id="sliderWrapper"
@@ -118,9 +123,10 @@
                             data-count="{{ $step->images->count() }}">
 
                             @foreach ($step->images as $img)
-                                {{-- PERBAIKAN: Menggunakan properti 'path' yang benar dari Repeater Relasi --}}
+                                {{-- Pengecekan Kunci Gambar (sesuai path Filament) --}}
                                 @if ($img->path && Storage::disk('public')->exists($img->path))
                                     <div class="w-full flex-shrink-0 flex justify-center">
+                                        {{-- Path ke gambar: 'storage/' + path di DB --}}
                                         <img src="{{ asset('storage/' . $img->path) }}"
                                             alt="Gambar Langkah {{ $step->order }}"
                                             class="object-contain max-h-[400px] rounded-lg shadow-lg">
@@ -132,13 +138,13 @@
                         {{-- Tombol Navigasi Slider --}}
                         @if ($step->images->count() > 1)
                             <button id="prevBtnSlider"
-                                    class="absolute top-1/2 left-2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg text-xl hover:bg-gray-200 transition-colors"
-                                    aria-label="Gambar Sebelumnya">
+                                            class="absolute top-1/2 left-2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg text-xl hover:bg-gray-200 transition-colors"
+                                            aria-label="Gambar Sebelumnya">
                                 &lsaquo;
                             </button>
                             <button id="nextBtnSlider"
-                                    class="absolute top-1/2 right-2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg text-xl hover:bg-gray-200 transition-colors"
-                                    aria-label="Gambar Berikutnya">
+                                            class="absolute top-1/2 right-2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg text-xl hover:bg-gray-200 transition-colors"
+                                            aria-label="Gambar Berikutnya">
                                 &rsaquo;
                             </button>
                         @endif
@@ -147,7 +153,8 @@
                 
                 {{-- BAGIAN VIDEO URL --}}
                 @if ($step->video_url)
-                    <div class="mb-8 overflow-hidden rounded-lg shadow-xl">
+                    <div class="mb-8 overflow-hidden rounded-lg shadow-xl aspect-w-16 aspect-h-9">
+                        {{-- Asumsi video_url adalah embed link (misalnya YouTube /embed/...) --}}
                         <iframe width="100%" height="450" 
                                 src="{{ $step->video_url }}" 
                                 frameborder="0" 
@@ -165,21 +172,21 @@
                     {!! $step->content !!}
                 </div>
 
-                {{-- **QUIZ INTERAKTIF** (Menggunakan $quizData yang sudah di-cast) --}}
-                @if (!empty($quizData))
+                {{-- **QUIZ INTERAKTIF** --}}
+                @if ($isQuizRequired)
                     <div class="mt-10 p-6 bg-yellow-50 border-2 border-yellow-300 rounded-lg shadow-inner" id="quiz-section">
                         <h2 class="text-2xl font-bold text-yellow-800 mb-4">
                             ❓ Uji Pemahaman: {{ $step->title }}
                         </h2>
+                        {{-- Form ini akan mengirim jawaban ke endpoint AJAX Anda --}}
                         <form id="quiz-form" data-step-id="{{ $step->id }}">
                             @csrf
                             @foreach ($quizData as $index => $quiz)
                                 <div class="mb-4 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
                                     <p class="font-semibold text-gray-700 mb-2">P{{ $index + 1 }}. {{ $quiz['question'] }}</p>
                                     <div class="space-y-1">
-                                        {{-- Mengakses $quiz['options'] sebagai array --}}
                                         @foreach ($quiz['options'] as $optionKey => $option)
-                                            <label class="flex items-center space-x-2 cursor-pointer">
+                                            <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
                                                 <input type="radio" 
                                                     name="answers[{{ $index }}]" 
                                                     value="{{ $option['option'] }}" 
@@ -216,18 +223,31 @@
                 @endif
 
                 @if ($nextStep)
-                    <a href="#" 
+                    <a href="{{ $defaultNextHref }}" 
                     id="nextStepBtn"
                     data-next-id="{{ $nextStep->id }}" 
                     class="flex items-center bg-green-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-600 transition-colors 
-                    @if (!empty($quizData)) opacity-50 cursor-not-allowed @endif">
+                    @if ($isQuizRequired) opacity-50 cursor-not-allowed @endif">
                     <span class="mr-2">Selanjutnya: {{ Str::limit($nextStep->title, 35) }}</span>
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                     </a>
                 @else
-                    <button class="bg-gray-400 text-white font-bold py-3 px-6 rounded-xl cursor-not-allowed">
+                    {{-- Tombol 'Materi Selesai' di Langkah Terakhir --}}
+                    @php
+                        // Memastikan stepId diteruskan ke rute 'materi.complete'
+                        $completionRoute = route('materi.complete', ['stepId' => $step->id]); 
+                    @endphp
+                    
+                    <a href="#"
+                    class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition-colors flex items-center"
+                    onclick="event.preventDefault(); document.getElementById('complete-form').submit();">
                         Materi Selesai 🎉
-                    </button>
+                    </a>
+                    
+                    {{-- Form tersembunyi untuk POST request --}}
+                    <form id="complete-form" action="{{ $completionRoute }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
                 @endif
             </div>
 
@@ -259,6 +279,10 @@
                     if (index < totalSlides - 1) {
                         index++;
                         updateSlide();
+                    } else {
+                        // Kembali ke slide pertama
+                        index = 0;
+                        updateSlide();
                     }
                 });
             }
@@ -267,6 +291,10 @@
                 prevBtnSlider.addEventListener('click', () => {
                     if (index > 0) {
                         index--;
+                        updateSlide();
+                    } else {
+                         // Kembali ke slide terakhir
+                        index = totalSlides - 1;
                         updateSlide();
                     }
                 });
@@ -286,14 +314,16 @@
             const tocList = document.getElementById('tocList');
             
             if (contentContainer && tocList) {
+                // Mencari semua heading H2 dan H3 di dalam konten
                 const headings = contentContainer.querySelectorAll('h2, h3');
                 
                 headings.forEach((heading) => {
+                    // Buat ID unik dari teks heading jika belum ada
                     let id = heading.id || heading.textContent
                         .toLowerCase()
-                        .replace(/[^a-z0-9\s-]/g, '')
+                        .replace(/[^a-z0-9\s-]/g, '') // Hapus karakter non-alfanumerik
                         .trim()
-                        .replace(/\s+/g, '-');
+                        .replace(/\s+/g, '-'); // Ganti spasi dengan dash
                     
                     let originalId = id;
                     let counter = 1;
@@ -329,17 +359,31 @@
             const quizForm = document.getElementById('quiz-form');
             const resultDiv = document.getElementById('quiz-result');
             const nextBtn = document.getElementById('nextStepBtn'); 
-            const stepId = quizForm ? quizForm.getAttribute('data-step-id') : null;
             
+            const stepId = quizForm ? quizForm.getAttribute('data-step-id') : null;
             const nextStepId = nextBtn ? nextBtn.getAttribute('data-next-id') : null;
 
-            // Nonaktifkan tombol next secara default jika ada kuis
-            if (quizForm && nextBtn) {
-                nextBtn.removeAttribute('href');
-            }
-
+            // Variabel untuk menyimpan fungsi prevent click agar bisa dihapus
+            let preventNextClickFunction;
+            
             if (quizForm) {
                 
+                // Tambahkan event listener untuk memblokir tombol NEXT jika kuis belum diselesaikan
+                if (nextBtn && nextBtn.getAttribute('href') === '#') {
+                    preventNextClickFunction = function(e) {
+                        e.preventDefault();
+                        
+                        // Tampilkan pesan peringatan
+                        resultDiv.classList.remove('hidden', 'bg-green-100', 'text-green-700');
+                        resultDiv.className = 'mt-4 text-center p-3 rounded-lg bg-red-100 text-red-700';
+                        resultDiv.innerHTML = '<strong>PERINGATAN:</strong> Harap selesaikan dan LULUS kuis ini terlebih dahulu untuk melanjutkan.';
+                        
+                        // Gulir ke bagian kuis
+                        document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+                    };
+                    nextBtn.addEventListener('click', preventNextClickFunction);
+                }
+
                 quizForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     
@@ -356,7 +400,8 @@
                         }
                     });
 
-                    // Kirim Jawaban ke StepController@submitQuiz melalui AJAX
+                    // Kirim Jawaban ke endpoint yang Anda tentukan (misal: StepController@submitQuiz)
+                    // Anda harus membuat route POST /step/{stepId}/quiz di web.php
                     fetch(`/step/${stepId}/quiz`, {
                         method: 'POST',
                         headers: {
@@ -375,16 +420,24 @@
 
                             if (scorePercentage >= minScorePercentage) {
                                 resultDiv.className = 'mt-4 text-center p-3 rounded-lg bg-green-100 text-green-700';
-                                resultDiv.innerHTML = `<strong>Selamat!</strong> ${data.message} (${data.percentage}%). Anda LULUS.`;
+                                resultDiv.innerHTML = `<strong>Selamat!</strong> ${data.message} (${data.percentage}%). Anda LULUS.<br>Silakan tekan tombol **Selanjutnya** di bawah untuk melanjutkan.`;
                                 
-                                // AKTIFKAN TOMBOL NEXT
+                                // Menonaktifkan form kuis setelah lulus
+                                document.getElementById('submitQuizBtn').disabled = true;
+                                const radios = quizForm.querySelectorAll('input[type="radio"]');
+                                radios.forEach(radio => radio.disabled = true);
+                                
                                 if (nextBtn && nextStepId) { 
+                                    // AKTIFKAN TOMBOL NEXT
                                     nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                                    // PERBAIKAN: Gunakan route() yang benar
-                                    // Asumsi: route step.show bisa diakses seperti ini di JS
                                     nextBtn.setAttribute('href', `/step/${nextStepId}`); 
-                                    nextBtn.innerHTML = nextBtn.innerHTML.replace('Selanjutnya', 'LANJUTKAN');
-                                }
+
+                                    // Hapus event listener pencegah klik
+                                    if(preventNextClickFunction) {
+                                        nextBtn.removeEventListener('click', preventNextClickFunction);
+                                    }
+                                } 
+
                             } else {
                                 resultDiv.className = 'mt-4 text-center p-3 rounded-lg bg-red-100 text-red-700';
                                 resultDiv.innerHTML = `<strong>Coba Lagi.</strong> ${data.message} (${data.percentage}%). Anda belum lulus.`;
@@ -392,7 +445,7 @@
                                 // Pastikan tombol NEXT dinonaktifkan jika gagal
                                 if (nextBtn) {
                                     nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                                    nextBtn.removeAttribute('href');
+                                    nextBtn.setAttribute('href', '#'); 
                                 }
                             }
                         } else {
@@ -403,7 +456,7 @@
                     .catch(error => {
                         console.error('Error:', error);
                         resultDiv.className = 'mt-4 text-center p-3 rounded-lg bg-red-100 text-red-700';
-                        resultDiv.innerHTML = 'Terjadi kesalahan jaringan.';
+                        resultDiv.innerHTML = 'Terjadi kesalahan jaringan atau server.';
                     });
                 });
             }

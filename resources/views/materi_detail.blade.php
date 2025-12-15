@@ -11,18 +11,27 @@
             display: -webkit-box;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            -webkit-line-clamp: 3; /* Batasi hingga 3 baris */
         }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
 
+    {{-- Asumsi komponen navbar ada di path ini --}}
     @include('components.navbar')
 
     <main class="max-w-7xl mx-auto p-6 md:p-10">
+        
+        @php
+            use Illuminate\Support\Str;
+            use Illuminate\Support\Facades\Storage;
+        @endphp
+
+        {{-- Breadcrumb --}}
         <div class="text-sm text-gray-500 mb-4">
-            {{-- KOREKSI: Menggunakan 'segment' sebagai kunci parameter sesuai route/web.php --}}
+            {{-- Asumsi $fase memiliki properti 'name' atau 'title' --}}
             <a href="{{ route('course.show', ['segment' => $segmentName]) }}" class="hover:underline">{{ $segmentName }}</a> 
-            &gt; {{ $fase->name }} 
+            &gt; {{ $fase->title ?? 'Fase' }} 
             &gt; <span class="text-blue-700 font-semibold">{{ $currentMateri->title }}</span>
         </div>
         
@@ -33,8 +42,9 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             
+            {{-- KOLOM KIRI: MATERI LAIN --}}
             <aside class="lg:col-span-1 bg-white p-5 rounded-lg shadow-xl lg:sticky lg:top-4 lg:h-fit">
-                <h2 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">Materi Lain di {{ $fase->name }}</h2>
+                <h2 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">Materi Lain di {{ $fase->title ?? 'Fase Ini' }}</h2>
                 
                 <ul class="space-y-2">
                     @foreach ($fase->materis as $materi)
@@ -49,12 +59,12 @@
                 </ul>
             </aside>
 
+            {{-- KOLOM TENGAH: DAFTAR LANGKAH (STEPS) --}}
             <section class="lg:col-span-2 main-content-area">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-6">Langkah-Langkah Pembelajaran:</h2>
 
-                {{-- LOOPING UNTUK MENAMPILKAN STEP-BY-STEP --}}
                 @forelse ($currentMateri->steps as $step)
-                    {{-- SETIAP STEP ADALAH LINK KE HALAMAN STEP DETAIL (LEVEL 4) --}}
+                    {{-- SETIAP STEP ADALAH LINK KE HALAMAN STEP DETAIL --}}
                     <a href="{{ route('step.show', ['stepId' => $step->id]) }}" 
                         class="block mb-8 p-6 bg-white rounded-xl shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition duration-300 transform hover:scale-[1.01]">
                         
@@ -62,16 +72,31 @@
                             Langkah {{ $step->order }}: {{ $step->title }}
                         </h3>
                         
-                        @if ($step->image_path)
-                            <div class="h-auto max-h-80 bg-gray-200 rounded-lg mb-4 overflow-hidden">
-                                <img src="{{ asset($step->image_path) }}" alt="{{ $step->title }} Illustration" class="w-full h-full object-cover">
+                        {{-- **KOREKSI TOTAL UNTUK GAMBAR FILAMENT DARI RELASI 'images'** --}}
+                        @php
+                            // Ambil objek gambar pertama dari relasi 'images'
+                            // Asumsi $step->images di-eager load di Controller
+                            $firstImage = $step->images->first(); 
+                        @endphp
+
+                        @if ($firstImage && $firstImage->path && Storage::disk('public')->exists($firstImage->path))
+                            <div class="h-40 md:h-64 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                                {{-- Kunci: Menggunakan asset('storage/' . path_relatif) --}}
+                                <img src="{{ asset('storage/' . $firstImage->path) }}" 
+                                    alt="{{ $step->title }} Ilustrasi" 
+                                    class="w-full h-full object-cover">
+                            </div>
+                        @else
+                            {{-- Placeholder jika gambar tidak ada/tidak ditemukan --}}
+                            <div class="h-40 md:h-64 bg-gray-100 rounded-lg mb-4 flex items-center justify-center border border-dashed border-gray-400">
+                                <span class="text-gray-500 italic text-sm">Ilustrasi Tidak Tersedia</span>
                             </div>
                         @endif
+                        {{-- **AKHIR KOREKSI GAMBAR** --}}
 
-                        {{-- Menampilkan ringkasan konten --}}
+                        {{-- Menampilkan ringkasan konten (strip_tags untuk menghilangkan HTML Rich Editor) --}}
                         <p class="text-gray-700 leading-relaxed line-clamp-3">
-                            {{-- Menggunakan Str::limit untuk memotong konten menjadi 150 karakter --}}
-                            {{ Str::limit($step->content, 150) }}
+                            {{ Str::limit(strip_tags($step->content), 150) }}
                         </p>
                         <p class="mt-4 text-sm font-semibold text-blue-600">Baca Selengkapnya →</p>
                     </a>
@@ -82,14 +107,16 @@
                 @endforelse
             </section>
 
+            {{-- KOLOM KANAN: SUMBER EKSTERNAL --}}
             <aside class="lg:col-span-1 bg-white p-5 rounded-lg shadow-xl lg:sticky lg:top-4 lg:h-fit">
                 <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">🔗 Sumber Eksternal</h2>
                 <p class="text-sm text-gray-500 mb-5">
                     Link ke dokumentasi resmi atau video tutorial terkait.
                 </p>
-
-                {{-- START: LOOPING DATA AKTUAL DARI externalLinks --}}
+                
                 @php
+                    // Pastikan $currentMateri->externalLinks di-cast sebagai array/Collection di Model Materi
+                    $externalLinks = $currentMateri->externalLinks ?? [];
                     $iconStyles = [
                         'doc' => ['bg-pink-100', 'text-pink-600', 'DOC'],
                         'video' => ['bg-red-100', 'text-red-600', 'VID'],
@@ -98,22 +125,22 @@
                     ];
                 @endphp
                 
-                @forelse ($currentMateri->externalLinks as $link)
+                @forelse ($externalLinks as $link)
                     @php
-                        // Ambil style berdasarkan tipe link, default ke 'other' jika tipe tidak ada
-                        $type = $link->type ?? 'other';
-                        [$bgColor, $textColor, $iconText] = $iconStyles[$type];
+                        // Asumsi $link adalah array atau objek dengan properti title, url, dan type
+                        // Jika 'type' tidak ada, default ke 'other'
+                        $type = $link['type'] ?? 'other'; 
+                        [$bgColor, $textColor, $iconText] = $iconStyles[$type] ?? $iconStyles['other'];
                     @endphp
 
-                    <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer" class="block">
+                    <a href="{{ $link['url'] }}" target="_blank" rel="noopener noreferrer" class="block">
                         <div class="flex space-x-3 mb-4 p-3 border-b hover:bg-gray-50 transition rounded-md">
-                            {{-- Ikon/Warna dinamis berdasarkan tipe --}}
                             <div class="w-12 h-8 {{ $bgColor }} rounded-md flex-shrink-0 flex items-center justify-center text-sm font-bold {{ $textColor }}">
                                 {{ $iconText }}
                             </div>
                             <div class="truncate">
-                                <p class="text-sm font-semibold text-gray-700 truncate">{{ $link->title }}</p>
-                                <p class="text-xs text-gray-500 truncate">{{ $link->url }}</p>
+                                <p class="text-sm font-semibold text-gray-700 truncate">{{ $link['title'] }}</p>
+                                <p class="text-xs text-gray-500 truncate">{{ $link['url'] }}</p>
                             </div>
                         </div>
                     </a>
@@ -122,11 +149,9 @@
                         <p class="text-sm italic">Belum ada sumber eksternal yang ditambahkan untuk materi ini.</p>
                     </div>
                 @endforelse
-                {{-- END: LOOPING DATA AKTUAL --}}
-
             </aside>
             
         </div>
-        </main>
+    </main>
 </body>
 </html>
