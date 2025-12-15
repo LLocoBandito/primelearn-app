@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PeminatanController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SegmentController;
+use App\Http\Controllers\StepController;
 use App\Models\Segment;
 
 /*
@@ -103,3 +104,11 @@ Route::get('/segment/{id}', function ($id) {
 */
 Route::get('/ajax/load-more-sidebar', [CourseController::class, 'loadMoreSidebar'])
     ->name('ajax.load_more_sidebar');
+
+
+/* step controller */
+// Rute untuk menampilkan detail Step/Langkah
+Route::get('/step/{stepId}', [StepController::class, 'show'])->name('step.show');
+
+// Rute untuk memproses pengiriman kuis (interaktif)
+Route::post('/step/{stepId}/quiz', [StepController::class, 'submitQuiz'])->name('step.submit_quiz');

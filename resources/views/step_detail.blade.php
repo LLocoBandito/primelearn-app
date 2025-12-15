@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Langkah {{ $step->order }}: {{ $step->title }} | PrimeLearn</title>
-    {{-- Memuat Tailwind CSS melalui CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
-
-    {{-- Konfigurasi Tailwind untuk mengaktifkan plugin Typography --}}
     <script>
         tailwind.config = {
             theme: {
                 extend: {},
             },
             plugins: [
-                require('@tailwindcss/typography'),
+                require('@tailwindcss/typography'), 
             ],
         }
     </script>
@@ -22,53 +19,95 @@
 <body class="bg-gray-100 min-h-screen">
 
     {{-- KOMPONEN: Navbar --}}
-    @include('components.navbar')
+    @include('components.navbar') 
 
     @php
-        // Import Facades Storage untuk pengecekan path gambar
         use Illuminate\Support\Facades\Storage;
+        use Illuminate\Support\Str;
+        
+        $materi = $step->materi;
+        $fase = $materi->fase;
+        $segment = $fase->segment;
     @endphp
 
-    {{-- MAIN LAYOUT: max-w-7xl, Menggunakan Flexbox pada breakpoint MD ke atas --}}
     <main class="max-w-7xl mx-auto p-6 md:p-10 md:flex md:space-x-8">
 
-        {{-- KOLOM KIRI: DAFTAR ISI (TABLE OF CONTENTS / TOC) --}}
+        {{-- KOLOM KIRI: DAFTAR ISI (TOC) & EXTERNAL LINKS --}}
         <aside class="md:w-1/4 mb-6 md:mb-0 hidden md:block sticky top-6 self-start">
+            
+            {{-- Bagian Daftar Isi (TOC) --}}
             <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
                 <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
                     Daftar Isi 📖
                 </h3>
                 <nav>
-                    {{-- ID: tocList digunakan oleh JavaScript untuk mengisi daftar isi --}}
                     <ul id="tocList" class="space-y-2 text-sm">
-                        {{-- Daftar isi akan diisi secara dinamis oleh JavaScript --}}
+                        {{-- Diisi secara dinamis oleh JavaScript --}}
                     </ul>
                 </nav>
             </div>
+
+            {{-- Bagian External Links --}}
+            @if ($externalLinks->isNotEmpty())
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mt-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+                        Sumber Daya Eksternal 🔗
+                    </h3>
+                    <ul class="space-y-2 text-sm">
+                        @foreach ($externalLinks as $link)
+                            <li>
+                                <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer" 
+                                   class="text-blue-500 hover:text-blue-700 block transition-colors leading-tight">
+                                    {{ $link->title }}
+                                </a>
+                                @if ($link->description)
+                                    <span class="text-gray-500 text-xs italic">{{ Str::limit($link->description, 50) }}</span>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
         </aside>
 
         {{-- KOLOM KANAN: KONTEN UTAMA --}}
         <div class="w-full md:w-3/4">
-            {{-- ID: mainContentArticle untuk memindai konten --}}
+
+            {{-- Breadcrumb --}}
+            <nav class="text-sm mb-4 text-gray-600">
+                <ol class="list-none p-0 inline-flex">
+                    <li class="flex items-center">
+                        <a href="#" class="text-blue-600 hover:text-blue-800">{{ $segment->name }}</a>
+                        <span class="mx-2">/</span>
+                    </li>
+                    <li class="flex items-center">
+                        <a href="#" class="text-blue-600 hover:text-blue-800">{{ $fase->title }}</a>
+                        <span class="mx-2">/</span>
+                    </li>
+                    <li class="flex items-center">
+                        <a href="#" class="text-blue-600 hover:text-blue-800">{{ $materi->title }}</a>
+                        <span class="mx-2">/</span>
+                    </li>
+                    <li class="text-gray-500">{{ $step->title }}</li>
+                </ol>
+            </nav>
+
             <article id="mainContentArticle" class="bg-white p-8 rounded-xl shadow-2xl">
 
-                {{-- Judul Langkah --}}
                 <h1 class="text-4xl font-extrabold text-blue-800 mb-3">
                     {{ $step->title }}
                 </h1>
 
                 <hr class="my-6">
-
+                
                 {{-- BAGIAN SLIDER GAMBAR --}}
                 @if ($step->images && $step->images->count() > 0)
                     <div class="relative mb-10 w-full overflow-hidden">
-                        {{-- Wrapper Slider Utama --}}
                         <div id="sliderWrapper"
                              class="flex transition-transform duration-500"
                              data-count="{{ $step->images->count() }}">
 
                             @foreach ($step->images as $img)
-                                {{-- Pengecekan Ketersediaan Gambar --}}
                                 @if ($img->image_path && Storage::disk('public')->exists($img->image_path))
                                     <div class="w-full flex-shrink-0 flex justify-center">
                                         <img src="{{ asset('storage/' . $img->image_path) }}"
@@ -77,139 +116,275 @@
                                     </div>
                                 @endif
                             @endforeach
-
                         </div>
 
                         {{-- Tombol Navigasi Slider --}}
-                        {{-- Tombol Prev --}}
-                        <button id="prevBtn"
+                        <button id="prevBtnSlider"
                                 class="absolute top-1/2 left-2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg text-xl hover:bg-gray-200 transition-colors"
                                 aria-label="Gambar Sebelumnya">
                             &lsaquo;
                         </button>
-
-                        {{-- Tombol Next --}}
-                        <button id="nextBtn"
+                        <button id="nextBtnSlider"
                                 class="absolute top-1/2 right-2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg text-xl hover:bg-gray-200 transition-colors"
                                 aria-label="Gambar Berikutnya">
                             &rsaquo;
                         </button>
                     </div>
                 @endif
-                {{-- AKHIR BAGIAN SLIDER GAMBAR --}}
+                
+                {{-- BAGIAN VIDEO URL --}}
+                @if ($step->video_url)
+                    <div class="mb-8 overflow-hidden rounded-lg shadow-xl">
+                        <iframe width="100%" height="450" 
+                                src="{{ $step->video_url }}" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen
+                                class="w-full h-[400px] md:h-[500px]">
+                        </iframe>
+                    </div>
+                @endif
 
                 <hr class="my-6">
 
-                {{-- Konten Utama Langkah: Menggunakan class prose untuk styling tipografi --}}
+                {{-- Konten Utama Langkah --}}
                 <div class="prose prose-lg max-w-none text-gray-800">
                     {!! $step->content !!}
                 </div>
 
+                {{-- **QUIZ INTERAKTIF** --}}
+                @if (!empty($quizData))
+                    <div class="mt-10 p-6 bg-yellow-50 border-2 border-yellow-300 rounded-lg shadow-inner" id="quiz-section">
+                        <h2 class="text-2xl font-bold text-yellow-800 mb-4">
+                            ❓ Uji Pemahaman: {{ $step->title }}
+                        </h2>
+                        <form id="quiz-form" data-step-id="{{ $step->id }}">
+                            @csrf
+                            @foreach ($quizData as $index => $quiz)
+                                <div class="mb-4 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+                                    <p class="font-semibold text-gray-700 mb-2">P{{ $index + 1 }}. {{ $quiz['question'] }}</p>
+                                    <div class="space-y-1">
+                                        @foreach ($quiz['options'] as $optionKey => $option)
+                                            <label class="flex items-center space-x-2 cursor-pointer">
+                                                {{-- FIX: Mengakses ['option'] untuk mendapatkan STRING (Menghindari TypeError) --}}
+                                                <input type="radio" 
+                                                       name="answers[{{ $index }}]" 
+                                                       value="{{ $option['option'] }}" 
+                                                       class="form-radio text-blue-600">
+                                                <span>{{ $option['option'] }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endforeach
+                            <button type="submit" id="submitQuizBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150">
+                                Kirim Jawaban
+                            </button>
+                            <div id="quiz-result" class="mt-4 text-center p-3 rounded-lg hidden"></div>
+                        </form>
+                    </div>
+                @endif
+
             </article>
+
+            <hr class="my-10 border-gray-300">
+
+            {{-- **NAVIGASI NEXT/PREV** --}}
+            <div class="flex justify-between items-center p-4 bg-white rounded-xl shadow-lg">
+
+                @if ($prevStep)
+                    <a href="{{ route('step.show', ['stepId' => $prevStep->id]) }}" 
+                       class="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path></svg>
+                        <span class="font-semibold">Sebelumnya:</span> {{ Str::limit($prevStep->title, 35) }}
+                    </a>
+                @else
+                    <span class="text-gray-400">← Ini adalah Langkah Pertama</span>
+                @endif
+
+                @if ($nextStep)
+                    <a href="#" 
+                       id="nextStepBtn"
+                       data-next-id="{{ $nextStep->id }}" 
+                       class="flex items-center bg-green-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-600 transition-colors opacity-50 cursor-not-allowed">
+                       <span class="mr-2">Selanjutnya: {{ Str::limit($nextStep->title, 35) }}</span>
+                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                    </a>
+                @else
+                    <button class="bg-gray-400 text-white font-bold py-3 px-6 rounded-xl cursor-not-allowed">
+                        Materi Selesai 🎉
+                    </button>
+                @endif
+            </div>
+
         </div>
     </main>
 
-    {{-- SCRIPT JAVASCRIPT: Slider dan TOC Dinamis --}}
+    {{-- SCRIPT JAVASCRIPT: Slider, TOC, dan Quiz Interaktif --}}
     <script>
-        // ===================================
-        // 1. Script Fungsionalitas Slider
-        // ===================================
-
-        const wrapper = document.getElementById('sliderWrapper');
-        const nextBtn = document.getElementById('nextBtn');
-        const prevBtn = document.getElementById('prevBtn');
-
-        let index = 0;
-        const totalSlides = wrapper ? Number(wrapper.dataset.count) : 0;
-
-        /**
-         * Memperbarui posisi slide menggunakan properti CSS transform.
-         */
-        function updateSlide() {
-            if (wrapper) {
-                wrapper.style.transform = `translateX(-${index * 100}%)`;
-            }
-        }
-
-        // Listener untuk Tombol Next
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-                if (index < totalSlides - 1) {
-                    index++;
-                    updateSlide();
-                }
-            });
-        }
-
-        // Listener untuk Tombol Prev
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => {
-                if (index > 0) {
-                    index--;
-                    updateSlide();
-                }
-            });
-        }
-
-        // Sembunyikan tombol jika hanya ada satu gambar atau tidak ada
-        if (totalSlides <= 1) {
-            if (nextBtn) nextBtn.style.display = 'none';
-            if (prevBtn) prevBtn.style.display = 'none';
-        }
-
-
-        // ===================================
-        // 2. Script Fungsionalitas TOC Dinamis
-        // ===================================
         document.addEventListener('DOMContentLoaded', () => {
-            // Kontainer yang berisi konten langkah (di-render dengan class 'prose')
+
+            // ===================================
+            // 1. Script Fungsionalitas Slider
+            // ===================================
+            const wrapper = document.getElementById('sliderWrapper');
+            const nextBtnSlider = document.getElementById('nextBtnSlider');
+            const prevBtnSlider = document.getElementById('prevBtnSlider');
+
+            let index = 0;
+            const totalSlides = wrapper ? Number(wrapper.dataset.count) : 0;
+
+            function updateSlide() {
+                if (wrapper) {
+                    wrapper.style.transform = `translateX(-${index * 100}%)`;
+                }
+            }
+
+            if (nextBtnSlider) {
+                nextBtnSlider.addEventListener('click', () => {
+                    if (index < totalSlides - 1) {
+                        index++;
+                        updateSlide();
+                    }
+                });
+            }
+
+            if (prevBtnSlider) {
+                prevBtnSlider.addEventListener('click', () => {
+                    if (index > 0) {
+                        index--;
+                        updateSlide();
+                    }
+                });
+            }
+
+            if (totalSlides <= 1) {
+                if (nextBtnSlider) nextBtnSlider.style.display = 'none';
+                if (prevBtnSlider) prevBtnSlider.style.display = 'none';
+            }
+
+
+            // ===================================
+            // 2. Script Fungsionalitas TOC Dinamis
+            // ===================================
             const contentContainer = document.querySelector('.prose'); 
             const tocList = document.getElementById('tocList');
             
-            if (!contentContainer || !tocList) return;
+            if (contentContainer && tocList) {
+                const headings = contentContainer.querySelectorAll('h2, h3');
+                
+                headings.forEach((heading) => {
+                    let id = heading.id || heading.textContent
+                        .toLowerCase()
+                        .replace(/[^a-z0-9\s-]/g, '')
+                        .trim()
+                        .replace(/\s+/g, '-');
+                    
+                    let originalId = id;
+                    let counter = 1;
+                    while (document.getElementById(id)) {
+                        id = originalId + '-' + counter++;
+                    }
 
-            // Targetkan heading H2 dan H3 di dalam konten
-            const headings = contentContainer.querySelectorAll('h2, h3');
+                    heading.id = id;
+                    
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    
+                    link.href = `#${id}`;
+                    link.textContent = heading.textContent;
+                    link.classList.add('text-gray-600', 'hover:text-blue-600', 'transition-colors', 'block', 'leading-tight', 'truncate');
+
+                    if (heading.tagName === 'H3') {
+                        link.classList.add('ml-4', 'text-sm', 'font-normal');
+                    } else {
+                        link.classList.add('font-medium');
+                    }
+                    
+                    listItem.appendChild(link);
+                    tocList.appendChild(listItem);
+                });
+            }
+
+
+            // ===================================
+            // 3. Script Fungsionalitas Quiz Interaktif
+            // ===================================
+            const quizForm = document.getElementById('quiz-form');
+            const resultDiv = document.getElementById('quiz-result');
+            const nextBtn = document.getElementById('nextStepBtn'); 
+            const stepId = quizForm ? quizForm.getAttribute('data-step-id') : null;
             
-            headings.forEach((heading) => {
-                // A. Buat ID unik dari teks heading (Slugify)
-                let id = heading.id || heading.textContent
-                    .toLowerCase()
-                    .replace(/[^a-z0-9\s-]/g, '') // Hapus karakter non-alfanumerik/spasi/dash
-                    .trim()
-                    .replace(/\s+/g, '-'); // Ganti spasi dengan dash
-                
-                // B. Pastikan ID unik (hindari duplikasi)
-                let originalId = id;
-                let counter = 1;
-                while (document.getElementById(id)) {
-                    id = originalId + '-' + counter++;
-                }
+            const nextStepId = nextBtn ? nextBtn.getAttribute('data-next-id') : null;
 
-                heading.id = id; // Terapkan ID ke heading di konten
+            if (quizForm) {
                 
-                // C. Buat elemen Daftar Isi (li dan a)
-                const listItem = document.createElement('li');
-                const link = document.createElement('a');
-                
-                link.href = `#${id}`;
-                link.textContent = heading.textContent;
-                link.classList.add('text-gray-600', 'hover:text-blue-600', 'transition-colors', 'block', 'leading-tight', 'truncate');
+                quizForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(quizForm);
+                    const answers = {};
 
-                // Tambahkan kelas indentasi berdasarkan level heading
-                if (heading.tagName === 'H3') {
-                    link.classList.add('ml-4', 'text-sm', 'font-normal');
-                } else { // H2
-                    link.classList.add('font-medium');
-                }
-                
-                listItem.appendChild(link);
-                
-                // D. Masukkan ke dalam TOC List
-                tocList.appendChild(listItem);
-            });
+                    // Kumpulkan jawaban yang dipilih
+                    formData.forEach((value, key) => {
+                        if (key.startsWith('answers[')) {
+                            const indexMatch = key.match(/\[(\d+)\]/);
+                            if (indexMatch) {
+                                answers[indexMatch[1]] = value;
+                            }
+                        }
+                    });
+
+                    // Kirim Jawaban ke StepController@submitQuiz melalui AJAX
+                    fetch(`/step/${stepId}/quiz`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                        },
+                        body: JSON.stringify({ answers: answers })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        resultDiv.classList.remove('hidden');
+                        
+                        if (data.success) {
+                            const minScorePercentage = 0.8; 
+                            const scorePercentage = data.score / data.total;
+
+                            if (scorePercentage >= minScorePercentage) {
+                                resultDiv.className = 'mt-4 text-center p-3 rounded-lg bg-green-100 text-green-700';
+                                resultDiv.innerHTML = `<strong>Selamat!</strong> ${data.message} (${data.percentage}%). Anda LULUS.`;
+                                
+                                // AKTIFKAN TOMBOL NEXT
+                                if (nextBtn && nextStepId) { 
+                                    nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                                    nextBtn.setAttribute('href', `/step/${nextStepId}`); 
+                                    nextBtn.innerHTML = nextBtn.innerHTML.replace('Selanjutnya', 'LANJUTKAN');
+                                }
+                            } else {
+                                resultDiv.className = 'mt-4 text-center p-3 rounded-lg bg-red-100 text-red-700';
+                                resultDiv.innerHTML = `<strong>Coba Lagi.</strong> ${data.message} (${data.percentage}%). Anda belum lulus.`;
+                                
+                                // Pastikan tombol NEXT dinonaktifkan jika gagal
+                                if (nextBtn) {
+                                     nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                                     nextBtn.removeAttribute('href');
+                                }
+                            }
+                        } else {
+                            resultDiv.className = 'mt-4 text-center p-3 rounded-lg bg-gray-100 text-gray-700';
+                            resultDiv.innerHTML = 'Gagal memproses kuis.';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        resultDiv.className = 'mt-4 text-center p-3 rounded-lg bg-red-100 text-red-700';
+                        resultDiv.innerHTML = 'Terjadi kesalahan jaringan.';
+                    });
+                });
+            }
         });
     </script>
-
 </body>
 </html>
