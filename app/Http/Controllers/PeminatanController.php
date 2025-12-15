@@ -16,7 +16,8 @@ class PeminatanController extends Controller
         // Ini memastikan form ditampilkan dari awal (reset)
         session()->forget(['peminatan_result', 'form_completed', 'matched_categories']);
 
-        return view('apply');
+        // Pastikan nama view yang dikembalikan benar (sesuai implementasi Anda)
+        return view('apply'); 
     }
 
     /**
@@ -25,27 +26,35 @@ class PeminatanController extends Controller
     public function store(Request $request)
     {
         // 1️⃣ Validasi input
+        // Nama input disesuaikan dengan 20 pertanyaan baru yang dikelompokkan
         $validatedData = $request->validate([
-            'q1' => 'required|integer|between:1,4',
-            'q2' => 'required|integer|between:1,4',
-            'q3' => 'required|integer|between:1,4',
-            'q4' => 'required|integer|between:1,4',
-            'q5' => 'required|integer|between:1,4',
-            'q6' => 'required|integer|between:1,4',
-            'q7' => 'required|integer|between:1,4',
-            'q8' => 'required|integer|between:1,4',
-            'q9' => 'required|integer|between:1,4',
-            'q10' => 'required|integer|between:1,4',
-            'q11' => 'required|integer|between:1,4',
-            'q12' => 'required|integer|between:1,4',
-            'q13' => 'required|integer|between:1,4',
-            'q14' => 'required|integer|between:1,4',
-            'q15' => 'required|integer|between:1,4',
-            'q16' => 'required|integer|between:1,4',
-            'q17' => 'required|integer|between:1,4',
-            'q18' => 'required|integer|between:1,4',
-            'q19' => 'required|integer|between:1,4',
-            'q20' => 'required|integer|between:1,4',
+            // Software Developer
+            'q1_dev' => 'required|integer|between:1,4',
+            'q2_dev' => 'required|integer|between:1,4',
+            'q3_dev' => 'required|integer|between:1,4',
+            'q4_dev' => 'required|integer|between:1,4',
+            'q5_dev' => 'required|integer|between:1,4',
+            
+            // Network & Security
+            'q6_net' => 'required|integer|between:1,4',
+            'q7_net' => 'required|integer|between:1,4',
+            'q8_net' => 'required|integer|between:1,4',
+            'q9_net' => 'required|integer|between:1,4',
+            'q10_net' => 'required|integer|between:1,4',
+
+            // Data Analytics & AI
+            'q11_data' => 'required|integer|between:1,4',
+            'q12_data' => 'required|integer|between:1,4',
+            'q13_data' => 'required|integer|between:1,4',
+            'q14_data' => 'required|integer|between:1,4',
+            'q15_data' => 'required|integer|between:1,4',
+            
+            // UI/UX Design
+            'q16_uiux' => 'required|integer|between:1,4',
+            'q17_uiux' => 'required|integer|between:1,4',
+            'q18_uiux' => 'required|integer|between:1,4',
+            'q19_uiux' => 'required|integer|between:1,4',
+            'q20_uiux' => 'required|integer|between:1,4',
         ]);
 
         // 2️⃣ Hitung skor per kategori
@@ -81,12 +90,14 @@ class PeminatanController extends Controller
      */
     public function showResult()
     {
+        // Ganti 'peminatan.form' dengan route yang benar jika berbeda
         if (!session()->has('peminatan_result')) {
-            return redirect()->route('peminatan.form');
+            return redirect()->route('peminatan.form'); 
         }
 
         $data = session('peminatan_result');
 
+        // Pastikan nama view yang dikembalikan benar (sesuai implementasi Anda)
         return view('result', [
             'recommendation' => $data['recommendation'],
             'matchStatus' => $data['matchStatus'],
@@ -102,23 +113,27 @@ class PeminatanController extends Controller
 
     private function calculateScores(array $data): array
     {
-        // Pastikan alokasi skor ini sesuai dengan pertanyaan Anda
+        // ALOKASI SKOR BARU (5 pertanyaan per kategori)
         return [
+            // Q1, Q2, Q3, Q4, Q5 (DEV)
             'Software Development' => 
-            $data['q1'] + $data['q7'] + $data['q11'] + ($data['q13'] * 0.5) + $data['q16'] + $data['q20'],
+                $data['q1_dev'] + $data['q2_dev'] + $data['q3_dev'] + $data['q4_dev'] + $data['q5_dev'],
 
+            // Q6, Q7, Q8, Q9, Q10 (NET)
             'Network & Security' => 
-                $data['q2'] + $data['q6'] + $data['q10'] + $data['q12'] + $data['q15'] + $data['q18'],
+                $data['q6_net'] + $data['q7_net'] + $data['q8_net'] + $data['q9_net'] + $data['q10_net'],
 
-            'UX/UI Design' => 
-                $data['q5'] + $data['q8'] + ($data['q13'] * 0.5) + $data['q19'],
-
+            // Q11, Q12, Q13, Q14, Q15 (DATA)
             'Data Analytics & AI' => 
-                $data['q3'] + $data['q4'] + $data['q9'] + $data['q14'] + $data['q17'],
+                $data['q11_data'] + $data['q12_data'] + $data['q13_data'] + $data['q14_data'] + $data['q15_data'],
+
+            // Q16, Q17, Q18, Q19, Q20 (UIUX)
+            'UX-UI Design' => 
+                $data['q16_uiux'] + $data['q17_uiux'] + $data['q18_uiux'] + $data['q19_uiux'] + $data['q20_uiux'],
         ];
     }
     
-    // ... (metode calculateMatchStatus dan getRecommendation tidak berubah)
+    // Metode calculateMatchStatus tidak perlu diubah, karena ia bekerja berdasarkan skor maksimum yang dihitung (Max Score = 20)
     private function calculateMatchStatus(array $scores): array
     {
         $maxScore = max($scores);

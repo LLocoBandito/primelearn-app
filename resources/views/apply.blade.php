@@ -84,7 +84,6 @@
             font-weight: 600;
             transition: all 0.2s ease;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            /* Menambahkan bayangan kecil pada tombol */
         }
 
         .btn:hover:not(:disabled) {
@@ -127,284 +126,303 @@
 
         <form id="form" method="POST" action="{{ route('peminatan.store') }}">
             @csrf
-          
-
+            
             <div class="step">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-blue-600">Software Developer (1/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        1. Saya menikmati proses menyusun logika / algoritma untuk memecahkan masalah.
+                        1. Saya menikmati proses menyusun logika / algoritma yang efisien untuk memecahkan masalah.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q1" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q1" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q1" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q1" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q1_dev" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q1_dev" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q1_dev" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q1_dev" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-blue-600">Software Developer (2/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        2. Saya lebih suka membangun fungsionalitas di belakang layar (**backend**) daripada tampilan depan (**frontend**) suatu aplikasi.
+                        2. Saya tidak keberatan menghabiskan waktu berjam-jam untuk men-debug dan memecahkan satu masalah *coding* yang sangat sulit.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q7" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q7" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q7" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q7" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q2_dev" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q2_dev" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q2_dev" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q2_dev" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-blue-600">Software Developer (3/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        3. Saya tidak keberatan menghabiskan waktu berjam-jam untuk memecahkan satu masalah coding yang sangat sulit.
+                        3. Saya tertarik mempelajari Struktur Data (misalnya, *linked list*, *tree*) dan efisiensi algoritma (*Big O notation*).
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q11" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q11" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q11" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q11" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q3_dev" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q3_dev" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q3_dev" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q3_dev" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-blue-600">Software Developer (4/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        4. Saya tertarik mempelajari Struktur Data (misalnya, *linked list*, *tree*) dan efisiensi algoritma (*Big O notation*).
+                        4. Saya tertarik dengan konsep pemrograman berorientasi objek (OOP) seperti *Class*, *Inheritance*, dan *Polymorphism*.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q16" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q16" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q16" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q16" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q4_dev" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q4_dev" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q4_dev" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q4_dev" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-blue-600">Software Developer (5/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        5. Saya tertarik dengan konsep pemrograman berorientasi objek (OOP) seperti *Class*, *Inheritance*, dan *Polymorphism*.
+                        5. Saya lebih suka membangun fungsionalitas di belakang layar (**backend**) daripada tampilan depan (**frontend**) suatu aplikasi.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q20" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q20" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q20" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q20" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q5_dev" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q5_dev" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q5_dev" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q5_dev" value="1"><div class="choice">Tidak Setuju</div></label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step hidden">
+                <div class="question-card">
+                    <span class="text-sm font-medium text-green-600">Network & Security (1/5)</span>
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
+                        6. Saya tertarik memahami cara kerja jaringan, server, dan infrastruktur (**IT Infrastructure**).
+                    </h2>
+                    <div class="space-y-4">
+                        <label class="block"><input type="radio" name="q6_net" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q6_net" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q6_net" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q6_net" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-green-600">Network & Security (2/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        6. Saya tertarik memahami cara kerja jaringan, server, dan infrastruktur.
+                        7. Saya penasaran bagaimana cara melindungi sistem dan data dari serangan siber (*hacking* dan *malware*).
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q2" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q2" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q2" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q2" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q7_net" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q7_net" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q7_net" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q7_net" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-green-600">Network & Security (3/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        7. Saya penasaran bagaimana cara melindungi sistem dan data dari serangan siber (**hacking**).
+                        8. Saya *enjoy* mengkonfigurasi, mengelola, dan memelihara sistem operasi server (seperti **Linux** atau **Windows Server**).
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q6" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q6" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q6" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q6" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q8_net" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q8_net" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q8_net" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q8_net" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-green-600">Network & Security (4/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        8. Saya *enjoy* mengkonfigurasi dan memelihara sistem operasi server (seperti **Linux** atau **Windows Server**).
+                        9. Saya tertarik mempelajari protokol jaringan lanjutan (**TCP/IP** mendalam) dan konsep **firewall/VPN**.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q10" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q10" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q10" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q10" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q9_net" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q9_net" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q9_net" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q9_net" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-green-600">Network & Security (5/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        9. Saya tertarik untuk mempelajari celah keamanan dan melakukan *penetration testing* secara etis.
+                        10. Saya tertarik untuk mempelajari celah keamanan dan melakukan *penetration testing* secara etis.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q12" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q12" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q12" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q12" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q10_net" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q10_net" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q10_net" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q10_net" value="1"><div class="choice">Tidak Setuju</div></label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step hidden">
+                <div class="question-card">
+                    <span class="text-sm font-medium text-red-600">Data & AI (1/5)</span>
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
+                        11. Saya tertarik dengan kecerdasan buatan (**AI**), pembelajaran mesin (**Machine Learning**), dan cara kerja model prediktif.
+                    </h2>
+                    <div class="space-y-4">
+                        <label class="block"><input type="radio" name="q11_data" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q11_data" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q11_data" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q11_data" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-red-600">Data & AI (2/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        10. Saya tertarik mempelajari protokol jaringan lanjutan (seperti **TCP/IP** mendalam) dan konsep **firewall/VPN**.
+                        12. Saya menikmati menganalisis pola, tren, dan data statistik dari sekumpulan data yang besar.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q18" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q18" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q18" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q18" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q12_data" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q12_data" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q12_data" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q12_data" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-red-600">Data & AI (3/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        11. Saya sangat peduli dengan tampilan visual dan kemudahan penggunaan (**user experience**) suatu produk digital.
+                        13. Saya percaya kemampuan matematika dan statistik saya cukup baik untuk diimplementasikan pada pemecahan masalah data.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q5" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q5" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q5" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q5" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q13_data" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q13_data" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q13_data" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q13_data" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-red-600">Data & AI (4/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        12. Saya suka membuat prototipe, sketsa, atau *wireframe* desain antarmuka pengguna (**UI**).
+                        14. Saya *enjoy* menyajikan data kompleks dalam bentuk grafik atau *dashboard* yang mudah dipahami (visualisasi data).
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q8" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q8" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q8" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q8" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q14_data" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q14_data" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q14_data" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q14_data" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-red-600">Data & AI (5/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        13. Saya suka menggabungkan kreativitas dengan logika untuk menciptakan solusi digital yang indah dan fungsional.
+                        15. Saya tertarik pada teknologi *cloud computing* (seperti **AWS**, **Azure**) untuk menyimpan dan memproses data besar.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q13" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q13" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q13" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q13" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q15_data" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q15_data" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q15_data" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q15_data" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-yellow-600">UI/UX (1/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        14. Saya suka melakukan riset pengguna (wawancara, survei) untuk mengidentifikasi kebutuhan dan masalah mereka dalam menggunakan aplikasi.
+                        16. Saya sangat peduli dengan tampilan visual dan kemudahan penggunaan (**User Experience**) suatu produk digital.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q19" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q19" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q19" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q19" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q16_uiux" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q16_uiux" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q16_uiux" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q16_uiux" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-yellow-600">UI/UX (2/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        15. Saya tertarik dengan **AI**, **Machine Learning**, dan analisis data.
+                        17. Saya suka membuat prototipe, sketsa, atau *wireframe* desain antarmuka pengguna (**UI**).
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q3" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q3" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q3" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q3" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q17_uiux" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q17_uiux" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q17_uiux" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q17_uiux" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-yellow-600">UI/UX (3/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        16. Saya menikmati menganalisis pola, tren, dan data statistik dari sekumpulan data yang besar.
+                        18. Saya suka menggabungkan kreativitas dengan logika untuk menciptakan solusi digital yang indah dan fungsional.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q4" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q4" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q4" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q4" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q18_uiux" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q18_uiux" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q18_uiux" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q18_uiux" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-yellow-600">UI/UX (4/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        17. Saya tertarik dengan kecerdasan buatan (**AI**), pembelajaran mesin (**Machine Learning**), dan cara kerja model prediktif.
+                        19. Saya suka melakukan riset pengguna (wawancara, survei) untuk mengidentifikasi kebutuhan dan masalah mereka dalam menggunakan aplikasi.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q9" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q9" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q9" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q9" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q19_uiux" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q19_uiux" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q19_uiux" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q19_uiux" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
 
             <div class="step hidden">
                 <div class="question-card">
+                    <span class="text-sm font-medium text-yellow-600">UI/UX (5/5)</span>
                     <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        18. Saya percaya kemampuan matematika dan statistik saya cukup baik untuk diimplementasikan pada pemecahan masalah.
+                        20. Saya lebih tertarik menciptakan alur pengguna (*user flow*) yang lancar dan intuitif daripada menulis kode yang kompleks.
                     </h2>
                     <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q14" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q14" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q14" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q14" value="1"><div class="choice">Tidak Setuju</div></label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="step hidden">
-                <div class="question-card">
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        19. Saya *enjoy* menyajikan data kompleks dalam bentuk grafik atau *dashboard* yang mudah dipahami (visualisasi data).
-                    </h2>
-                    <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q17" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q17" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q17" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q17" value="1"><div class="choice">Tidak Setuju</div></label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="step hidden">
-                <div class="question-card">
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
-                        20. Saya tertarik pada teknologi *cloud computing* (seperti **AWS**, **Azure**, **Google Cloud**) dan virtualisasi.
-                    </h2>
-                    <div class="space-y-4">
-                        <label class="block"><input type="radio" name="q15" value="4" required><div class="choice">Sangat Setuju</div></label>
-                        <label class="block"><input type="radio" name="q15" value="3"><div class="choice">Setuju</div></label>
-                        <label class="block"><input type="radio" name="q15" value="2"><div class="choice">Cukup Setuju</div></label>
-                        <label class="block"><input type="radio" name="q15" value="1"><div class="choice">Tidak Setuju</div></label>
+                        <label class="block"><input type="radio" name="q20_uiux" value="4" required><div class="choice">Sangat Setuju</div></label>
+                        <label class="block"><input type="radio" name="q20_uiux" value="3"><div class="choice">Setuju</div></label>
+                        <label class="block"><input type="radio" name="q20_uiux" value="2"><div class="choice">Cukup Setuju</div></label>
+                        <label class="block"><input type="radio" name="q20_uiux" value="1"><div class="choice">Tidak Setuju</div></label>
                     </div>
                 </div>
             </div>
@@ -429,7 +447,7 @@
         const form = document.getElementById('form');
 
         let currentStep = 0;
-        const totalQuestions = steps.length; // Lebih dinamis
+        const totalQuestions = steps.length;
 
         /**
          * Memperbarui tampilan progress bar.
