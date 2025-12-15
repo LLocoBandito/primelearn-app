@@ -4,7 +4,7 @@
     <div class="small-post-item">
         <div class="small-post-text">
             {{-- Pastikan route('materi.detail') ada dan menggunakan ID materi --}}
-            <a href="{{ route('materi.detail', $course->id) }}">
+            <a href="{{ route('materi.show', $course->id) }}">
                 <p><strong>{{ $course->title }}</strong></p>
             </a>
             <small>
