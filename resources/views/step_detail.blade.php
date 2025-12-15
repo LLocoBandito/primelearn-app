@@ -25,9 +25,18 @@
         use Illuminate\Support\Facades\Storage;
         use Illuminate\Support\Str;
         
+        // Asumsi relasi Model Step sudah di-cast:
+        // $step->images adalah koleksi relasi (Repeater relasi)
+        // $step->external_links adalah array (Repeater JSON)
+        // $step->quiz_data adalah array (Repeater JSON)
+
         $materi = $step->materi;
         $fase = $materi->fase;
         $segment = $fase->segment;
+        
+        // **PERBAIKAN UTAMA DI SINI:** Ambil data dari kolom JSON
+        $externalLinks = $step->external_links ?? []; // Ambil dari kolom JSON, default array kosong
+        $quizData = $step->quiz_data ?? []; // Ambil dari kolom JSON, default array kosong
     @endphp
 
     <main class="max-w-7xl mx-auto p-6 md:p-10 md:flex md:space-x-8">
@@ -47,21 +56,22 @@
                 </nav>
             </div>
 
-            {{-- Bagian External Links --}}
-            @if ($externalLinks->isNotEmpty())
+            {{-- Bagian External Links (Sekarang menggunakan array JSON $externalLinks) --}}
+            @if (!empty($externalLinks))
                 <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mt-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
                         Sumber Daya Eksternal 🔗
                     </h3>
                     <ul class="space-y-2 text-sm">
+                        {{-- PERUBAHAN: Mengakses $link sebagai array asosiatif --}}
                         @foreach ($externalLinks as $link)
                             <li>
-                                <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer" 
-                                   class="text-blue-500 hover:text-blue-700 block transition-colors leading-tight">
-                                    {{ $link->title }}
+                                <a href="{{ $link['url'] }}" target="_blank" rel="noopener noreferrer" 
+                                class="text-blue-500 hover:text-blue-700 block transition-colors leading-tight">
+                                    {{ $link['title'] }}
                                 </a>
-                                @if ($link->description)
-                                    <span class="text-gray-500 text-xs italic">{{ Str::limit($link->description, 50) }}</span>
+                                @if (isset($link['description']))
+                                    <span class="text-gray-500 text-xs italic">{{ Str::limit($link['description'], 50) }}</span>
                                 @endif
                             </li>
                         @endforeach
@@ -104,31 +114,34 @@
                 @if ($step->images && $step->images->count() > 0)
                     <div class="relative mb-10 w-full overflow-hidden">
                         <div id="sliderWrapper"
-                             class="flex transition-transform duration-500"
-                             data-count="{{ $step->images->count() }}">
+                            class="flex transition-transform duration-500"
+                            data-count="{{ $step->images->count() }}">
 
                             @foreach ($step->images as $img)
-                                @if ($img->image_path && Storage::disk('public')->exists($img->image_path))
+                                {{-- PERBAIKAN: Menggunakan properti 'path' yang benar dari Repeater Relasi --}}
+                                @if ($img->path && Storage::disk('public')->exists($img->path))
                                     <div class="w-full flex-shrink-0 flex justify-center">
-                                        <img src="{{ asset('storage/' . $img->image_path) }}"
-                                             alt="Gambar Langkah {{ $step->order }}"
-                                             class="object-contain max-h-[400px] rounded-lg shadow-lg">
+                                        <img src="{{ asset('storage/' . $img->path) }}"
+                                            alt="Gambar Langkah {{ $step->order }}"
+                                            class="object-contain max-h-[400px] rounded-lg shadow-lg">
                                     </div>
                                 @endif
                             @endforeach
                         </div>
 
                         {{-- Tombol Navigasi Slider --}}
-                        <button id="prevBtnSlider"
-                                class="absolute top-1/2 left-2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg text-xl hover:bg-gray-200 transition-colors"
-                                aria-label="Gambar Sebelumnya">
-                            &lsaquo;
-                        </button>
-                        <button id="nextBtnSlider"
-                                class="absolute top-1/2 right-2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg text-xl hover:bg-gray-200 transition-colors"
-                                aria-label="Gambar Berikutnya">
-                            &rsaquo;
-                        </button>
+                        @if ($step->images->count() > 1)
+                            <button id="prevBtnSlider"
+                                    class="absolute top-1/2 left-2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg text-xl hover:bg-gray-200 transition-colors"
+                                    aria-label="Gambar Sebelumnya">
+                                &lsaquo;
+                            </button>
+                            <button id="nextBtnSlider"
+                                    class="absolute top-1/2 right-2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg text-xl hover:bg-gray-200 transition-colors"
+                                    aria-label="Gambar Berikutnya">
+                                &rsaquo;
+                            </button>
+                        @endif
                     </div>
                 @endif
                 
@@ -152,7 +165,7 @@
                     {!! $step->content !!}
                 </div>
 
-                {{-- **QUIZ INTERAKTIF** --}}
+                {{-- **QUIZ INTERAKTIF** (Menggunakan $quizData yang sudah di-cast) --}}
                 @if (!empty($quizData))
                     <div class="mt-10 p-6 bg-yellow-50 border-2 border-yellow-300 rounded-lg shadow-inner" id="quiz-section">
                         <h2 class="text-2xl font-bold text-yellow-800 mb-4">
@@ -164,13 +177,13 @@
                                 <div class="mb-4 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
                                     <p class="font-semibold text-gray-700 mb-2">P{{ $index + 1 }}. {{ $quiz['question'] }}</p>
                                     <div class="space-y-1">
+                                        {{-- Mengakses $quiz['options'] sebagai array --}}
                                         @foreach ($quiz['options'] as $optionKey => $option)
                                             <label class="flex items-center space-x-2 cursor-pointer">
-                                                {{-- FIX: Mengakses ['option'] untuk mendapatkan STRING (Menghindari TypeError) --}}
                                                 <input type="radio" 
-                                                       name="answers[{{ $index }}]" 
-                                                       value="{{ $option['option'] }}" 
-                                                       class="form-radio text-blue-600">
+                                                    name="answers[{{ $index }}]" 
+                                                    value="{{ $option['option'] }}" 
+                                                    class="form-radio text-blue-600">
                                                 <span>{{ $option['option'] }}</span>
                                             </label>
                                         @endforeach
@@ -194,7 +207,7 @@
 
                 @if ($prevStep)
                     <a href="{{ route('step.show', ['stepId' => $prevStep->id]) }}" 
-                       class="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+                    class="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path></svg>
                         <span class="font-semibold">Sebelumnya:</span> {{ Str::limit($prevStep->title, 35) }}
                     </a>
@@ -204,11 +217,12 @@
 
                 @if ($nextStep)
                     <a href="#" 
-                       id="nextStepBtn"
-                       data-next-id="{{ $nextStep->id }}" 
-                       class="flex items-center bg-green-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-600 transition-colors opacity-50 cursor-not-allowed">
-                       <span class="mr-2">Selanjutnya: {{ Str::limit($nextStep->title, 35) }}</span>
-                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                    id="nextStepBtn"
+                    data-next-id="{{ $nextStep->id }}" 
+                    class="flex items-center bg-green-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-600 transition-colors 
+                    @if (!empty($quizData)) opacity-50 cursor-not-allowed @endif">
+                    <span class="mr-2">Selanjutnya: {{ Str::limit($nextStep->title, 35) }}</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                     </a>
                 @else
                     <button class="bg-gray-400 text-white font-bold py-3 px-6 rounded-xl cursor-not-allowed">
@@ -258,6 +272,7 @@
                 });
             }
 
+            // Tombol sembunyi jika hanya ada satu slide
             if (totalSlides <= 1) {
                 if (nextBtnSlider) nextBtnSlider.style.display = 'none';
                 if (prevBtnSlider) prevBtnSlider.style.display = 'none';
@@ -282,6 +297,7 @@
                     
                     let originalId = id;
                     let counter = 1;
+                    // Pastikan ID unik
                     while (document.getElementById(id)) {
                         id = originalId + '-' + counter++;
                     }
@@ -316,6 +332,11 @@
             const stepId = quizForm ? quizForm.getAttribute('data-step-id') : null;
             
             const nextStepId = nextBtn ? nextBtn.getAttribute('data-next-id') : null;
+
+            // Nonaktifkan tombol next secara default jika ada kuis
+            if (quizForm && nextBtn) {
+                nextBtn.removeAttribute('href');
+            }
 
             if (quizForm) {
                 
@@ -359,6 +380,8 @@
                                 // AKTIFKAN TOMBOL NEXT
                                 if (nextBtn && nextStepId) { 
                                     nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                                    // PERBAIKAN: Gunakan route() yang benar
+                                    // Asumsi: route step.show bisa diakses seperti ini di JS
                                     nextBtn.setAttribute('href', `/step/${nextStepId}`); 
                                     nextBtn.innerHTML = nextBtn.innerHTML.replace('Selanjutnya', 'LANJUTKAN');
                                 }
@@ -368,8 +391,8 @@
                                 
                                 // Pastikan tombol NEXT dinonaktifkan jika gagal
                                 if (nextBtn) {
-                                     nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                                     nextBtn.removeAttribute('href');
+                                    nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                                    nextBtn.removeAttribute('href');
                                 }
                             }
                         } else {

@@ -81,7 +81,7 @@ class StepResource extends Resource
                             ->columnSpanFull(),
                     ]),
                 
-                // === Bagian 3: Galeri Gambar ===
+                // === Bagian 3: Galeri Gambar (Repeater Relasi) ===
                 Section::make('Galeri Gambar (Opsional)')
                     ->description('Tambahkan gambar ilustrasi yang akan muncul sebagai slider di halaman detail langkah.')
                     ->schema([
@@ -105,9 +105,9 @@ class StepResource extends Resource
                             ->columnSpanFull(),
                     ]),
 
-                // === Bagian 4: Kuis Interaktif (Perbaikan Dinamis Options) ===
+                // === Bagian 4: Kuis Interaktif (Repeater JSON) ===
                 Section::make('Kuis Interaktif')
-                    ->description('Atur pertanyaan dan opsi jawaban.')
+                    ->description('Atur pertanyaan, opsi jawaban, dan kunci jawaban.')
                     ->collapsible()
                     ->schema([
                         Repeater::make('quiz_data')
@@ -121,7 +121,7 @@ class StepResource extends Resource
                                 // Repeater Options DENGAN .live()
                                 Repeater::make('options')
                                     ->label('Opsi Jawaban')
-                                    ->live() // Ini adalah KUNCI agar Select di bawahnya diperbarui
+                                    ->live() // KUNCI agar Select di bawahnya diperbarui
                                     ->schema([
                                         TextInput::make('option') 
                                             ->label('Teks Opsi')
@@ -142,18 +142,17 @@ class StepResource extends Resource
                                     ->required()
                                     ->options(function (Forms\Get $get): array {
                                         // Ambil array dari repeater 'options'
-                                        // Catatan: $get harus di-inject ke dalam closure ini
                                         $options = $get('options');
                                         
                                         if (empty($options)) {
                                             return [];
                                         }
 
-                                        // Filter item yang memiliki nilai 'option' (string tidak null)
+                                        // Ubah array repeater menjadi array asosiatif untuk Select
                                         $validOptions = collect($options)
                                             // Penting: Pastikan $item['option'] ada dan berupa string
                                             ->filter(fn($item) => isset($item['option']) && is_string($item['option']))
-                                            ->pluck('option', 'option') 
+                                            ->pluck('option', 'option') // key dan value sama (teks opsi)
                                             ->toArray();
                                         
                                         return $validOptions;
@@ -166,6 +165,36 @@ class StepResource extends Resource
                             ->addActionLabel('Tambah Pertanyaan')
                             ->columnSpanFull(),
                     ]),
+                    
+                // === Bagian 5: SUMBER DAYA EKSTERNAL (Repeater JSON) ===
+                Section::make('Sumber Daya Eksternal')
+                    ->description('Tambahkan daftar tautan eksternal yang relevan (disimpan dalam kolom JSON).')
+                    ->collapsible()
+                    ->schema([
+                        Repeater::make('external_links')
+                            ->label('Daftar Tautan Eksternal')
+                            ->schema([
+                                TextInput::make('title')
+                                    ->label('Judul Tautan')
+                                    ->required()
+                                    ->maxLength(255),
+                                TextInput::make('url')
+                                    ->label('URL')
+                                    ->url() // Validasi URL
+                                    ->required()
+                                    ->maxLength(255),
+                                TextInput::make('description')
+                                    ->label('Deskripsi Singkat')
+                                    ->nullable()
+                                    ->maxLength(255),
+                            ])
+                            ->columns(3) // Tampilkan 3 kolom dalam Repeater
+                            ->defaultItems(0)
+                            ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Tautan Baru')
+                            ->collapsed() 
+                            ->collapsible()
+                            ->addActionLabel('Tambah Tautan'),
+                    ])->columnSpanFull(),
             ]);
     }
 
