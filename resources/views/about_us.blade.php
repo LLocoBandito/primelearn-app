@@ -54,14 +54,16 @@
     </header>
 
     {{-- NAVIGASI SEKUNDER --}}
+
     <nav class="secondary-nav">
         <a href="{{ route('segments.index') }}" class="nav-item {{ request()->routeIs('segments.index') ? 'active' : '' }}">HOME</a>
         <a href="{{ route('about') }}" class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">ABOUT US</a>
         <a href="{{ route('faq') }}" class="nav-item {{ request()->routeIs('faq') ? 'active' : '' }}">FAQ</a>
     </nav>
 
+
     {{-- Konten Utama Halaman --}}
-    <main class="container mx-auto p-4 sm:p-8 lg:p-12">
+    <main class="container mx-auto p-4 sm:p-8 lg:p-12 pt-24">
         
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -178,7 +180,7 @@
             const nav = document.querySelector(".secondary-nav");
 
             menuBtn.addEventListener("click", () => {
-                nav.classList.toggle("show");
+                nav.classList.toggle("hide");
             });
 
             // --- LOGIC AJAX LOAD MORE SIDEBAR ---

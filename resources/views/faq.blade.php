@@ -128,15 +128,16 @@
         <div class="menu-icon">☰</div>
     </header>
 
-    {{-- NAVIGASI SEKUNDER --}}
+     <!-- navbar muncul/hilang -->
     <nav class="secondary-nav">
         <a href="{{ route('segments.index') }}" class="nav-item {{ request()->routeIs('segments.index') ? 'active' : '' }}">HOME</a>
         <a href="{{ route('about') }}" class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">ABOUT US</a>
         <a href="{{ route('faq') }}" class="nav-item {{ request()->routeIs('faq') ? 'active' : '' }}">FAQ</a>
     </nav>
 
+
     <!-- FAQ SECTION -->
-    <div class="container mx-auto px-4 mt-10 pb-20 faq-container">
+    <div class="container mx-auto px-4 pt-20 pb-10 faq-container">
         <h2 class="text-3xl font-bold mb-6 text-[#062743]">Pertanyaan Umum (FAQ)</h2>
 
         <div class="grid md:grid-cols-2 gap-6">
@@ -246,7 +247,7 @@
             const nav = document.querySelector(".secondary-nav");
 
             menuBtn.addEventListener("click", () => {
-                nav.classList.toggle("show");
+                nav.classList.toggle("hide");
             });
 
             // --- LOGIC AJAX LOAD MORE SIDEBAR ---
