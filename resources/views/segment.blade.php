@@ -9,11 +9,19 @@
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}"> 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
-    {{-- Anda bisa menambahkan CSS untuk efek loading di sini jika diperlukan --}}
     <style>
+        /* Gaya untuk efek loading */
         .read-more-link.loading {
             opacity: 0.6;
-            pointer-events: none; /* Mencegah klik ganda saat loading */
+            pointer-events: none;
+        }
+        /* Tambahan gaya untuk memisahkan hasil pencarian non-segment (opsional) */
+        .search-result-title {
+            margin-top: 40px;
+            font-size: 1.5em;
+            border-bottom: 2px solid var(--primary-color, #007bff); /* Sesuaikan dengan warna tema Anda */
+            padding-bottom: 5px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -35,7 +43,7 @@
     {{-- KONTEN UTAMA DAN SIDEBAR --}}
     <main class="container">
         <div class="search-bar">
-            {{-- Form Pencarian Segment --}}
+            {{-- Form Pencarian Global: Mengarah ke segments.index dengan query --}}
             <form action="{{ route('segments.index') }}" method="GET" class="search-form-flex">
                 <input
                     type="text"
@@ -49,48 +57,109 @@
 
         <div class="content-wrapper">
             
-            {{-- AREA SEGMENT UTAMA --}}
+            {{-- AREA SEGMENT UTAMA DAN HASIL PENCARIAN --}}
             <section class="main-segment-area">
-                <h2 class="main-segment-title">Jelajahi Segmen Pembelajaran</h2>
-                <div class="segment-cards-grid-new">
+                
+                {{-- JUDUL DINAMIS --}}
+                <h2 class="main-segment-title">
+                    @if ($query)
+                        Hasil Pencarian untuk: <strong>"{{ $query }}"</strong>
+                    @elseif (isset($isFilteredByRecommendation) && $isFilteredByRecommendation)
+                        Rekomendasi Segmen Terbaik untuk Anda
+                    @else
+                        Jelajahi Segmen Pembelajaran
+                    @endif
+                </h2>
+                
+                {{-- NOTIFIKASI REKOMENDASI (Opsional, berdasarkan logic controller Anda) --}}
+                @if (isset($recommendation) && !$query)
+                    <div style="padding: 10px; background-color: #e6ffe6; border-left: 5px solid #00c700; margin-bottom: 20px;">
+                        <p><strong>Rekomendasi:</strong> {{ $recommendation }}! Segmen di bawah ini paling cocok dengan minat Anda.</p>
+                    </div>
+                @endif
 
-                    @forelse ($segments as $segment)
-                        <a href="{{ route('course.show', ['segment' => $segment->name]) }}" class="segment-post-item">
 
-                            {{-- GAMBAR SEGMENT --}}
-                            <img 
-                                src="{{ asset('storage/' . $segment->image_path) }}" 
-                                alt="{{ $segment->name }} Image" 
-                                class="segment-item-image"
-                            >
+                {{-- 1. HASIL SEGMENT (Main Content Area) --}}
+                @if ($segments->isNotEmpty())
+                    @if ($query)
+                        <h3 class="search-result-title">Segmen Ditemukan ({{ $segments->count() }})</h3>
+                    @endif
+                    <div class="segment-cards-grid-new">
 
-                            <div class="segment-item-overlay">
-                                <span class="category-tag">Category</span>
-                                <h3 class="segment-item-title-small">{{ $segment->name }}</h3>
-                                <div class="segment-item-description-small">
-                                    {{ $segment->description }}
+                        @foreach ($segments as $segment)
+                            <a href="{{ route('course.show', ['segment' => $segment->name]) }}" class="segment-post-item">
+                                <img 
+                                    src="{{ asset('storage/' . $segment->image_path) }}" 
+                                    alt="{{ $segment->name }} Image" 
+                                    class="segment-item-image"
+                                >
+                                <div class="segment-item-overlay">
+                                    <span class="category-tag">Category</span>
+                                    <h3 class="segment-item-title-small">{{ $segment->name }}</h3>
+                                    <div class="segment-item-description-small">
+                                        {{ $segment->description }}
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+
+                    </div>
+                @endif
+                
+                {{-- 2. HASIL PENCARIAN FASE --}}
+                @if ($query && isset($fases) && $fases->isNotEmpty())
+                    <h3 class="search-result-title">Fase Ditemukan ({{ $fases->count() }})</h3>
+                    <div class="small-post-list">
+                        @foreach ($fases as $fase)
+                            <div class="small-post-item">
+                                <div class="small-post-text">
+                                    <a href="{{ route('fase.show', $fase->id) }}">
+                                        <p><strong>[FASE] {{ $fase->title }}</strong></p>
+                                    </a>
+                                    <small>Berada di Segmen: {{ $fase->segment->name ?? 'N/A' }}</small> 
                                 </div>
                             </div>
+                        @endforeach
+                    </div>
+                @endif
 
-                        </a>
-                    @empty
-                        <p>Tidak ada segmen pembelajaran ditemukan untuk kata kunci: 
-                            <strong>{{ request('query') }}</strong>
-                        </p>
-                    @endforelse
-
-                </div>
+                {{-- 3. HASIL PENCARIAN LANGKAH/STEP --}}
+                @if ($query && isset($steps) && $steps->isNotEmpty())
+                    <h3 class="search-result-title">Langkah/Materi Ditemukan ({{ $steps->count() }})</h3>
+                    <div class="small-post-list">
+                        @foreach ($steps as $step)
+                            <div class="small-post-item">
+                                <div class="small-post-text">
+                                    <a href="{{ route('step.show', $step->id) }}">
+                                        <p><strong>[LANGKAH] {{ $step->title }}</strong></p>
+                                    </a>
+                                    <small>
+                                        Konten: {{ Str::limit(strip_tags($step->content), 100) }}
+                                    </small>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+                
+                {{-- JIKA TIDAK ADA HASIL SAMA SEKALI SAAT PENCARIAN --}}
+                @if ($query && $segments->isEmpty() && (!isset($fases) || $fases->isEmpty()) && (!isset($steps) || $steps->isEmpty()))
+                    <p style="margin-top: 20px; padding: 15px; background: #ffe6e6; border: 1px solid #ff9999;">
+                        Maaf, tidak ditemukan hasil yang cocok untuk kata kunci <strong>"{{ $query }}"</strong> di Segmen, Fase, maupun Langkah/Materi.
+                    </p>
+                @endif
+                
             </section>
             
             {{-- SIDEBAR --}}
             <aside class="sidebar">
-                <h3 class="sidebar-title">Materi Terbaru / Populer</h3>
+                <h3 class="sidebar-title">Materi Menarik Lainnya</h3>
                 <div class="small-post-list">
 
                     @forelse ($sidebarCourses as $course)
                         <div class="small-post-item">
                             <div class="small-post-text">
-                                <a href="{{ route('materi.detail', $course->id) }}">
+                                <a href="{{ route('materi.show', $course->id) }}">
                                     <p><strong>{{ $course->title }}</strong></p>
                                 </a>
                                 <small>

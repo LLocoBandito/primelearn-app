@@ -46,42 +46,6 @@ class MateriResource extends Resource
                     ])->columns(3),
 
                 // START: PENAMBAHAN REPEATER UNTUK LINK EKSTERNAL
-                Forms\Components\Section::make('Sumber Eksternal / Dokumentasi')
-                    ->description('Tambahkan link ke sumber daya eksternal (dokumentasi resmi, video, artikel) yang relevan dengan materi ini.')
-                    ->schema([
-                        Repeater::make('externalLinks')
-                            ->relationship() // Menggunakan relasi externalLinks() dari Model Materi
-                            ->label('Daftar Link')
-                            ->schema([
-                                TextInput::make('title')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->label('Judul Link'),
-
-                                TextInput::make('url')
-                                    ->required()
-                                    ->url() // Pastikan input adalah URL yang valid
-                                    ->maxLength(2048)
-                                    ->label('Alamat URL'),
-
-                                Select::make('type')
-                                    ->options([
-                                        'doc' => 'Dokumentasi Resmi',
-                                        'video' => 'Video Tutorial',
-                                        'article' => 'Artikel Blog/Web',
-                                        'other' => 'Lainnya',
-                                    ])
-                                    ->default('doc')
-                                    ->label('Tipe Sumber')
-                                    ->required(),
-                            ])
-                            ->defaultItems(0) // Mulai tanpa item secara default
-                            ->columns(3)
-                            ->columnSpanFull()
-                            ->itemLabel(fn (array $state): ?string => $state['title'] ?? null) // Label pada item yang sudah diisi
-                            ->reorderableWithButtons(), // Memungkinkan pengurutan link
-                    ])->collapsible(),
-                // END: PENAMBAHAN REPEATER UNTUK LINK EKSTERNAL
             ]);
     }
 
@@ -109,9 +73,6 @@ class MateriResource extends Resource
                     ->counts('steps')
                     ->label('Jumlah Langkah'),
                 // Tambahkan kolom untuk menghitung jumlah link eksternal (opsional)
-                Tables\Columns\TextColumn::make('external_links_count')
-                    ->counts('externalLinks')
-                    ->label('Jumlah Link'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('fase')

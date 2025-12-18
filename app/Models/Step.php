@@ -14,6 +14,9 @@ class Step extends Model
         'order',
         'title',
         'content',
+        'video_url', // Pastikan ini ada jika Anda menambahkannya di Filament
+        'quiz_data',
+        'external_links',
         // HAPUS 'image_path' karena sekarang gambar disimpan di tabel step_images
     ];
 
@@ -40,4 +43,9 @@ class Step extends Model
     {
         return $this->hasOne(StepImage::class)->oldest();
     }
+
+    protected $casts = [
+        'quiz_data' => 'array',
+        'external_links' => 'array', // PENTING: Untuk kemudahan akses data kuis
+    ];
 }
