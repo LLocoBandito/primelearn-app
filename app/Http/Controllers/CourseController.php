@@ -7,6 +7,7 @@ use App\Models\Segment;
 use App\Models\Materi;
 use App\Models\Step;
 use App\Models\Fase;
+use Illuminate\Support\Str; // Tambahkan ini untuk fungsi limit teks
 
 class CourseController extends Controller
 {
@@ -17,13 +18,15 @@ class CourseController extends Controller
             ->firstOrFail();
 
         $segmentsWithCourses = Segment::with('fases.materis')->get();
-        // Data pendukung sidebar (Load More)
-        $sidebarCourses = Materi::orderBy('created_at', 'desc')->take(3)->get();
+        
+        // Data pendukung sidebar awal (Ambil 3 terbaru)
+        $sidebarCourses = Materi::orderBy('created_at', 'desc')->paginate(3);
 
         return view('course_detail', [
             'segmentData' => $segment,
             'segmentsWithCourses' => $segmentsWithCourses,
-            'sidebarCourses' => $sidebarCourses
+            'sidebarCourses' => $sidebarCourses,
+            'query' => null // Tambahkan default agar tidak error di blade
         ]);
     }
 
@@ -41,7 +44,7 @@ class CourseController extends Controller
             'currentMateri' => $currentMateri,
             'fase' => $fase,
             'segment' => $segment,
-            'segmentName' => $segment->name, // Menambahkan ini agar title di Blade tidak error
+            'segmentName' => $segment->name,
             'segmentsWithCourses' => $segmentsWithCourses
         ]);
     }
@@ -61,8 +64,40 @@ class CourseController extends Controller
             'materi' => $materi,
             'fase' => $fase,
             'segment' => $segment,
-            'segmentName' => $segment->name, // Menambahkan ini agar title di Blade tidak error
+            'segmentName' => $segment->name,
             'segmentsWithCourses' => $segmentsWithCourses
+        ]);
+    }
+
+    /**
+     * FUNGSI BARU: Menangani request AJAX untuk Load More Sidebar
+     */
+    public function loadMoreSidebar(Request $request)
+    {
+        // Mengambil materi dengan pagination (3 data per halaman)
+        // Laravel otomatis mendeteksi parameter ?page dari JavaScript
+        $sidebarCourses = Materi::orderBy('created_at', 'desc')->paginate(3);
+
+        $html = '';
+        foreach ($sidebarCourses as $course) {
+            // Kita susun HTML yang sama persis dengan yang ada di sidebar blade Anda
+            $description = Str::limit($course->description, 50);
+            $url = route('materi.show', $course->id);
+
+            $html .= '
+            <div class="small-post-item">
+                <div class="small-post-text">
+                    <a href="' . $url . '">
+                        <p><strong>' . e($course->title) . '</strong></p>
+                    </a>
+                    <small>' . e($description) . '</small>
+                </div>
+            </div>';
+        }
+
+        return response()->json([
+            'html' => $html,
+            'hasMore' => $sidebarCourses->hasMorePages()
         ]);
     }
 }
