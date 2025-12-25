@@ -12,16 +12,36 @@
     <!-- Fonts & AOS -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}"> 
 
     <style>
         body { font-family: 'Poppins', sans-serif; }
+        /* FIX ABOUT PAGE SECTION SPACING */
+        section {
+            min-height: auto !important;
+            height: auto !important;
+        }
+
     </style>
+
 </head>
 
 <body class="bg-white text-gray-800">
 
 <!-- ================= HEADER ================= -->
-<header class="w-full border-b bg-white/80 backdrop-blur sticky top-0 z-50">
+ <header class="main-header">
+        <div class="site-title">PrimeLearn</div>
+        <div class="menu-icon">☰</div>
+    </header>
+
+    {{-- NAVIGASI SEKUNDER --}}
+    <nav class="secondary-nav">
+        <a href="{{ route('segments.index') }}" class="nav-item {{ request()->routeIs('segments.index') ? 'active' : '' }}">HOME</a>
+        <a href="{{ route('about') }}" class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">ABOUT US</a>
+        <a href="{{ route('faq') }}" class="nav-item {{ request()->routeIs('faq') ? 'active' : '' }}">FAQ</a>
+    </nav>
+
+{{-- <header class="w-full border-b bg-white/80 backdrop-blur sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <h1 class="text-xl font-bold text-blue-900">PrimeLearn</h1>
         <nav class="space-x-6 hidden md:block">
@@ -30,7 +50,7 @@
             <a href="{{ route('faq') }}" class="hover:text-teal-600">FAQ</a>
         </nav>
     </div>
-</header>
+</header> --}}
 
 <!-- ================= HERO ================= -->
 <section class="relative bg-gradient-to-br from-blue-900 to-teal-600 text-white">
@@ -268,19 +288,20 @@
             Tim inti yang berperan dalam pengembangan dan perancangan PrimeLearn.
         </p>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-10 justify-center">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-10 justify-center">
 
             @php
                 $team = [
-                    ['name' => 'Mas Heri', 'img' => 'heri.webp', 'role' => 'Mentor'],
+                    ['name' => 'Mas Heri', 'img' => 'heri.webp', 'role' => 'Admin'],
                     ['name' => 'Nyoman Bagus', 'img' => 'william.webp', 'role' => 'Backend'],
                     ['name' => 'Dinda Dev', 'img' => 'dinda.webp', 'role' => 'UI/UX'],
                     ['name' => 'Yasa', 'img' => 'yasa.webp', 'role' => 'Fullstack'],
+                    ['name' => 'Satya', 'img' => 'satya.webp', 'role' => 'Database'],
                 ];
             @endphp
 
             @foreach($team as $member)
-                <div class="text-center" data-aos="fade-up">
+                <div class="text-center" data-aos="">
 
                     <!-- Avatar -->
                     <div class="mx-auto mb-5 w-40 h-40 rounded-full
@@ -310,15 +331,145 @@
 
 
 <!-- ================= FOOTER ================= -->
-<footer class="bg-gradient-to-br from-blue-900 to-teal-600 py-8 text-center text-sm text-white/80">
-    © {{ date('Y') }} PrimeLearn. All rights reserved.
-</footer>
+  <footer class="main-footer">
+        <div class="container footer-content">
+            <div class="footer-logo">PrimeLearn</div>
+            <div class="footer-copyright">
+                &copy; {{ date('Y') }} PrimeLearn. All Rights Reserved.
+            </div>
+        </div>
+  </footer>
 
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>
     AOS.init({ duration: 900, easing: 'ease-out-cubic', once: false });
 </script>
+<script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const menuBtn = document.querySelector(".menu-icon");
+            const nav = document.querySelector(".secondary-nav");
+
+            menuBtn.addEventListener("click", () => {
+                nav.classList.toggle("show");
+            });
+
+            // --- LOGIC AJAX LOAD MORE SIDEBAR ---
+
+            const loadMoreBtn = document.querySelector(".read-more-link"); 
+            const smallPostList = document.querySelector(".small-post-list"); 
+            
+            // Variabel untuk melacak halaman yang sudah dimuat. Asumsi materi awal adalah Halaman 1.
+            let currentPage = 1; 
+
+            // Hanya jalankan jika elemen ditemukan
+            if (loadMoreBtn && smallPostList) {
+                // Pastikan tombol terlihat seperti dapat di-klik
+                loadMoreBtn.style.cursor = 'pointer';
+
+                loadMoreBtn.addEventListener("click", function (e) {
+                    e.preventDefault(); // Mencegah navigasi default ke '#'
+                    
+                    // Cek apakah tombol sedang dalam status nonaktif
+                    if (loadMoreBtn.disabled) {
+                        return;
+                    }
+
+                    // 1. Tampilkan status loading
+                    const originalText = loadMoreBtn.textContent;
+                    loadMoreBtn.textContent = 'Memuat...';
+                    loadMoreBtn.classList.add('loading');
+                    
+                    // Naikkan nomor halaman untuk meminta data berikutnya
+                    currentPage++; 
+
+                    // 2. Kirim permintaan Fetch/AJAX
+                    // Menggunakan route name yang sudah kita definisikan: 'ajax.load_more_sidebar'
+                    fetch(`{{ route('ajax.load_more_sidebar') }}?page=${currentPage}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // 3. Masukkan HTML materi baru
+                            smallPostList.insertAdjacentHTML('beforeend', data.html);
+
+                            // Hapus status loading
+                            loadMoreBtn.classList.remove('loading');
+                            
+                            // 4. Periksa apakah masih ada halaman lagi
+                            if (data.hasMore) {
+                                loadMoreBtn.textContent = originalText; // Kembalikan teks asli
+                            } else {
+                                // Nonaktifkan tombol jika semua materi sudah dimuat
+                                loadMoreBtn.textContent = 'Semua Materi Dimuat';
+                                loadMoreBtn.disabled = true; 
+                                loadMoreBtn.style.cursor = 'default';
+                                loadMoreBtn.style.opacity = '0.7'; 
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error memuat data:', error);
+                            loadMoreBtn.textContent = 'Gagal Memuat (Coba lagi)';
+                            loadMoreBtn.classList.remove('loading');
+                        });
+                });
+            }
+            // --- ACCORDION LOGIC ---
+            const toggles = document.querySelectorAll('.accordion-toggle');
+
+            toggles.forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    const item = toggle.closest('.accordion-item');
+                    const content = item.querySelector('[data-accordion-content]');
+                    const icon = item.querySelector('[data-icon]');
+
+                    // Check if the clicked item is already open
+                    const isOpen = content.classList.contains('open');
+
+                    // Close all other open accordion items (optional for accordion behavior)
+                    document.querySelectorAll('.accordion-content.open').forEach(openContent => {
+                        if (openContent !== content) {
+                            openContent.classList.remove('open');
+                            openContent.closest('.accordion-item').querySelector('[data-icon]').classList.remove('rotated');
+                        }
+                    });
+
+                    // Toggle the clicked accordion item
+                    if (isOpen) {
+                        content.classList.remove('open');
+                        icon.classList.remove('rotated');
+                    } else {
+                        content.classList.add('open');
+                        icon.classList.add('rotated');
+                    }
+                });
+            });
+
+       
+            // --- WHATSAPP POPUP LOGIC (SAFE) ---
+                const popup = document.getElementById("wa-popup");
+                const waButton = document.getElementById("wa-button");
+
+                if (popup && waButton) {
+                    setTimeout(() => {
+                        popup.style.opacity = "1";
+                        popup.style.transform = "translateY(0)";
+                    }, 800);
+
+                    popup.addEventListener("click", () => {
+                        waButton.click();
+                    });
+
+                    setTimeout(() => {
+                        popup.style.opacity = "0";
+                        popup.style.transform = "translateY(20px)";
+                    }, 8000);
+                }
+        });
+    </script>
 
 </body>
 </html>
-```
