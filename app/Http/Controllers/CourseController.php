@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Segment;
 use App\Models\Materi;
 use App\Models\Step;
+use App\Models\Fase;
 
 class CourseController extends Controller
 {
@@ -23,15 +24,18 @@ class CourseController extends Controller
             abort(404, 'Segmen pembelajaran tidak ditemukan.');
         }
 
-        // Jika sidebar butuh list segmen saja:
+        // List untuk sidebar
         $segmentsWithCourses = Segment::with('fases.materis')->get();
+        // Data pendukung sidebar (Load More)
+        $sidebarCourses = Materi::orderBy('created_at', 'desc')->take(3)->get();
 
         return view('course_detail', [
             'segmentData' => $segment,
-            'segmentsWithCourses' => $segmentsWithCourses
+            'segmentsWithCourses' => $segmentsWithCourses,
+            'sidebarCourses' => $sidebarCourses
         ]);
     }
-    
+
     /**
      * Level 3: Halaman detail materi + steps
      */
@@ -45,57 +49,43 @@ class CourseController extends Controller
 
         // Perbaikan relasi sidebar
         $segmentsWithCourses = Segment::with('fases.materis')->get();
+        $sidebarCourses = Materi::orderBy('created_at', 'desc')->take(3)->get();
         
         return view('materi_detail', [
             'currentMateri' => $currentMateri,
             'fase' => $fase,
             'segmentName' => $segmentName,
-            'segmentsWithCourses' => $segmentsWithCourses
-        ]);
-    }
-
-    // ⭐ METODE BARU: Menampilkan halaman ringkasan materi (Tujuan redirect dari StepController)
-    public function showMateriSummary($materiId)
-    {
-        $materi = Materi::with('fase.segment', 'steps')->findOrFail($materiId);
-        
-        // Perbaikan relasi sidebar
-        $segmentsWithCourses = Segment::with('fases.materis')->get();
-        
-        // Anda bisa menambahkan logika atau data lain di sini (misalnya, sertifikat, progress, dll.)
-
-        return view('materi_summary', [ // Pastikan Anda memiliki view ini!
-            'materi' => $materi,
             'segmentsWithCourses' => $segmentsWithCourses,
-            'completion_status' => session('success') // Menerima pesan "Selamat" dari redirect
+            'sidebarCourses' => $sidebarCourses
         ]);
     }
 
     /**
-     * Level 4: Halaman detail Step
-     * CATATAN: Metode ini seharusnya dihapus atau diubah namanya
-     * karena Anda sudah memindahkannya ke StepController@show.
-     * Jika Anda ingin tetap menggunakan CourseController:
+     * Menampilkan detail Fase (Mendukung Route fase.show dari hasil pencarian)
      */
-    public function showStepContent($stepId)
+    public function showFaseDetail($id)
     {
-        // Peringatan: Metode ini bertentangan dengan StepController@show.
-        // Sebaiknya hapus rute yang menunjuk ke sini dan hanya gunakan StepController.
-        $step = Step::with('materi.fase.segment')->findOrFail($stepId);
-
-        $materi = $step->materi;
-        $fase = $materi->fase;
-        $segmentName = $fase->segment->name;
-
-        // Perbaikan relasi sidebar
-        $segmentsWithCourses = Segment::with('fases.materis')->get();
+        $fase = Fase::with('segment')->findOrFail($id);
         
-        return view('step_detail', [
-            'step' => $step,
+        // Redirect ke halaman segment utama yang mengandung fase ini
+        return redirect()->route('course.show', ['segment' => $fase->segment->name])
+                         ->with('info', 'Menampilkan materi untuk ' . $fase->title);
+    }
+
+    /**
+     * Menampilkan halaman ringkasan materi (Redirect dari StepController setelah selesai)
+     */
+    public function showMateriSummary($materiId)
+    {
+        $materi = Materi::with('fase.segment', 'steps')->findOrFail($materiId);
+        $segmentsWithCourses = Segment::with('fases.materis')->get();
+        $sidebarCourses = Materi::orderBy('created_at', 'desc')->take(3)->get();
+
+        return view('materi_summary', [
             'materi' => $materi,
-            'fase' => $fase,
-            'segmentName' => $segmentName,
-            'segmentsWithCourses' => $segmentsWithCourses
+            'segmentsWithCourses' => $segmentsWithCourses,
+            'sidebarCourses' => $sidebarCourses,
+            'completion_status' => session('success')
         ]);
     }
 
@@ -106,9 +96,11 @@ class CourseController extends Controller
     {
         $page = $request->get('page', 1);
 
+        // Paginate 3 item per klik
         $courses = Materi::orderBy('created_at', 'desc')
                           ->paginate(3, ['*'], 'page', $page);
 
+        // Render partial view (Pastikan file resources/views/partials/sidebar_course_item.blade.php ada)
         $html = view('partials.sidebar_course_item', compact('courses'))->render();
 
         return response()->json([

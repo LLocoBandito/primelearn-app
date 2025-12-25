@@ -75,7 +75,7 @@ class SegmentController extends Controller
                 ->orWhere('description', 'like', "%{$query}%")
                 ->get();
 
-            $fases = Fase::where('title', 'like', "%{$query}%")
+            $fases = Fase::where('name', 'like', "%{$query}%")
                 ->with('segment')
                 ->get();
 

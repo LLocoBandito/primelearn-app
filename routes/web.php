@@ -98,6 +98,10 @@ Route::post('/step/{stepId}/quiz', [StepController::class, 'submitQuiz'])
 Route::post('/step/{stepId}/complete', [StepController::class, 'completeMateri'])
     ->name('materi.complete'); 
 
+// Detail Fase (Ditambahkan untuk mendukung hasil pencarian fase)
+Route::get('/fase/{id}', [CourseController::class, 'showFaseDetail'])
+    ->name('fase.show');
+
 
 /*
 |--------------------------------------------------------------------------
