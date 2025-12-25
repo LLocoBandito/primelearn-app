@@ -1,5 +1,5 @@
 @php 
-        use Illuminate\Support\Facades\Storage;
+            use Illuminate\Support\Facades\Storage;
     use Illuminate\Support\Str;
 
     // Inisialisasi data relasi
@@ -208,6 +208,7 @@
                     const submitBtn = document.getElementById('submitQuizBtn');
                     const formData = new FormData(this);
                     const answers = {};
+                    formData.forEach((v, k) => { if (k.includes('answers')) answers[k.match(/\d+/)[0]] = v; });
 
                     formData.forEach((value, key) => {
                         if (key.includes('answers')) {

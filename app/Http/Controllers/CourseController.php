@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Segment;
 use App\Models\Materi;
 use App\Models\Step;
+use App\Models\Fase;
 
 class CourseController extends Controller
 {
@@ -16,10 +17,13 @@ class CourseController extends Controller
             ->firstOrFail();
 
         $segmentsWithCourses = Segment::with('fases.materis')->get();
+        // Data pendukung sidebar (Load More)
+        $sidebarCourses = Materi::orderBy('created_at', 'desc')->take(3)->get();
 
         return view('course_detail', [
             'segmentData' => $segment,
-            'segmentsWithCourses' => $segmentsWithCourses
+            'segmentsWithCourses' => $segmentsWithCourses,
+            'sidebarCourses' => $sidebarCourses
         ]);
     }
 
