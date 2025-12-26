@@ -50,7 +50,7 @@ class CourseController extends Controller
     }
 
     public function showStepContent($stepId)
-<<<<<<< HEAD
+
 {
     $step = Step::with([
         'materi.fase.segment',
@@ -72,7 +72,7 @@ class CourseController extends Controller
         'nextStep' => $nextStep,
     ]);
 }
-    
+
     /**
      * FUNGSI BARU: Menangani request AJAX untuk Load More Sidebar
      */
