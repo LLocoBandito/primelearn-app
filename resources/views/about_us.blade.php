@@ -1,54 +1,35 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - PrimeLearn</title>
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}"> 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    {{-- Tailwind CSS CDN untuk styling yang cepat dan modern --}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
+    <!-- Fonts & AOS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}"> 
+
     <style>
-        /* CSS Tambahan untuk border aktif sub-navigasi */
-        .active-nav {
-            background-color: #10b981; /* teal-500 */
-            color: white;
-            font-weight: 600;
-            border-radius: 0.5rem 0.5rem 0 0; /* rounded-t-lg */
-        }
-        
-        /* Style untuk tim kami agar terlihat seperti di desain */
-        .team-box {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem; /* Sedikit dilebarkan */
-        }
-        
-        /* --- STYLE BARU UNTUK FOTO ANGGOTA TIM --- */
-        .team-member-photo {
-            width: 8rem; 
-            height: 8rem; 
-            object-fit: cover; /* Memastikan foto tidak terdistorsi */
-            border-radius: 50%; /* Membuat foto menjadi lingkaran */
-            margin-left: auto; /* Untuk menengahkan foto */
-            margin-right: auto; /* Untuk menengahkan foto */
-            border: 4px solid #0b2239; /* Border teal-500 */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        body { font-family: 'Poppins', sans-serif; }
+        /* FIX ABOUT PAGE SECTION SPACING */
+        section {
+            min-height: auto !important;
+            height: auto !important;
         }
 
-        /* Menyembunyikan placeholder yang lama */
-        .team-member-placeholder {
-            display: none !important;
-        }
-        /* --- END STYLE BARU --- */
-        
     </style>
-</head>
-<body class="bg-gray-100">
 
-    <header class="main-header">
+</head>
+
+<body class="bg-white text-gray-800">
+
+<!-- ================= HEADER ================= -->
+ <header class="main-header">
         <div class="site-title">PrimeLearn</div>
         <div class="menu-icon">☰</div>
     </header>
@@ -61,121 +42,320 @@
         <a href="{{ route('faq') }}" class="nav-item {{ request()->routeIs('faq') ? 'active' : '' }}">FAQ</a>
     </nav>
 
+<<<<<<< HEAD
 
     {{-- Konten Utama Halaman --}}
     <main class="container mx-auto p-4 sm:p-8 lg:p-12 pt-24">
         
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+=======
+{{-- <header class="w-full border-b bg-white/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-blue-900">PrimeLearn</h1>
+        <nav class="space-x-6 hidden md:block">
+            <a href="{{ route('segments.index') }}" class="hover:text-teal-600">Home</a>
+            <a href="{{ route('about') }}" class="font-semibold text-teal-600">About</a>
+            <a href="{{ route('faq') }}" class="hover:text-teal-600">FAQ</a>
+        </nav>
+    </div>
+</header> --}}
+>>>>>>> 4d0db53829ad18f5b89b5a1387a100f105143e3f
 
-            {{-- Kolom Kiri (lg:col-span-2): Visi & Misi dan Konten Tambahan --}}
-            <div class="lg:col-span-2">
-                {{-- 1. Visi & Misi Kami --}}
-                <div class="bg-white rounded-xl shadow-xl overflow-hidden mb-8">
-                    <div class="relative">
-                        {{-- GAMBAR BESAR --}}
-                        <img src="images/team.jpg" 
-                             alt="Tim Sedang Rapat" 
-                             class="w-full h-80 object-cover">
-                        
-                        {{-- Kotak Teks Visi & Misi --}}
-                        <div class="absolute bottom-0 left-0 p-6 sm:p-10 text-white bg-black bg-opacity-60 w-full">
-                            <h3 class="text-3xl font-bold mb-4">Visi & Misi Kami</h3>
-                            <p class="text-sm leading-relaxed">
-                                Menjadi platform digital terdepan dalam penyebaran pengetahuan dan keterampilan di bidang Informatika dan Teknologi Informasi, yang mampu menjembatani kesenjangan antara teori akademik dan praktik industri, serta berkontribusi nyata dalam mencetak generasi unggul dan siap bersaing di era digital.
-                            </p>
-                        </div>
+<!-- ================= HERO ================= -->
+<section class="relative bg-gradient-to-br from-blue-900 to-teal-600 text-white">
+    <!-- Shadow Atas -->
+    <div class="pointer-events-none absolute top-0 left-0 w-full h-14
+                bg-gradient-to-b from-black/10 to-transparent"></div>
+
+    <!-- Shadow Bawah -->
+    <div class="pointer-events-none absolute bottom-0 left-0 w-full h-14
+                bg-gradient-to-t from-black/10 to-transparent"></div>
+    <div class="max-w-7xl mx-auto px-6 py-24 text-center">
+
+        <h2 class="text-4xl md:text-5xl font-bold mb-6" data-aos="fade-down">
+            Belajar dengan Cara yang Lebih Bermakna
+        </h2>
+
+        <p class="max-w-3xl mx-auto text-lg text-white/90 mb-10" data-aos="fade-up">
+            PrimeLearn menjembatani teori akademik dan praktik nyata untuk menciptakan
+            pengalaman belajar yang relevan dengan kebutuhan industri modern.
+        </p>
+
+        <!-- CTA -->
+        <div class="flex justify-center gap-4"
+            data-aos="fade-up"
+            data-aos-duration="1200"
+            data-aos-easing="ease-out-cubic"
+            data-aos-delay="200">
+
+            <a href="{{ route('segments.index') }}"
+            class="group px-8 py-4 rounded-full
+                    bg-white text-blue-900 font-semibold
+                    shadow-md
+                    transition-all duration-500 ease-out
+                    hover:shadow-xl
+                    hover:-translate-y-0.5
+                    focus:outline-none focus:ring-4 focus:ring-white/40">
+                <span class="inline-flex items-center gap-2">
+                    Mulai Belajar Sekarang
+                    <span class="transform transition-transform duration-500 group-hover:translate-x-1">
+                        →
+                    </span>
+                </span>
+            </a>
+
+        </div>
+
+
+    </div>
+</section>
+
+<!-- ================= STORY ================= -->
+<section class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-16 items-center">
+    
+    <div >
+        <h3 class="text-3xl font-bold text-blue-900 mb-6"data-aos="fade-right ">
+            Mengapa PrimeLearn Dibangun?
+        </h3>
+        <p class="text-gray-600 leading-relaxed mb-4"data-aos="fade-right ">
+            Banyak platform pembelajaran masih berfokus pada teori tanpa memberikan konteks
+            penerapan di dunia nyata. Hal ini membuat pembelajar kesulitan beradaptasi
+            dengan kebutuhan industri.
+        </p>
+        <p class="text-gray-600 leading-relaxed"data-aos="fade-right ">
+            PrimeLearn hadir sebagai solusi dengan pendekatan pembelajaran terstruktur,
+            kontekstual, dan berbasis pemecahan masalah nyata.
+        </p>
+    </div>
+
+    <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80"
+     alt="Diskusi Tim PrimeLearn"
+     data-aos="fade-left"
+     class="w-full max-w-md mx-auto
+            aspect-[4/3] object-cover
+            rounded-3xl shadow-2xl">
+
+</section>
+
+<!-- ================= VISION & MISSION ================= -->
+<section class="relative bg-gradient-to-b from-gray-50 to-white py-24 overflow-hidden">
+
+    <!-- Decorative Blur -->
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-teal-200/40 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-200/40 rounded-full blur-3xl"></div>
+
+    <div class="relative max-w-7xl mx-auto px-6">
+        <h3 class="text-3xl md:text-4xl font-bold text-center text-blue-900 mb-4" data-aos="fade-up">
+            Visi & <span class=" text-teal-600">Misi </span>
+        </h3>
+        <p class="text-center text-gray-600 max-w-2xl mx-auto mb-16" data-aos="fade-up">
+            Arah dan tujuan PrimeLearn dalam membangun pengalaman belajar
+            yang relevan dan berdampak.
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-12">
+
+            <!-- Visi -->
+            <div class="bg-white p-12 rounded-3xl shadow-xl 
+                        hover:-translate-y-2 hover:shadow-2xl transition"
+                 data-aos="zoom-in">
+
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 flex items-center justify-center 
+                                rounded-xl bg-teal-100 text-teal-600 text-2xl">
+                        🎯
                     </div>
-                </div>
-                
-                {{-- 2. Nilai Inti (Tambahan) --}}
-                <div class="mt-4 bg-white p-6 rounded-xl shadow-xl">
-                    <h2 class="text-2xl font-bold text-blue-900 mb-6 pb-2 border-b-2 border-teal-500">Nilai Inti Kami</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-gray-50 p-6 rounded-lg text-center shadow-sm">
-                            <span class="text-4xl text-teal-500 mb-3 block">💡</span>
-                            <h3 class="font-bold text-lg mb-1">Inovasi</h3>
-                            <p class="text-sm text-gray-600">Terus mencari cara baru dan lebih baik untuk memberikan pengalaman belajar yang optimal.</p>
-                        </div>
-                        <div class="bg-gray-50 p-6 rounded-lg text-center shadow-sm">
-                            <span class="text-4xl text-teal-500 mb-3 block">🏅</span>
-                            <h3 class="font-bold text-lg mb-1">Kualitas</h3>
-                            <p class="text-sm text-gray-600">Komitmen terhadap materi dan instruktur terbaik untuk mencapai hasil terbaik.</p>
-                        </div>
-                        <div class="bg-gray-50 p-6 rounded-lg text-center shadow-sm">
-                            <span class="text-4xl text-teal-500 mb-3 block">🌐</span>
-                            <h3 class="font-bold text-lg mb-1">Aksesibilitas</h3>
-                            <p class="text-sm text-gray-600">Memastikan pendidikan berkualitas dapat dijangkau oleh semua orang, di mana pun.</p>
-                        </div>
-                    </div>
+                    <h4 class="text-2xl font-semibold text-blue-900">Visi</h4>
                 </div>
 
-                {{-- 3. Garis Abu-abu di bagian bawah (Bisa ditambahkan jika diperlukan styling tambahan) --}}
-
+                <p class="text-gray-600 leading-relaxed text-lg">
+                    Menjadi platform pembelajaran digital yang unggul dalam membentuk
+                    pembelajar yang kritis, adaptif, dan siap menghadapi tantangan
+                    industri global.
+                </p>
             </div>
 
-            {{-- Kolom Kanan (1 Kolom): Tim Kami --}}
-            <div class="p-0">
-                <h2 class="text-xl font-bold text-gray-700 mb-4 pb-2 border-b-4 border-blue-900 inline-block">Tim Kami</h2>
-                
-                {{-- Grid Anggota Tim --}}
-                <div class="team-box">
-                    
-                    {{-- Anggota Tim Item 1 (Foto: Mas Heri) --}}
-                    <div class="text-center">
-                        <img src="{{ asset('images/heri.webp') }}" 
-                             alt="Foto Mas Heri" 
-                             class="team-member-photo">
-                        <p class="text-sm font-semibold mt-2">Mas Heri</p>
-                    </div>
+            <!-- Misi -->
+            <div class="bg-white p-12 rounded-3xl shadow-xl 
+                        hover:-translate-y-2 hover:shadow-2xl transition"
+                 data-aos="zoom-in" data-aos-delay="150">
 
-                    {{-- Anggota Tim Item 2 (Foto: William) --}}
-                    <div class="text-center">
-                        <img src="{{ asset('images/william.webp') }}" 
-                             alt="Foto William" 
-                             class="team-member-photo">
-                        <p class="text-sm font-semibold mt-2">Nyoman Bagus</p>
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 flex items-center justify-center 
+                                rounded-xl bg-blue-100 text-blue-600 text-2xl">
+                        🚀
                     </div>
+                    <h4 class="text-2xl font-semibold  text-teal-600">Misi</h4>
+                </div>
 
-                    {{-- Anggota Tim Item 3 (Foto: Dinda Dev) --}}
-                    <div class="text-center">
-                        <img src="{{ asset('images/dinda.webp') }}" 
-                             alt="Foto Dinda Dev" 
-                             class="team-member-photo">
-                        <p class="text-sm font-semibold mt-2">Dinda Dev</p>
-                    </div>
+                <ul class="space-y-4 text-gray-600 text-lg">
+                    <li class="flex gap-3">
+                        <span class="text-teal-600 font-bold">✓</span>
+                        Menyediakan materi pembelajaran yang terstruktur dan aplikatif
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="text-teal-600 font-bold">✓</span>
+                        Menghubungkan teori dengan studi kasus dan praktik nyata
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="text-teal-600 font-bold">✓</span>
+                        Mendorong pembelajar untuk berpikir kritis dan mandiri
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="text-teal-600 font-bold">✓</span>
+                        Menyediakan akses pendidikan berkualitas untuk semua
+                    </li>
+                </ul>
+            </div>
 
-                    {{-- Anggota Tim Item 4 (Foto: Yasa) --}}
-                    <div class="text-center">
-                         <img src="{{ asset('images/yasa.webp') }}" 
-                             alt="Foto Yasa" 
-                             class="team-member-photo">
-                        <p class="text-sm font-semibold mt-2">Yasa</p>
-                    </div>
+        </div>
+    </div>
+</section>
 
-                    {{-- Anggota Tim Item 5 (Foto: Ananda) --}}
-                    <div class="text-center">
-                        <img src="{{ asset('images/satya.webp') }}" 
-                             alt="Foto Ananda" 
-                             class="team-member-photo">
-                        <p class="text-sm font-semibold mt-2">Bang Sat</p>
-                    </div>
-                    
-                    {{-- Anggota Tim Item 6 (Kosong sesuai desain asli) --}}
-                    <div class="text-center">
-                        {{-- Anggota Kosong --}}
-                        <div class="w-32 h-32 bg-transparent mx-auto"></div> 
-                        <p class="text-sm font-semibold mt-2"></p>
-                    </div>
+
+<!-- ================= VALUES ================= -->
+<section class="relative py-20 overflow-hidden bg-white">
+
+
+    <div class="relative max-w-7xl mx-auto px-6">
+        <h3 class="text-3xl font-bold text-center text-blue-900 mb-14"
+            data-aos="fade-up">
+            Nilai yang Kami Pegang
+        </h3>
+
+        <div class="grid md:grid-cols-3 gap-10">
+
+            <!-- CARD 1 -->
+            <div class="bg-gradient-to-br from-blue-500 to-teal-400 p-[1.5px] rounded-3xl shadow-lg"
+                 data-aos="fade-up">
+                <div class="bg-white p-8 rounded-3xl shadow-md
+                            hover:-translate-y-2 transition-all duration-500 ease-out">
+                    <div class="text-4xl mb-4">💡</div>
+                    <h4 class="font-semibold text-xl mb-2">Inovasi</h4>
+                    <p class="text-gray-600">
+                        Terus mengembangkan metode belajar yang relevan.
+                    </p>
+                </div>
+            </div>
+
+            <!-- CARD 2 -->
+            <div class="bg-gradient-to-br from-blue-500 to-teal-400 p-[1.5px] rounded-3xl shadow-lg"
+                 data-aos="fade-up" data-aos-delay="100">
+                <div class="bg-white p-8 rounded-3xl shadow-md
+                            hover:-translate-y-2 transition-all duration-500 ease-out">
+                    <div class="text-4xl mb-4">🏅</div>
+                    <h4 class="font-semibold text-xl mb-2">Kualitas</h4>
+                    <p class="text-gray-600">
+                        Materi terbaik dengan pendekatan yang mudah dipahami.
+                    </p>
+                </div>
+            </div>
+
+            <!-- CARD 3 -->
+            <div class="bg-gradient-to-br from-blue-500 to-teal-400 p-[1.5px] rounded-3xl shadow-lg"
+                 data-aos="fade-up" data-aos-delay="200">
+                <div class="bg-white p-8 rounded-3xl shadow-md
+                            hover:-translate-y-2 transition-all duration-500 ease-out">
+                    <div class="text-4xl mb-4">🌍</div>
+                    <h4 class="font-semibold text-xl mb-2">Aksesibilitas</h4>
+                    <p class="text-gray-600">
+                        Pendidikan berkualitas untuk semua kalangan.
+                    </p>
                 </div>
             </div>
 
         </div>
-        
-    </main>
+    </div>
+</section>
 
-    <script>
+
+<!-- ================= TEAM ================= -->
+<section class="relative bg-gray-50 py-24 overflow-hidden">
+
+    <!-- Decorative Blur -->
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2
+                w-[28rem] h-[28rem]
+                bg-teal-300/30 rounded-full blur-3xl"></div>
+
+    <div class="absolute top-1/3 -left-32
+                w-72 h-72
+                bg-blue-300/20 rounded-full blur-3xl"></div>
+
+    <div class="absolute -bottom-32 -right-32
+                w-96 h-96
+                bg-teal-200/30 rounded-full blur-3xl"></div>
+
+    <div class="relative max-w-6xl mx-auto px-6">
+
+        <h3 class="text-3xl font-bold text-center text-blue-900 mb-4"
+            data-aos="fade-up">
+            Tim di Balik PrimeLearn
+        </h3>
+
+        <p class="text-center text-gray-600 max-w-xl mx-auto mb-16"
+           data-aos="fade-up">
+            Tim inti yang berperan dalam pengembangan dan perancangan PrimeLearn.
+        </p>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-10 justify-center">
+
+            @php
+                $team = [
+                    ['name' => 'Mas Heri', 'img' => 'heri.webp', 'role' => 'Admin'],
+                    ['name' => 'Nyoman Bagus', 'img' => 'william.webp', 'role' => 'Backend'],
+                    ['name' => 'Dinda Dev', 'img' => 'dinda.webp', 'role' => 'UI/UX'],
+                    ['name' => 'Yasa', 'img' => 'yasa.webp', 'role' => 'Fullstack'],
+                    ['name' => 'Satya', 'img' => 'satya.webp', 'role' => 'Database'],
+                ];
+            @endphp
+
+            @foreach($team as $member)
+                <div class="text-center" data-aos="">
+
+                    <!-- Avatar -->
+                    <div class="mx-auto mb-5 w-40 h-40 rounded-full
+                                bg-gradient-to-br from-blue-500 to-teal-400 p-1
+                                transition-transform duration-500 hover:scale-105">
+                        <img src="{{ asset('images/' . $member['img']) }}"
+                             class="w-full h-full rounded-full object-cover bg-white"
+                             alt="{{ $member['name'] }}">
+                    </div>
+
+                    <!-- Name -->
+                    <p class="font-semibold text-blue-900">
+                        {{ $member['name'] }}
+                    </p>
+
+                    <!-- Role -->
+                    <p class="text-sm text-gray-500">
+                        {{ $member['role'] }}
+                    </p>
+
+                </div>
+            @endforeach
+
+        </div>
+    </div>
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+  <footer class="main-footer">
+        <div class="container footer-content">
+            <div class="footer-logo">PrimeLearn</div>
+            <div class="footer-copyright">
+                &copy; {{ date('Y') }} PrimeLearn. All Rights Reserved.
+            </div>
+        </div>
+  </footer>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 900, easing: 'ease-out-cubic', once: false });
+</script>
+<script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Logic Menu Toggle
+
             const menuBtn = document.querySelector(".menu-icon");
             const nav = document.querySelector(".secondary-nav");
 
@@ -246,6 +426,57 @@
                         });
                 });
             }
+            // --- ACCORDION LOGIC ---
+            const toggles = document.querySelectorAll('.accordion-toggle');
+
+            toggles.forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    const item = toggle.closest('.accordion-item');
+                    const content = item.querySelector('[data-accordion-content]');
+                    const icon = item.querySelector('[data-icon]');
+
+                    // Check if the clicked item is already open
+                    const isOpen = content.classList.contains('open');
+
+                    // Close all other open accordion items (optional for accordion behavior)
+                    document.querySelectorAll('.accordion-content.open').forEach(openContent => {
+                        if (openContent !== content) {
+                            openContent.classList.remove('open');
+                            openContent.closest('.accordion-item').querySelector('[data-icon]').classList.remove('rotated');
+                        }
+                    });
+
+                    // Toggle the clicked accordion item
+                    if (isOpen) {
+                        content.classList.remove('open');
+                        icon.classList.remove('rotated');
+                    } else {
+                        content.classList.add('open');
+                        icon.classList.add('rotated');
+                    }
+                });
+            });
+
+       
+            // --- WHATSAPP POPUP LOGIC (SAFE) ---
+                const popup = document.getElementById("wa-popup");
+                const waButton = document.getElementById("wa-button");
+
+                if (popup && waButton) {
+                    setTimeout(() => {
+                        popup.style.opacity = "1";
+                        popup.style.transform = "translateY(0)";
+                    }, 800);
+
+                    popup.addEventListener("click", () => {
+                        waButton.click();
+                    });
+
+                    setTimeout(() => {
+                        popup.style.opacity = "0";
+                        popup.style.transform = "translateY(20px)";
+                    }, 8000);
+                }
         });
     </script>
 </body>

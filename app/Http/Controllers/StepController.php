@@ -22,9 +22,9 @@ class StepController extends Controller
             // Serta eager load semua step dalam materi untuk navigasi
             $step = Step::with([
                 'materi.fase.segment',
-                'materi.externalLinks',
                 'materi.steps' 
             ])->findOrFail($stepId);
+
 
             // 2. Tentukan Step Sebelumnya dan Selanjutnya (berdasarkan kolom 'order' di tabel steps)
             // Asumsi relasi 'steps' di Model Materi sudah diurutkan (orderBy('order'))

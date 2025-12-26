@@ -54,6 +54,7 @@ Route::get('/materi/{materiId}', [CourseController::class, 'showMateriDetail'])-
 Route::get('/step/{stepId}', [CourseController::class, 'showStepContent'])->name('step.show');
 
 // Segment detail with relationship
+
 Route::get('/segment/{id}', function ($id) {
     $segmentData = Segment::with(['fases.materis'])->findOrFail($id);
     return view('course_detail', compact('segmentData'));

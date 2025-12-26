@@ -7,7 +7,13 @@
 
 body {
     font-family: "Poppins", sans-serif;
+<<<<<<< HEAD
     background-color: #f0f0f0;
+=======
+    background-color: #f2f4f7;
+    min-height: 100vh;
+
+>>>>>>> 4d0db53829ad18f5b89b5a1387a100f105143e3f
 }
 
 .container {
@@ -395,4 +401,93 @@ main.container {
         display: block; /* Membuat tautan menjadi vertikal di mobile */
         margin: 5px 0;
     }
+
+    /* =========================================
+   RESPONSIVE FIX — ABOUT PAGE (MOBILE)
+========================================= */
+@media (max-width: 640px) {
+
+    /* === HERO === */
+    section.relative.bg-gradient-to-br {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    section.relative.bg-gradient-to-br h2 {
+        font-size: 2rem; /* dari 4xl → mobile */
+        line-height: 1.3;
+    }
+
+    section.relative.bg-gradient-to-br p {
+        font-size: 0.95rem;
+    }
+
+    /* === GENERAL SECTION SPACING === */
+    section {
+        padding-top: 3.5rem !important;
+        padding-bottom: 3.5rem !important;
+    }
+
+    /* === STORY GRID === */
+    section.grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem;
+        text-align: center;
+    }
+
+    section.grid img {
+        max-width: 100%;
+    }
+
+    /* === VISI & MISI CARD === */
+    section .grid.md\:grid-cols-2 > div {
+        padding: 1.5rem !important;
+    }
+
+    /* === VALUES === */
+    section .grid.md\:grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+
+    /* === TEAM SECTION ===
+    section.relative.bg-gray-50 .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    section.relative.bg-gray-50 img {
+        width: 110px;
+        height: 110px;
+    }
+
+    /* === TEAM TEXT === */
+    /* section.relative.bg-gray-50 p {
+        font-size: 0.85rem;
+    } */ */
+
+    /* === DECORATIVE BLUR (DIKECILKAN) === */
+    section.relative .blur-3xl {
+        width: 14rem !important;
+        height: 14rem !important;
+        opacity: 0.5;
+    }
+
+    /* === FOOTER === */
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    /* === NAV DROPDOWN (TETAP SAMA, LEBIH NYAMAN DI TAP) === */
+    .secondary-nav {
+        width: 90%;
+    }
+
+    .secondary-nav .nav-item {
+        padding: 10px 18px;
+        font-size: 0.9rem;
+    }
+}
+
 }
