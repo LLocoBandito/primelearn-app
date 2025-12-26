@@ -24,20 +24,10 @@
     {{-- Anda perlu memastikan komponen ini ada atau ganti dengan HTML navbar statis Anda --}}
     {{-- @include('components.navbar') --}} 
 
-@php 
-    use Illuminate\Support\Facades\Storage;
-    use Illuminate\Support\Str;
-    
-    // Asumsi: Model Step memiliki relasi materi, dan materi memiliki relasi fase, dst.
-    $materi = $step->materi;
-    $fase = $materi->fase;
-    $segment = $fase->segment;
-    
-    // Ambil data external links, utamakan dari Step, fallback ke Materi
-    $externalLinks = $step->external_links ?? ($step->materi->externalLinks ?? []); 
-    $quizData = $step->quiz_data ?? []; 
-    
+@php  
     // Tentukan apakah tombol next harus dinonaktifkan (karena ada kuis)
+    $quizData = $quizData ?? [];
+    $externalLinks = $externalLinks ?? [];
     $isQuizRequired = !empty($quizData);
 
     // Tentukan rute default. Jika ada kuis, default-nya ke '#'.
@@ -76,7 +66,7 @@
                                     {{ $link['title'] }}
                                 </a>
                                 @if (isset($link['description']))
-                                    <span class="text-gray-500 text-xs italic">{{ Str::limit($link['description'], 50) }}</span>
+                                   {{ \Illuminate\Support\Str::limit($link['description'], 50) }}
                                 @endif
                             </li>
                         @endforeach
@@ -89,23 +79,44 @@
         <div class="w-full md:w-3/4">
 
             {{-- Breadcrumb Navigasi --}}
-            <nav class="text-sm mb-4 text-gray-600">
-                <ol class="list-none p-0 inline-flex">
-                    <li class="flex items-center">
-                        <a href="{{ route('segments.index') }}" class="text-blue-600 hover:text-blue-800">{{ $segment->name }}</a>
-                        <span class="mx-2">/</span>
-                    </li>
-                    <li class="flex items-center">
-                        <a href="{{ route('course.show', $segment->name) }}" class="text-blue-600 hover:text-blue-800">{{ $fase->title }}</a>
-                        <span class="mx-2">/</span>
-                    </li>
-                    <li class="flex items-center">
-                        <a href="{{ route('materi.show', $materi->id) }}" class="text-blue-600 hover:text-blue-800">{{ $materi->title }}</a>
-                        <span class="mx-2">/</span>
-                    </li>
-                    <li class="text-gray-500">{{ $step->title }}</li>
-                </ol>
-            </nav>
+<nav class="text-sm mb-4 text-gray-600">
+    <ol class="list-none p-0 inline-flex">
+        <li class="flex items-center">
+            @if($step->materi?->fase?->segment)
+                <a href="{{ route('segments.index') }}"
+                   class="text-blue-600 hover:text-blue-800">
+                    {{ $step->materi->fase->segment->name }}
+                </a>
+                <span class="mx-2">/</span>
+            @endif
+        </li>
+
+        <li class="flex items-center">
+            @if($step->materi?->fase)
+                <a href="{{ route('course.show', $step->materi->fase->segment->name) }}">
+                   class="text-blue-600 hover:text-blue-800">
+                    {{ $step->materi->fase->title }}
+                </a>
+                <span class="mx-2">/</span>
+            @endif
+        </li>
+
+        <li class="flex items-center">
+            @if($step->materi)
+                <a href="{{ route('materi.show', $step->materi->id) }}"
+                   class="text-blue-600 hover:text-blue-800">
+                    {{ $step->materi->title }}
+                </a>
+                <span class="mx-2">/</span>
+            @endif
+        </li>
+
+        <li class="text-gray-500">
+            {{ $step->title }}
+        </li>
+    </ol>
+</nav>
+
 
             <article id="mainContentArticle" class="bg-white p-8 rounded-xl shadow-2xl">
 
@@ -124,7 +135,7 @@
 
                             @foreach ($step->images as $img)
                                 {{-- Pengecekan Kunci Gambar (sesuai path Filament) --}}
-                                @if ($img->path && Storage::disk('public')->exists($img->path))
+                                @if ($img->path && \Illuminate\Support\Facades\Storage::disk('public')->exists($img->path))
                                     <div class="w-full flex-shrink-0 flex justify-center">
                                         {{-- Path ke gambar: 'storage/' + path di DB --}}
                                         <img src="{{ asset('storage/' . $img->path) }}"
@@ -216,34 +227,38 @@
                     <a href="{{ route('step.show', ['stepId' => $prevStep->id]) }}" 
                     class="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path></svg>
-                        <span class="font-semibold">Sebelumnya:</span> {{ Str::limit($prevStep->title, 35) }}
+                        <span class="font-semibold">Sebelumnya:</span> {{ \Illuminate\Support\Str::limit($prevStep->title, 35) }}
                     </a>
                 @else
                     <span class="text-gray-400">← Ini adalah Langkah Pertama</span>
                 @endif
 
                 @if ($nextStep)
-                    <a href="{{ $defaultNextHref }}" 
-                    id="nextStepBtn"
-                    data-next-id="{{ $nextStep->id }}" 
-                    class="flex items-center bg-green-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-600 transition-colors 
-                    @if ($isQuizRequired) opacity-50 cursor-not-allowed @endif">
-                    <span class="mr-2">Selanjutnya: {{ Str::limit($nextStep->title, 35) }}</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                    </a>
-                @else
-                    {{-- Tombol 'Materi Selesai' di Langkah Terakhir --}}
-                    @php
-                        // Memastikan stepId diteruskan ke rute 'materi.complete'
-                        $completionRoute = route('materi.complete', ['stepId' => $step->id]); 
-                    @endphp
-                    
-                    <a href="#"
-                    class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition-colors flex items-center"
-                    onclick="event.preventDefault(); document.getElementById('complete-form').submit();">
-                        Materi Selesai 🎉
-                    </a>
-                    
+    <a href="{{ $defaultNextHref }}"
+       id="nextStepBtn"
+       data-next-id="{{ $nextStep->id }}"
+       class="flex items-center bg-green-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-green-600 transition-colors
+       @if ($isQuizRequired) opacity-50 cursor-not-allowed @endif">
+
+        <span class="mr-2">
+            Selanjutnya: {{ \Illuminate\Support\Str::limit($nextStep->title, 35) }}
+        </span>
+
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+        </svg>
+    </a>
+@else
+          {{-- Tombol 'Materi Selesai' di Langkah Terakhir --}}
+                     @php
+                     $completionRoute = route('materi.complete', ['stepId' => $step->id]);
+                @endphp
+
+                     <a href="{{ $completionRoute }}"
+                    class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition-colors flex items-center">
+                     Materi Selesai
+                  </a>   
                     {{-- Form tersembunyi untuk POST request --}}
                     <form id="complete-form" action="{{ $completionRoute }}" method="POST" style="display: none;">
                         @csrf

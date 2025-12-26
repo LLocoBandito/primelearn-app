@@ -116,7 +116,7 @@
             </a>
 
             <div>
-                <a href="{{ route('apply.form')}}"
+                <a href="{{ route('peminatan.form') }}">
                    class="text-sm text-gray-500 hover:text-blue-600 underline">
                     Retake assessment
                 </a>

@@ -62,7 +62,7 @@
                 
                 {{-- JUDUL DINAMIS --}}
                 <h2 class="main-segment-title">
-                    @if ($query)
+                   @if (isset($query) && $query)
                         Hasil Pencarian untuk: <strong>"{{ $query }}"</strong>
                     @elseif (isset($isFilteredByRecommendation) && $isFilteredByRecommendation)
                         Rekomendasi Segmen Terbaik untuk Anda
@@ -72,7 +72,7 @@
                 </h2>
                 
                 {{-- NOTIFIKASI REKOMENDASI (Opsional, berdasarkan logic controller Anda) --}}
-                @if (isset($recommendation) && !$query)
+                @if  (isset($recommendation) && empty($query))
                     <div style="padding: 10px; background-color: #e6ffe6; border-left: 5px solid #00c700; margin-bottom: 20px;">
                         <p><strong>Rekomendasi:</strong> {{ $recommendation }}! Segmen di bawah ini paling cocok dengan minat Anda.</p>
                     </div>
@@ -81,7 +81,7 @@
 
                 {{-- 1. HASIL SEGMENT (Main Content Area) --}}
                 @if ($segments->isNotEmpty())
-                    @if ($query)
+                    @if (!empty($query))
                         <h3 class="search-result-title">Segmen Ditemukan ({{ $segments->count() }})</h3>
                     @endif
                     <div class="segment-cards-grid-new">
@@ -107,7 +107,7 @@
                 @endif
                 
                 {{-- 2. HASIL PENCARIAN FASE --}}
-                @if ($query && isset($fases) && $fases->isNotEmpty())
+                @if (!empty($query) && isset($fases) && $fases->isNotEmpty())
                     <h3 class="search-result-title">Fase Ditemukan ({{ $fases->count() }})</h3>
                     <div class="small-post-list">
                         @foreach ($fases as $fase)
@@ -124,7 +124,7 @@
                 @endif
 
                 {{-- 3. HASIL PENCARIAN LANGKAH/STEP --}}
-                @if ($query && isset($steps) && $steps->isNotEmpty())
+                @if (!empty($query) && isset($steps) && $steps->isNotEmpty())
                     <h3 class="search-result-title">Langkah/Materi Ditemukan ({{ $steps->count() }})</h3>
                     <div class="small-post-list">
                         @foreach ($steps as $step)
@@ -143,7 +143,7 @@
                 @endif
                 
                 {{-- JIKA TIDAK ADA HASIL SAMA SEKALI SAAT PENCARIAN --}}
-                @if ($query && $segments->isEmpty() && (!isset($fases) || $fases->isEmpty()) && (!isset($steps) || $steps->isEmpty()))
+               @if (!empty($query) && $segments->isEmpty() && (!isset($fases) || $fases->isEmpty()) && (!isset($steps) || $steps->isEmpty()))
                     <p style="margin-top: 20px; padding: 15px; background: #ffe6e6; border: 1px solid #ff9999;">
                         Maaf, tidak ditemukan hasil yang cocok untuk kata kunci <strong>"{{ $query }}"</strong> di Segmen, Fase, maupun Langkah/Materi.
                     </p>

@@ -78,26 +78,27 @@ class CourseController extends Controller
      * Jika Anda ingin tetap menggunakan CourseController:
      */
     public function showStepContent($stepId)
-    {
-        // Peringatan: Metode ini bertentangan dengan StepController@show.
-        // Sebaiknya hapus rute yang menunjuk ke sini dan hanya gunakan StepController.
-        $step = Step::with('materi.fase.segment')->findOrFail($stepId);
+{
+    $step = Step::with([
+        'materi.fase.segment',
+        'materi.externalLinks',
+        'materi.steps'
+    ])->findOrFail($stepId);
 
-        $materi = $step->materi;
-        $fase = $materi->fase;
-        $segmentName = $fase->segment->name;
+    $stepsMateri = $step->materi->steps;
+    $currentIndex = $stepsMateri->search(fn ($item) => $item->id === $step->id);
 
-        // Perbaikan relasi sidebar
-        $segmentsWithCourses = Segment::with('fases.materis')->get();
-        
-        return view('step_detail', [
-            'step' => $step,
-            'materi' => $materi,
-            'fase' => $fase,
-            'segmentName' => $segmentName,
-            'segmentsWithCourses' => $segmentsWithCourses
-        ]);
-    }
+    $prevStep = $stepsMateri->get($currentIndex - 1);
+    $nextStep = $stepsMateri->get($currentIndex + 1);
+
+    return view('step_detail', [
+        'step' => $step,
+        'quizData' => $step->quiz_data ?? [],
+        'externalLinks' => $step->materi->externalLinks ?? [],
+        'prevStep' => $prevStep,
+        'nextStep' => $nextStep,
+    ]);
+}
 
     /**
      * AJAX Load More Sidebar

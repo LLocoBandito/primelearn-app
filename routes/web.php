@@ -6,14 +6,16 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SegmentController;
 use App\Models\Segment;
 use App\Models\Materi; 
+use Illuminate\Http\Request;
 
 
 // Landing Page
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
     if (session('form_completed')) {
         return redirect()->route('segments.index');
     }
 
+    $query = $request->query('query');
     // ⬅ SOLUSI A — Tambahkan $sidebarCourses
     $sidebarCourses = Materi::latest()->take(5)->get();
 
@@ -37,6 +39,8 @@ Route::get('/faq', function () {
 // Peminatan
 Route::get('/peminatan', [PeminatanController::class, 'index'])->name('peminatan.form');
 Route::post('/peminatan', [PeminatanController::class, 'store'])->name('peminatan.store');
+Route::get('/peminatan/result', [PeminatanController::class, 'showResult'])
+    ->name('peminatan.result');
 
 // Segments
 Route::get('/segments', [SegmentController::class, 'index'])->name('segments.index');
