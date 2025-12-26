@@ -72,27 +72,7 @@ class CourseController extends Controller
         'nextStep' => $nextStep,
     ]);
 }
-=======
-    {
-        $step = Step::with('materi.fase.segment')->findOrFail($stepId);
-
-        $materi = $step->materi;
-        $fase = $materi->fase;
-        $segment = $fase->segment;
-
-        $segmentsWithCourses = Segment::with('fases.materis')->get();
-
-        return view('step_detail', [
-            'step' => $step,
-            'materi' => $materi,
-            'fase' => $fase,
-            'segment' => $segment,
-            'segmentName' => $segment->name,
-            'segmentsWithCourses' => $segmentsWithCourses
-        ]);
-    }
->>>>>>> 4d0db53829ad18f5b89b5a1387a100f105143e3f
-
+    
     /**
      * FUNGSI BARU: Menangani request AJAX untuk Load More Sidebar
      */
