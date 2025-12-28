@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Step;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class StepController extends Controller
@@ -23,12 +22,13 @@ class StepController extends Controller
             // Serta eager load semua step dalam materi untuk navigasi
             $step = Step::with([
                 'materi.fase.segment',
-                'materi.externalLinks',
                 'materi.steps' 
             ])->findOrFail($stepId);
 
+
             // 2. Tentukan Step Sebelumnya dan Selanjutnya (berdasarkan kolom 'order' di tabel steps)
-            $stepsMateri = $step->materi->steps; // Collection of steps, sudah diurutkan di Model Materi
+            // Asumsi relasi 'steps' di Model Materi sudah diurutkan (orderBy('order'))
+            $stepsMateri = $step->materi->steps; 
 
             // Cari index step saat ini di dalam collection
             $currentIndex = $stepsMateri->search(fn ($item) => $item->id === $step->id);
@@ -42,7 +42,8 @@ class StepController extends Controller
                 'step' => $step,
                 // quizData sudah otomatis menjadi array karena $casts di Model Step
                 'quizData' => $step->quiz_data, 
-                'externalLinks' => $step->materi->externalLinks,
+                // Asumsi step memiliki relasi externalLinks ke materi
+                'externalLinks' => $step->materi->externalLinks, 
                 'prevStep' => $prevStep,
                 'nextStep' => $nextStep,
             ]);
@@ -59,6 +60,7 @@ class StepController extends Controller
 
     /**
      * Logika untuk memproses dan memeriksa jawaban kuis (AJAX endpoint).
+     * TIDAK MEMERLUKAN LOGIN (hanya mengembalikan hasil skor).
      *
      * @param \Illuminate\Http\Request $request
      * @param int $stepId
@@ -75,15 +77,8 @@ class StepController extends Controller
             $jawabanUser = $request->input('answers');
             $quizData = $step->quiz_data; // Sudah berbentuk array/object karena Model casting
             
-            // Asumsi structure quizData:
-            // [
-            //     ['question' => '...', 'options' => ['A', 'B', 'C'], 'correct_answer' => 'B'],
-            //     ...
-            // ]
-
             $score = 0;
             $totalQuestions = count($quizData);
-            $results = [];
 
             foreach ($quizData as $index => $quiz) {
                 // Ambil kunci jawaban yang benar
@@ -96,13 +91,6 @@ class StepController extends Controller
                 if ($isCorrect) {
                     $score++;
                 }
-                
-                $results[] = [
-                    'question_index' => $index,
-                    'is_correct' => $isCorrect,
-                    'user_answer' => $jawabanDiterima,
-                    'correct_answer' => $kunciJawaban,
-                ];
             }
 
             $scorePercentage = $totalQuestions > 0 ? ($score / $totalQuestions) : 0;
@@ -114,7 +102,6 @@ class StepController extends Controller
                 'total' => $totalQuestions,
                 'passed' => $scorePercentage >= $minPassingScore,
                 'percentage' => round($scorePercentage * 100),
-                'results' => $results,
                 'message' => "Anda mendapatkan skor {$score} dari {$totalQuestions}."
             ]);
 
@@ -123,6 +110,43 @@ class StepController extends Controller
         } catch (\Exception $e) {
             Log::error("Error submitting quiz for step $stepId: " . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat memproses kuis.'], 500);
+        }
+    }
+
+    /**
+     * Menandai keseluruhan Materi telah selesai.
+     * Metode ini dipanggil dari Langkah TERAKHIR materi.
+     * TIDAK MEMERLUKAN LOGIN (hanya mencatat log dan redirect).
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int $stepId ID dari Step terakhir (trigger)
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function completeMateri(Request $request, $stepId)
+    {
+        // Pemeriksaan auth/login DIHAPUS karena situs tidak memerlukan login.
+        
+        try {
+            $step = Step::with('materi')->findOrFail($stepId);
+            $materi = $step->materi;
+            
+            // LOGIKA UTAMA: Melakukan logging atau proses non-user lainnya
+            // Jika Anda perlu melacak penyelesaian secara non-user (misal: via session/cookie),
+            // Anda dapat mengimplementasikannya di sini.
+            
+            Log::info("Materi ID: {$materi->id} ({$materi->title}) telah diselesaikan.");
+            
+            // Redirect ke halaman ringkasan materi atau dashboard
+            // Pastikan rute 'materi.summary' ada di routes/web.php Anda
+           return redirect()
+            ->route('materi.show', ['materiId' => $materi->id]) 
+            ->with('success', "Selamat! Anda telah menyelesaikan materi: **{$materi->title}**.");
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return back()->with('error', 'Langkah atau Materi tidak ditemukan.');
+        } catch (\Exception $e) {
+            Log::error("Error completing materi via step $stepId: " . $e->getMessage());
+            return back()->with('error', 'Gagal menyelesaikan materi. Silakan coba lagi.');
         }
     }
 }

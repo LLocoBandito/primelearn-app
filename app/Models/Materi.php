@@ -42,8 +42,4 @@ class Materi extends Model
      * Relasi ini akan digunakan untuk menyimpan link dokumentasi resmi yang ditambahkan 
      * oleh admin melalui Filament.
      */
-    public function externalLinks(): HasMany
-    {
-        return $this->hasMany(ExternalLink::class);
-    }
 }

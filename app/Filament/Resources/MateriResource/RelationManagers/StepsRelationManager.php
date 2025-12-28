@@ -11,44 +11,90 @@ use Filament\Tables\Table;
 class StepsRelationManager extends RelationManager
 {
     protected static string $relationship = 'steps';
-    protected static ?string $title = 'Langkah-Langkah Pembelajaran';
-    protected static ?string $label = 'Langkah';
-    protected static ?string $pluralLabel = 'Langkah-Langkah';
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('order')
-                    ->required()
-                    ->numeric()
-                    ->default(1)
-                    ->label('Urutan Langkah'),
+                // Judul dan Urutan tetap Wajib (Standar Langkah)
+                Forms\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->label('Judul Langkah'),
+                        Forms\Components\TextInput::make('order')
+                            ->required()
+                            ->numeric()
+                            ->default(1)
+                            ->label('Urutan'),
+                    ]),
 
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255)
-                    ->label('Judul Langkah')
-                    ->columnSpanFull(), 
-
-                // Menggunakan extraAttributes untuk kompatibilitas versi lama
                 Forms\Components\RichEditor::make('content')
                     ->required()
-                    ->label('Konten Detail Langkah')
-                    ->fileAttachmentsDisk('public') 
-                    ->fileAttachmentsDirectory('steps-attachments')
-                    ->toolbarButtons([ 
-                        'attachFiles', 'blockquote', 'bold', 'bulletList', 'codeBlock', 
-                        'h2', 'h3', 'italic', 'link', 'orderedList', 'redo', 
-                        'strike', 'underline', 'undo',
-                    ])
-                    ->extraAttributes([
-                        'style' => 'min-height: 40vh;', // Mengatur tinggi editor
-                    ])
                     ->columnSpanFull(),
 
-                Forms\Components\TextInput::make('image_path')
-                    ->label('Image Path (Opsional)'),
+                Forms\Components\TextInput::make('video_url')
+                    ->url()
+                    ->columnSpanFull()
+                    ->label('URL Video (Opsional)'),
+
+                // --- BAGIAN OPSIONAL (BINTANG MERAH DIHAPUS) ---
+
+                // Foto Opsional
+                Forms\Components\Repeater::make('images')
+                    ->relationship('images')
+                    ->schema([
+                        Forms\Components\FileUpload::make('path')
+                            ->image()
+                            ->directory('steps')
+                            ->disk('public'), // Required dihapus
+                    ])
+                    ->label('Galeri Foto (Opsional)')
+                    ->columnSpanFull()
+                    ->grid(2),
+
+                // Kuis Opsional
+                Forms\Components\Section::make('Kuis Interaktif (Opsional)')
+                    ->collapsible()
+                    ->schema([
+                        Forms\Components\Repeater::make('quiz_data')
+                            ->schema([
+                                Forms\Components\Textarea::make('question')
+                                    ->label('Pertanyaan'), // Required dihapus
+                                
+                                Forms\Components\Repeater::make('options')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('option')
+                                            ->label('Pilihan Jawaban'), // Required dihapus
+                                    ])
+                                    ->live() 
+                                    ->itemLabel(fn (array $state): ?string => $state['option'] ?? null),
+
+                                Forms\Components\Select::make('correct_answer')
+                                    ->label('Jawaban yang Benar')
+                                    ->options(function (Forms\Get $get) {
+                                        $options = $get('options') ?? [];
+                                        return collect($options)
+                                            ->filter(fn ($item) => !empty($item['option']))
+                                            ->pluck('option', 'option')
+                                            ->toArray();
+                                    }), // Required dihapus
+                            ])
+                            ->columnSpanFull(),
+                    ]),
+
+                // Link Eksternal Opsional
+                Forms\Components\Section::make('Sumber Daya Eksternal (Opsional)')
+                    ->schema([
+                        Forms\Components\Repeater::make('external_links')
+                            ->schema([
+                                Forms\Components\TextInput::make('title'), // Required dihapus
+                                Forms\Components\TextInput::make('url')->url(), // Required dihapus
+                                Forms\Components\TextInput::make('description')->label('Deskripsi Singkat'),
+                            ])
+                            ->columns(3),
+                    ]),
             ]);
     }
 
@@ -57,35 +103,15 @@ class StepsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->columns([
-                Tables\Columns\TextColumn::make('order')
-                    ->sortable()
-                    ->label('No.')
-                    ->width(50),
-                    
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable()
-                    ->label('Judul Langkah'),
-                    
-                Tables\Columns\TextColumn::make('content')
-                    ->html() 
-                    ->limit(50)
-                    ->label('Preview Konten'),
-            ])
-            ->filters([
-                //
+                Tables\Columns\TextColumn::make('order')->label('No.')->sortable(),
+                Tables\Columns\TextColumn::make('title')->label('Langkah')->searchable(),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(), 
+                Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
-            ->defaultSort('order', 'asc'); 
+            ]);
     }
 }

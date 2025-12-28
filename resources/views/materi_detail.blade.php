@@ -1,46 +1,70 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $currentMateri->title }} | {{ $segmentName }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* CSS untuk membatasi teks (diperlukan untuk Str::limit) */
         .line-clamp-3 {
             display: -webkit-box;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            -webkit-line-clamp: 3;
         }
     </style>
 </head>
+
 <body class="bg-gray-100 min-h-screen">
 
     @include('components.navbar')
 
     <main class="max-w-7xl mx-auto p-6 md:p-10">
-        <div class="text-sm text-gray-500 mb-4">
-            {{-- KOREKSI: Menggunakan 'segment' sebagai kunci parameter sesuai route/web.php --}}
-            <a href="{{ route('course.show', ['segment' => $segmentName]) }}" class="hover:underline">{{ $segmentName }}</a> 
-            &gt; {{ $fase->name }} 
-            &gt; <span class="text-blue-700 font-semibold">{{ $currentMateri->title }}</span>
-        </div>
-        
+
+        @php
+            use Illuminate\Support\Str;
+            use Illuminate\Support\Facades\Storage;
+        @endphp
+
+        {{-- BREADCRUMB TERPERBAIKI --}}
+        <nav class="flex items-center text-sm text-gray-500 mb-6 space-x-2">
+            <a href="{{ route('course.show', ['segment' => $segmentName]) }}" class="text-blue-600 hover:underline">
+                {{ $segmentName }}
+            </a>
+            <span class="text-gray-400">/</span>
+
+            <a href="{{ route('course.show', ['segment' => $segmentName]) }}" class="text-blue-600 hover:underline">
+                Fase
+            </a>
+            <span class="text-gray-400">/</span>
+
+            <a href="{{ route('course.show', ['segment' => $segmentName]) }}" class="text-blue-600 hover:underline">
+                {{ $fase->title ?? 'Pengenalan Perangkat Lunak' }}
+            </a>
+            <span class="text-gray-400">/</span>
+
+            <span class="text-blue-800 font-bold italic">{{ $currentMateri->title }}</span>
+        </nav>
+
         <h1 class="text-3xl md:text-4xl font-extrabold text-blue-800 mb-2">
             📖 {{ $currentMateri->title }}
         </h1>
         <p class="text-gray-600 mb-8">Detail pembelajaran langkah demi langkah untuk materi ini.</p>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            {{-- KOLOM KIRI: MATERI LAIN --}}
             <aside class="lg:col-span-1 bg-white p-5 rounded-lg shadow-xl lg:sticky lg:top-4 lg:h-fit">
-                <h2 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">Materi Lain di {{ $fase->name }}</h2>
-                
+                <h2 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">Materi Lain di
+                    {{ $fase->title ?? 'Fase Ini' }}</h2>
+
                 <ul class="space-y-2">
                     @foreach ($fase->materis as $materi)
-                        <li class="p-2 rounded transition border-l-4 
-                            @if($materi->id === $currentMateri->id) bg-teal-100 border-teal-600 font-bold @else hover:bg-gray-50 border-transparent @endif">
-                            <a href="{{ route('materi.show', ['materiId' => $materi->id]) }}" 
+                        <li
+                            class="p-2 rounded transition border-l-4 
+                                @if($materi->id === $currentMateri->id) bg-teal-100 border-teal-600 font-bold @else hover:bg-gray-50 border-transparent @endif">
+                            <a href="{{ route('materi.show', ['materiId' => $materi->id]) }}"
                                 class="@if($materi->id === $currentMateri->id) text-teal-800 @else text-gray-800 @endif block">
                                 {{ $materi->title }}
                             </a>
@@ -49,29 +73,36 @@
                 </ul>
             </aside>
 
+            {{-- KOLOM TENGAH/UTAMA: DAFTAR LANGKAH (STEPS) --}}
             <section class="lg:col-span-2 main-content-area">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-6">Langkah-Langkah Pembelajaran:</h2>
 
-                {{-- LOOPING UNTUK MENAMPILKAN STEP-BY-STEP --}}
                 @forelse ($currentMateri->steps as $step)
-                    {{-- SETIAP STEP ADALAH LINK KE HALAMAN STEP DETAIL (LEVEL 4) --}}
-                    <a href="{{ route('step.show', ['stepId' => $step->id]) }}" 
+                    <a href="{{ route('step.show', ['stepId' => $step->id]) }}"
                         class="block mb-8 p-6 bg-white rounded-xl shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition duration-300 transform hover:scale-[1.01]">
-                        
+
                         <h3 class="text-xl font-bold text-blue-700 mb-3">
                             Langkah {{ $step->order }}: {{ $step->title }}
                         </h3>
-                        
-                        @if ($step->image_path)
-                            <div class="h-auto max-h-80 bg-gray-200 rounded-lg mb-4 overflow-hidden">
-                                <img src="{{ asset($step->image_path) }}" alt="{{ $step->title }} Illustration" class="w-full h-full object-cover">
+
+                        @php
+                            $firstImage = $step->images->first(); 
+                        @endphp
+
+                        @if ($firstImage && $firstImage->path && Storage::disk('public')->exists($firstImage->path))
+                            <div class="h-40 md:h-64 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                                <img src="{{ asset('storage/' . $firstImage->path) }}" alt="{{ $step->title }} Ilustrasi"
+                                    class="w-full h-full object-cover">
+                            </div>
+                        @else
+                            <div
+                                class="h-40 md:h-64 bg-gray-100 rounded-lg mb-4 flex items-center justify-center border border-dashed border-gray-400">
+                                <span class="text-gray-500 italic text-sm">Ilustrasi Tidak Tersedia</span>
                             </div>
                         @endif
 
-                        {{-- Menampilkan ringkasan konten --}}
                         <p class="text-gray-700 leading-relaxed line-clamp-3">
-                            {{-- Menggunakan Str::limit untuk memotong konten menjadi 150 karakter --}}
-                            {{ Str::limit($step->content, 150) }}
+                            {{ Str::limit(strip_tags($step->content), 150) }}
                         </p>
                         <p class="mt-4 text-sm font-semibold text-blue-600">Baca Selengkapnya →</p>
                     </a>
@@ -82,51 +113,8 @@
                 @endforelse
             </section>
 
-            <aside class="lg:col-span-1 bg-white p-5 rounded-lg shadow-xl lg:sticky lg:top-4 lg:h-fit">
-                <h2 class="text-xl font-bold text-gray-700 mb-4 border-b pb-2">🔗 Sumber Eksternal</h2>
-                <p class="text-sm text-gray-500 mb-5">
-                    Link ke dokumentasi resmi atau video tutorial terkait.
-                </p>
-
-                {{-- START: LOOPING DATA AKTUAL DARI externalLinks --}}
-                @php
-                    $iconStyles = [
-                        'doc' => ['bg-pink-100', 'text-pink-600', 'DOC'],
-                        'video' => ['bg-red-100', 'text-red-600', 'VID'],
-                        'article' => ['bg-blue-100', 'text-blue-600', 'ART'],
-                        'other' => ['bg-gray-100', 'text-gray-600', 'LINK'],
-                    ];
-                @endphp
-                
-                @forelse ($currentMateri->externalLinks as $link)
-                    @php
-                        // Ambil style berdasarkan tipe link, default ke 'other' jika tipe tidak ada
-                        $type = $link->type ?? 'other';
-                        [$bgColor, $textColor, $iconText] = $iconStyles[$type];
-                    @endphp
-
-                    <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer" class="block">
-                        <div class="flex space-x-3 mb-4 p-3 border-b hover:bg-gray-50 transition rounded-md">
-                            {{-- Ikon/Warna dinamis berdasarkan tipe --}}
-                            <div class="w-12 h-8 {{ $bgColor }} rounded-md flex-shrink-0 flex items-center justify-center text-sm font-bold {{ $textColor }}">
-                                {{ $iconText }}
-                            </div>
-                            <div class="truncate">
-                                <p class="text-sm font-semibold text-gray-700 truncate">{{ $link->title }}</p>
-                                <p class="text-xs text-gray-500 truncate">{{ $link->url }}</p>
-                            </div>
-                        </div>
-                    </a>
-                @empty
-                    <div class="p-3 bg-gray-50 text-gray-500 rounded-md border-dashed border">
-                        <p class="text-sm italic">Belum ada sumber eksternal yang ditambahkan untuk materi ini.</p>
-                    </div>
-                @endforelse
-                {{-- END: LOOPING DATA AKTUAL --}}
-
-            </aside>
-            
         </div>
-        </main>
+    </main>
 </body>
+
 </html>
