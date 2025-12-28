@@ -69,6 +69,30 @@ class CourseController extends Controller
         ]);
     }
 
+    public function showFaseDetail($faseId)
+    {
+    // Ambil data fase beserta relasinya
+    $fase = Fase::with(['segment', 'materis.steps'])
+                ->findOrFail($faseId);
+
+    $segment = $fase->segment;
+
+    // Untuk sidebar atau menu navigasi (sama seperti di halaman lain)
+    $segmentsWithCourses = Segment::with('fases.materis')->get();
+
+    // Materi terbaru untuk sidebar (3 item awal)
+    $sidebarCourses = Materi::orderBy('created_at', 'desc')->take(3)->get();
+
+    return view('fase_detail', [
+        'fase' => $fase,
+        'segment' => $segment,
+        'segmentName' => $segment->name,
+        'segmentsWithCourses' => $segmentsWithCourses,
+        'sidebarCourses' => $sidebarCourses,
+    ]);
+    }
+
+
     /**
      * FUNGSI BARU: Menangani request AJAX untuk Load More Sidebar
      */
