@@ -47,19 +47,27 @@
 
         .materi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Membuat grid responsif */
             gap: 2rem;
             margin-top: 2rem;
         }
 
         .materi-card {
+            display: flex;
+            flex-direction: column; /* Menata konten secara vertikal */
+            justify-content: center; /* Menjaga konten di tengah secara vertikal */
+            align-items: center; /* Menjaga konten di tengah secara horizontal */
             background: var(--card);
             border-radius: 16px;
-            overflow: hidden;
+            padding: 2rem; /* Memberikan jarak antara teks dan border */
             box-shadow: var(--shadow-md);
             transition: all 0.4s ease;
             text-decoration: none;
             color: inherit;
+            min-height: 100px; /* Tinggi minimal card */
+            width: 100%; /* Lebar card menyesuaikan container */
+            max-width: 500px; /* Lebar maksimal card */
+            text-align: center; /* Pastikan teks di dalam card terpusat */
         }
 
         .materi-card:hover {
@@ -68,19 +76,21 @@
         }
 
         .materi-image {
-            width: 100%;
-            height: 200px;
+            width: 150px; /* Sesuaikan ukuran gambar */
+            height: 150px;
             object-fit: cover;
+            border-radius: 8px;
+            margin-right: 1.5rem; /* Memberikan jarak antara gambar dan teks */
         }
 
         .materi-content {
-            padding: 1.5rem;
+            text-align: center; /* Menjaga teks di tengah */
         }
 
         .materi-title {
             font-size: 1.3rem;
             font-weight: 600;
-            margin-bottom: 0.8rem;
+            margin-bottom: 1rem;
             color: var(--primary-dark);
         }
 
@@ -88,6 +98,18 @@
             font-size: 0.95rem;
             color: var(--text-muted);
             line-height: 1.5;
+            max-width: 80%; /* Menjaga deskripsi tidak terlalu lebar */
+            margin: 0 auto;
+        }
+
+        .materi-card a {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .materi-card a:hover {
+            text-decoration: none;
         }
 
         .small-post-list { display: flex; flex-direction: column; gap: 1rem; }
@@ -185,22 +207,15 @@
                     </p>
                 @else
                     <div class="materi-grid">
-                        @foreach($fase->materis as $materi)
-                            <a href="{{ route('materi.show', $materi->id) }}" class="materi-card">
-                                @if($materi->image_path)
-                                    <img src="{{ asset('storage/' . $materi->image_path) }}" alt="{{ $materi->title }}" class="materi-image">
-                                @else
-                                    <div style="height:200px; background:linear-gradient(135deg, #6366f1, #8b5cf6);"></div>
-                                @endif
-                                <div class="materi-content">
-                                    <h3 class="materi-title">{{ $materi->title }}</h3>
-                                    <p class="materi-desc">
-                                        {{ Str::limit($materi->description, 100) }}
-                                    </p>
-                                </div>
-                            </a>
-                        @endforeach
-                    </div>
+    @foreach($fase->materis as $materi)
+        <a href="{{ route('materi.show', $materi->id) }}" class="materi-card">
+            <h3 class="materi-title">{{ $materi->title }}</h3>
+            <p class="materi-desc">
+                {{ Str::limit($materi->description, 100) }}
+            </p>
+        </a>
+    @endforeach
+</div>
                 @endif
             </section>
 

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -21,7 +20,6 @@
             min-height: auto !important;
             height: auto !important;
         }
-
     </style>
 
 </head>
@@ -29,59 +27,17 @@
 <body class="bg-white text-gray-800">
 
 <!-- ================= HEADER ================= -->
- <header class="main-header">
+ <!-- HEADER & NAV (SAMA PERSIS) -->
+    <header class="main-header">
         <div class="site-title">PrimeLearn</div>
         <div class="menu-icon">☰</div>
     </header>
 
-    <nav id="mobile-menu" 
-         class="absolute top-[70px] left-1/2 -translate-x-1/2 dropdown-bg-new shadow-2xl 
-                flex flex-row items-center justify-center z-30 rounded-lg p-2 gap-2
-                slide-hidden transition-all duration-500 ease-in-out" 
-         style="width: fit-content;"> 
-         
-
-        <a href="{{ route('segments.index') }}" 
-           class="
-               {{ request()->routeIs('segments.index') 
-                  ? 'active-nav-dropdown-new' 
-                  : 'dropdown-item-new hover:bg-[#2c4d68] rounded-md' 
-               }}
-           ">
-            HOME
-        </a>
-
-        <a href="{{ route('about') }}" 
-           class="
-               {{ request()->routeIs('about') 
-                  ? 'active-nav-dropdown-new' 
-                  : 'dropdown-item-new hover:bg-[#2c4d68] rounded-md' 
-               }}
-           ">
-            ABOUT US
-        </a>
-
-        <a href="{{ route('faq') }}" 
-           class="
-               {{ request()->routeIs('faq') 
-                  ? 'active-nav-dropdown-new' 
-                  : 'dropdown-item-new hover:bg-[#2c4d68] rounded-md' 
-               }}
-           ">
-            FAQ
-        </a>
+    <nav class="secondary-nav">
+        <a href="{{ route('segments.index') }}" class="nav-item">HOME</a>
+        <a href="{{ route('about') }}" class="nav-item">ABOUT US</a>
+        <a href="{{ route('faq') }}" class="nav-item">FAQ</a>
     </nav>
-
-{{-- <header class="w-full border-b bg-white/80 backdrop-blur sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <h1 class="text-xl font-bold text-blue-900">PrimeLearn</h1>
-        <nav class="space-x-6 hidden md:block">
-            <a href="{{ route('segments.index') }}" class="hover:text-teal-600">Home</a>
-            <a href="{{ route('about') }}" class="font-semibold text-teal-600">About</a>
-            <a href="{{ route('faq') }}" class="hover:text-teal-600">FAQ</a>
-        </nav>
-    </div>
-</header> --}}
 
 <!-- ================= HERO ================= -->
 <section class="relative bg-gradient-to-br from-blue-900 to-teal-600 text-white">
@@ -375,133 +331,6 @@
 <script>
     AOS.init({ duration: 900, easing: 'ease-out-cubic', once: false });
 </script>
-<script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const menuBtn = document.querySelector(".menu-icon");
-            const mobileNav = document.querySelector("#mobile-menu");
-
-            menuBtn.addEventListener("click", () => {
-                // Men-toggle antara slide-hidden (tersembunyi) dan slide-visible (terbuka)
-                mobileNav.classList.toggle("slide-hidden");
-                mobileNav.classList.toggle("slide-visible");
-            });
-
-            // --- LOGIC AJAX LOAD MORE SIDEBAR ---
-
-            const loadMoreBtn = document.querySelector(".read-more-link"); 
-            const smallPostList = document.querySelector(".small-post-list"); 
-            
-            // Variabel untuk melacak halaman yang sudah dimuat. Asumsi materi awal adalah Halaman 1.
-            let currentPage = 1; 
-
-            // Hanya jalankan jika elemen ditemukan
-            if (loadMoreBtn && smallPostList) {
-                // Pastikan tombol terlihat seperti dapat di-klik
-                loadMoreBtn.style.cursor = 'pointer';
-
-                loadMoreBtn.addEventListener("click", function (e) {
-                    e.preventDefault(); // Mencegah navigasi default ke '#'
-                    
-                    // Cek apakah tombol sedang dalam status nonaktif
-                    if (loadMoreBtn.disabled) {
-                        return;
-                    }
-
-                    // 1. Tampilkan status loading
-                    const originalText = loadMoreBtn.textContent;
-                    loadMoreBtn.textContent = 'Memuat...';
-                    loadMoreBtn.classList.add('loading');
-                    
-                    // Naikkan nomor halaman untuk meminta data berikutnya
-                    currentPage++; 
-
-                    // 2. Kirim permintaan Fetch/AJAX
-                    // Menggunakan route name yang sudah kita definisikan: 'ajax.load_more_sidebar'
-                    fetch(`{{ route('ajax.load_more_sidebar') }}?page=${currentPage}`)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            // 3. Masukkan HTML materi baru
-                            smallPostList.insertAdjacentHTML('beforeend', data.html);
-
-                            // Hapus status loading
-                            loadMoreBtn.classList.remove('loading');
-                            
-                            // 4. Periksa apakah masih ada halaman lagi
-                            if (data.hasMore) {
-                                loadMoreBtn.textContent = originalText; // Kembalikan teks asli
-                            } else {
-                                // Nonaktifkan tombol jika semua materi sudah dimuat
-                                loadMoreBtn.textContent = 'Semua Materi Dimuat';
-                                loadMoreBtn.disabled = true; 
-                                loadMoreBtn.style.cursor = 'default';
-                                loadMoreBtn.style.opacity = '0.7'; 
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error memuat data:', error);
-                            loadMoreBtn.textContent = 'Gagal Memuat (Coba lagi)';
-                            loadMoreBtn.classList.remove('loading');
-                        });
-                });
-            }
-            // --- ACCORDION LOGIC ---
-            const toggles = document.querySelectorAll('.accordion-toggle');
-
-            toggles.forEach(toggle => {
-                toggle.addEventListener('click', () => {
-                    const item = toggle.closest('.accordion-item');
-                    const content = item.querySelector('[data-accordion-content]');
-                    const icon = item.querySelector('[data-icon]');
-
-                    // Check if the clicked item is already open
-                    const isOpen = content.classList.contains('open');
-
-                    // Close all other open accordion items (optional for accordion behavior)
-                    document.querySelectorAll('.accordion-content.open').forEach(openContent => {
-                        if (openContent !== content) {
-                            openContent.classList.remove('open');
-                            openContent.closest('.accordion-item').querySelector('[data-icon]').classList.remove('rotated');
-                        }
-                    });
-
-                    // Toggle the clicked accordion item
-                    if (isOpen) {
-                        content.classList.remove('open');
-                        icon.classList.remove('rotated');
-                    } else {
-                        content.classList.add('open');
-                        icon.classList.add('rotated');
-                    }
-                });
-            });
-
-       
-            // --- WHATSAPP POPUP LOGIC (SAFE) ---
-                const popup = document.getElementById("wa-popup");
-                const waButton = document.getElementById("wa-button");
-
-                if (popup && waButton) {
-                    setTimeout(() => {
-                        popup.style.opacity = "1";
-                        popup.style.transform = "translateY(0)";
-                    }, 800);
-
-                    popup.addEventListener("click", () => {
-                        waButton.click();
-                    });
-
-                    setTimeout(() => {
-                        popup.style.opacity = "0";
-                        popup.style.transform = "translateY(20px)";
-                    }, 8000);
-                }
-        });
-    </script>
 
 </body>
 </html>
