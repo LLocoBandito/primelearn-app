@@ -4,32 +4,31 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PeminatanController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SegmentController;
-use App\Http\Controllers\StepController; // <-- Pastikan ini diimpor
+use App\Http\Controllers\StepController;
 use App\Models\Segment;
 
 /*
 |--------------------------------------------------------------------------
-| LANDING PAGE
+| LANDING PAGE & REDIRECTS
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    // Jika form peminatan sudah selesai / di-skip
+    // Jika form peminatan sudah selesai / di-skip, langsung ke segmen
     if (session('form_completed')) {
         return redirect()->route('segments.index');
     }
     return view('home');
 })->name('home');
 
-/*
-|--------------------------------------------------------------------------
-| APPLY & STATIC PAGES
-|--------------------------------------------------------------------------
-*/
-// Rute Home ganda, salah satunya bisa dihapus, tapi jika Anda ingin tetap ada:
 Route::get('/home', function () {
     return view('home');
-})->name('home');
+});
 
+/*
+|--------------------------------------------------------------------------
+| STATIC PAGES
+|--------------------------------------------------------------------------
+*/
 Route::get('/apply', function () {
     return view('apply');
 })->name('apply.form');
@@ -44,14 +43,13 @@ Route::get('/about', function () {
 
 /*
 |--------------------------------------------------------------------------
-| PEMINATAN (SESSION BASED – TANPA DB)
+| PEMINATAN (SESSION BASED)
 |--------------------------------------------------------------------------
 */
 Route::get('/peminatan', [PeminatanController::class, 'index'])->name('peminatan.form');
 Route::post('/peminatan', [PeminatanController::class, 'store'])->name('peminatan.store');
 Route::get('/peminatan/result', [PeminatanController::class, 'showResult'])->name('peminatan.result');
 
-// Skip peminatan
 Route::get('/peminatan/skip', function () {
     session(['form_completed' => true]);
     return redirect()->route('segments.index');
@@ -59,64 +57,44 @@ Route::get('/peminatan/skip', function () {
 
 /*
 |--------------------------------------------------------------------------
-| SEGMENTS & GLOBAL SEARCH
+| SEGMENTS & COURSES
 |--------------------------------------------------------------------------
 */
-Route::get('/segments', [SegmentController::class, 'index'])
-    ->name('segments.index');
+Route::get('/segments', [SegmentController::class, 'index'])->name('segments.index');
+
+Route::get('/course/{segment}', [CourseController::class, 'show'])->name('course.show');
+
+Route::get('/materi/{materiId}', [CourseController::class, 'showMateriDetail'])->name('materi.show');
+
+Route::get('/fase/{id}', [CourseController::class, 'showFaseDetail'])->name('fase.show');
 
 /*
 |--------------------------------------------------------------------------
-| COURSE & MATERI
+| STEP CONTROLLER (Logika Penguncian & Kuis)
 |--------------------------------------------------------------------------
 */
 
-// Halaman course per segment
-Route::get('/course/{segment}', [CourseController::class, 'show'])
-    ->name('course.show');
+// 1. Menampilkan detail langkah
+Route::get('/step/{stepId}', [StepController::class, 'show'])->name('step.show');
 
-// Detail materi (Digunakan untuk link di halaman daftar materi)
-Route::get('/materi/{materiId}', [CourseController::class, 'showMateriDetail'])
-    ->name('materi.show');
+// 2. Memproses kuis
+Route::post('/step/{stepId}/quiz', [StepController::class, 'submitQuiz'])->name('step.submit.quiz');
 
+// 3. Menandai langkah SELESAI (PENTING: Middleware Auth DIHAPUS)
+// Method diarahkan ke 'markAsComplete' sesuai controller yang kita update tadi
+Route::post('/step/{id}/complete', [StepController::class, 'markAsComplete'])->name('step.complete');
+
+// 4. Menandai materi SELESAI sepenuhnya
+Route::post('/step/{stepId}/finish-materi', [StepController::class, 'completeMateri'])->name('materi.complete');
 
 /*
 |--------------------------------------------------------------------------
-| STEP CONTROLLER (Langkah Pembelajaran, Kuis, dan Penyelesaian Materi)
+| AJAX & DEV
 |--------------------------------------------------------------------------
 */
+Route::get('/ajax/load-more-sidebar', [CourseController::class, 'loadMoreSidebar'])->name('ajax.load_more_sidebar');
 
-// 1. Detail step (Menggantikan rute CourseController::showStepContent)
-Route::get('/step/{stepId}', [StepController::class, 'show'])
-    ->name('step.show');
-
-// 2. Endpoint POST untuk memproses pengiriman kuis (interaktif)
-Route::post('/step/{stepId}/quiz', [StepController::class, 'submitQuiz'])
-    ->name('step.submit.quiz'); // Diperbaiki penamaan dari step.submit_quiz ke step.submit.quiz
-
-// 3. Endpoint POST untuk menyelesaikan materi (dipanggil dari langkah terakhir)
-Route::post('/step/{stepId}/complete', [StepController::class, 'completeMateri'])
-    ->name('materi.complete'); 
-
-// Detail Fase (Ditambahkan untuk mendukung hasil pencarian fase)
-Route::get('/fase/{id}', [CourseController::class, 'showFaseDetail'])
-    ->name('fase.show');
-
-
-/*
-|--------------------------------------------------------------------------
-| SEGMENT DETAIL (DEV / OPTIONAL)
-|--------------------------------------------------------------------------
-*/
 Route::get('/segment/{id}', function ($id) {
     $segmentData = Segment::with(['fases.materis'])->findOrFail($id);
     return view('course_detail', compact('segmentData'));
 })->name('segment.show');
-
-/*
-|--------------------------------------------------------------------------
-| AJAX
-|--------------------------------------------------------------------------
-*/
-Route::get('/ajax/load-more-sidebar', [CourseController::class, 'loadMoreSidebar'])
-    ->name('ajax.load_more_sidebar');
