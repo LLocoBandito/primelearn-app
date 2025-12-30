@@ -47,4 +47,8 @@ class User extends Authenticatable
             'interest_completed' => 'boolean', // <-- PERUBAHAN 2: Tentukan tipenya
         ];
     }
+    public function finishedSteps()
+    {
+        return $this->belongsToMany(Step::class, 'step_user', 'user_id', 'langkah_id');
+    }
 }
