@@ -46,18 +46,6 @@ class MateriResource extends Resource
                             ->label('Urutan'),
                     ])->columns(3),
 
-                Section::make('Sumber Daya Luar (External Links)')
-                    ->collapsible()
-                    ->schema([
-                        Repeater::make('external_links')
-                            ->schema([
-                                TextInput::make('title')->required()->label('Judul'),
-                                TextInput::make('url')->url()->required()->label('URL Link'),
-                                TextInput::make('description')->label('Deskripsi Singkat'),
-                            ])
-                            ->columns(3)
-                            ->addActionLabel('Tambah Link Baru'),
-                    ]),
             ]);
     }
 
