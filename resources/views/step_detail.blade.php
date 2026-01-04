@@ -1,5 +1,5 @@
 @php 
-        use Illuminate\Support\Facades\Storage;
+    use Illuminate\Support\Facades\Storage;
     use Illuminate\Support\Str;
 
     // Inisialisasi data relasi
@@ -33,7 +33,6 @@
 
     // Logika Navigasi
     $isQuizRequired = !empty($quizData);
-    $nextRoute = $nextStep ? route('step.show', ['stepId' => $nextStep->id]) : '#';
 @endphp
 
 <!DOCTYPE html>
@@ -59,43 +58,22 @@
     </script>
 
     <style>
-        .prose p {
-            margin-bottom: 1.5em !important;
-        }
-
-        .prose ul {
-            list-style-type: disc;
-        }
-
-        .prose ol {
-            list-style-type: decimal;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        .prose p { margin-bottom: 1.5em !important; }
+        .prose ul { list-style-type: disc; }
+        .prose ol { list-style-type: decimal; }
+        html { scroll-behavior: smooth; }
         #sliderWrapper {
             scroll-snap-type: x mandatory;
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-
-        #sliderWrapper::-webkit-scrollbar {
-            display: none;
-        }
-
-        .slide-item {
-            scroll-snap-align: start;
-        }
-
-        /* Animasi untuk notifikasi auto-complete */
+        #sliderWrapper::-webkit-scrollbar { display: none; }
+        .slide-item { scroll-snap-align: start; }
         #scroll-toast {
             transition: all 0.5s ease-in-out;
             transform: translateY(100px);
             opacity: 0;
         }
-
         #scroll-toast.show {
             transform: translateY(0);
             opacity: 1;
@@ -113,7 +91,7 @@
 
     <main class="max-w-7xl mx-auto p-4 md:p-10 md:flex md:space-x-8">
 
-        {{-- KOLOM KIRI: DAFTAR ISI --}}
+        {{-- KOLOM KIRI: DAFTAR ISI & TAUTAN CEPAT --}}
         <aside class="md:w-1/4 mb-6 md:mb-0 hidden md:block sticky top-10 self-start">
             <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
                 <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2 flex items-center">
@@ -123,20 +101,35 @@
                     <ul id="tocList" class="space-y-2 text-sm text-gray-600"></ul>
                 </nav>
             </div>
+
+            {{-- Sidebar External Links (Opsional) --}}
+            @if(count($externalLinks) > 0)
+                <div class="mt-6 bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        Link Terkait
+                    </h3>
+                    <div class="space-y-3">
+                        @foreach($externalLinks as $link)
+                            <a href="{{ is_array($link) ? $link['url'] : $link }}" target="_blank" rel="noopener" class="block text-sm text-blue-600 hover:text-blue-800 hover:underline truncate">
+                                {{ is_array($link) ? $link['title'] : 'Referensi Luar' }}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </aside>
 
         {{-- KOLOM KANAN: KONTEN UTAMA --}}
         <div class="w-full md:w-3/4">
 
             {{-- BREADCRUMB --}}
-            <nav
-                class="flex items-center text-xs md:text-sm text-gray-500 mb-6 space-x-2 overflow-x-auto whitespace-nowrap pb-2">
+            <nav class="flex items-center text-xs md:text-sm text-gray-500 mb-6 space-x-2 overflow-x-auto whitespace-nowrap pb-2">
                 <a href="#" class="text-blue-600 hover:underline">{{ Str::limit($segmentName, 20) }}</a>
                 <span class="text-gray-400">/</span>
                 <a href="#" class="text-blue-600 hover:underline">{{ Str::limit($displayFase, 20) }}</a>
                 <span class="text-gray-400">/</span>
-                <a href="{{ route('materi.show', $materi->id) }}"
-                    class="text-blue-600 hover:underline">{{ Str::limit($materiTitle, 25) }}</a>
+                <a href="{{ route('materi.show', $materi->id) }}" class="text-blue-600 hover:underline">{{ Str::limit($materiTitle, 25) }}</a>
                 <span class="text-gray-400">/</span>
                 <span class="text-gray-700 font-semibold italic">{{ Str::limit($step->title, 25) }}</span>
             </nav>
@@ -150,38 +143,25 @@
                 {{-- SLIDER GAMBAR --}}
                 @if ($step->images && $step->images->count() > 0)
                     <div class="relative mb-10 group">
-                        <div
-                            class="relative w-full overflow-hidden bg-gray-900 rounded-xl border border-gray-200 shadow-lg">
+                        <div class="relative w-full overflow-hidden bg-gray-900 rounded-xl border border-gray-200 shadow-lg">
                             <div id="sliderWrapper" class="flex transition-transform duration-500 ease-in-out">
                                 @foreach ($step->images as $img)
                                     <div class="w-full flex-shrink-0 flex justify-center items-center bg-black slide-item">
-                                        <img src="{{ asset('storage/' . $img->path) }}"
-                                            class="object-contain max-h-[500px] w-full" alt="Gambar Langkah">
+                                        <img src="{{ asset('storage/' . $img->path) }}" class="object-contain max-h-[500px] w-full" alt="Gambar Langkah">
                                     </div>
                                 @endforeach
                             </div>
 
                             @if($step->images->count() > 1)
-                                <button id="prevBtn"
-                                    class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white p-3 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 19l-7-7 7-7" />
-                                    </svg>
+                                <button id="prevBtn" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white p-3 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
                                 </button>
-                                <button id="nextBtn"
-                                    class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white p-3 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5l7 7-7 7" />
-                                    </svg>
+                                <button id="nextBtn" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white p-3 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                                 </button>
                                 <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
                                     @foreach ($step->images as $index => $img)
-                                        <div class="dot w-2 h-2 rounded-full bg-white/50 transition-all" data-index="{{ $index }}">
-                                        </div>
+                                        <div class="dot w-2 h-2 rounded-full bg-white/50 transition-all" data-index="{{ $index }}"></div>
                                     @endforeach
                                 </div>
                             @endif
@@ -192,10 +172,7 @@
                 {{-- VIDEO YOUTUBE --}}
                 @if ($videoEmbedUrl)
                     <div class="mb-10 overflow-hidden rounded-xl shadow-lg aspect-video bg-black border-4 border-white">
-                        <iframe width="100%" height="100%" src="{{ $videoEmbedUrl }}" frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen class="w-full">
-                        </iframe>
+                        <iframe width="100%" height="100%" src="{{ $videoEmbedUrl }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="w-full"></iframe>
                     </div>
                 @endif
 
@@ -204,10 +181,33 @@
                     {!! $step->content !!}
                 </div>
 
+                {{-- === BAGIAN EXTERNAL LINKS (DI BAWAH KONTEN) === --}}
+                @if(count($externalLinks) > 0)
+                    <div class="mt-12 p-6 bg-blue-50 border-l-4 border-blue-500 rounded-r-xl">
+                        <h3 class="text-lg font-bold text-blue-900 mb-4 flex items-center">
+                            <span class="mr-2">🔗</span> Referensi & Tautan Luar
+                        </h3>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @foreach($externalLinks as $link)
+                                <li>
+                                    <a href="{{ is_array($link) ? $link['url'] : $link }}" target="_blank" rel="noopener noreferrer" 
+                                       class="flex items-center p-3 bg-white border border-blue-100 rounded-lg hover:shadow-md hover:border-blue-400 transition-all group">
+                                        <svg class="w-4 h-4 text-blue-500 mr-3 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
+                                        <span class="text-blue-700 font-medium truncate text-sm md:text-base">
+                                            {{ is_array($link) ? $link['title'] : 'Lihat Dokumen Referensi' }}
+                                        </span>
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 {{-- KUIS --}}
                 @if ($isQuizRequired)
-                    <div class="mt-16 p-6 md:p-8 bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl shadow-inner"
-                        id="quiz-section">
+                    <div class="mt-16 p-6 md:p-8 bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl shadow-inner" id="quiz-section">
                         <h2 class="text-2xl font-bold text-yellow-900 mb-6 flex items-center">
                             <span class="mr-3 p-2 bg-yellow-200 rounded-lg">❓</span> Uji Pemahaman Anda
                         </h2>
@@ -219,20 +219,16 @@
                                     <p class="text-lg font-medium text-gray-800 mb-5">{{ $quiz['question'] }}</p>
                                     <div class="grid gap-3">
                                         @foreach ($quiz['options'] as $option)
-                                            <label
-                                                class="flex items-center p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all group">
-                                                <input type="radio" name="answers[{{ $index }}]" value="{{ $option['option'] }}"
-                                                    class="w-5 h-5 text-blue-600">
-                                                <span
-                                                    class="ml-4 text-gray-700 group-hover:text-blue-900 font-medium">{{ $option['option'] }}</span>
+                                            <label class="flex items-center p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all group">
+                                                <input type="radio" name="answers[{{ $index }}]" value="{{ $option['option'] }}" class="w-5 h-5 text-blue-600">
+                                                <span class="ml-4 text-gray-700 group-hover:text-blue-900 font-medium">{{ $option['option'] }}</span>
                                             </label>
                                         @endforeach
                                     </div>
                                 </div>
                             @endforeach
                             <div class="flex flex-col items-center">
-                                <button type="submit" id="submitQuizBtn"
-                                    class="w-full md:w-64 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-xl transition-all transform hover:-translate-y-1">
+                                <button type="submit" id="submitQuizBtn" class="w-full md:w-64 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-xl transition-all transform hover:-translate-y-1">
                                     Periksa Jawaban
                                 </button>
                                 <div id="quiz-result" class="mt-6 w-full text-center p-4 rounded-xl font-bold hidden"></div>
@@ -243,11 +239,9 @@
             </article>
 
             {{-- NAVIGASI STEPS --}}
-            <div
-                class="flex flex-col md:flex-row justify-between items-center mt-12 p-6 bg-white rounded-2xl shadow-lg border border-gray-100 gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-center mt-12 p-6 bg-white rounded-2xl shadow-lg border border-gray-100 gap-4">
                 @if ($prevStep)
-                    <a href="{{ route('step.show', $prevStep->id) }}"
-                        class="flex items-center px-6 py-3 text-blue-600 font-bold hover:bg-blue-50 rounded-xl transition">
+                    <a href="{{ route('step.show', $prevStep->id) }}" class="flex items-center px-6 py-3 text-blue-600 font-bold hover:bg-blue-50 rounded-xl transition">
                         <span class="mr-2 text-xl">←</span> {{ Str::limit($prevStep->title, 15) }}
                     </a>
                 @else
@@ -255,30 +249,23 @@
                 @endif
 
                 @if ($nextStep)
-                    {{-- JIKA ADA KUIS: Link biasa tapi diproteksi JS --}}
                     @if($isQuizRequired)
-                        <a href="#" id="nextStepBtn" data-next-id="{{ $nextStep->id }}"
-                            class="w-full md:w-auto text-center bg-green-500 text-white font-bold py-4 px-12 rounded-xl shadow-lg transition opacity-50 cursor-not-allowed">
+                        <a href="#" id="nextStepBtn" data-next-id="{{ $nextStep->id }}" class="w-full md:w-auto text-center bg-green-500 text-white font-bold py-4 px-12 rounded-xl shadow-lg transition opacity-50 cursor-not-allowed">
                             Lanjut →
                         </a>
                     @else
-                        {{-- JIKA TIDAK ADA KUIS: Langsung Form POST agar session tercatat --}}
                         <form action="{{ route('step.complete', $step->id) }}" method="POST" class="w-full md:w-auto">
                             @csrf
                             <input type="hidden" name="next_step_id" value="{{ $nextStep->id }}">
-                            <button type="submit"
-                                class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-12 rounded-xl shadow-lg transition transform hover:scale-105">
+                            <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-12 rounded-xl shadow-lg transition transform hover:scale-105">
                                 Lanjut →
                             </button>
                         </form>
                     @endif
                 @else
-                    {{-- LANGKAH TERAKHIR --}}
-                    <form action="{{ route('materi.complete', ['stepId' => $step->id]) }}" method="POST"
-                        class="w-full md:w-auto">
+                    <form action="{{ route('materi.complete', ['stepId' => $step->id]) }}" method="POST" class="w-full md:w-auto">
                         @csrf
-                        <button type="submit"
-                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-12 rounded-xl shadow-lg transition transform hover:scale-105">
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-12 rounded-xl shadow-lg transition transform hover:scale-105">
                             Selesai 🎉
                         </button>
                     </form>
@@ -289,19 +276,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- LOGIKA AUTO-COMPLETE ON SCROLL (HANYA JIKA TIDAK ADA KUIS) ---
+            // --- LOGIKA AUTO-COMPLETE ON SCROLL ---
             @if(!$isQuizRequired)
                 let finished = false;
                 window.addEventListener('scroll', () => {
-                    if (!finished && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                    if (!finished && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
                         finished = true;
-
-                        // Munculkan toast notifikasi
                         const toast = document.getElementById('scroll-toast');
                         toast.classList.add('show');
                         setTimeout(() => toast.classList.remove('show'), 3000);
 
-                        // Kirim background request ke server untuk simpan session
                         fetch("{{ route('step.complete', $step->id) }}", {
                             method: "POST",
                             headers: {
@@ -309,7 +293,7 @@
                                 "Accept": "application/json",
                                 "Content-Type": "application/json"
                             }
-                        }).then(response => console.log("Progress saved via scroll."));
+                        }).then(response => console.log("Progress saved."));
                     }
                 });
             @endif
@@ -336,7 +320,6 @@
             if (nextBtn) nextBtn.addEventListener('click', () => { currentIndex = (currentIndex + 1) % totalSlides; updateSlider(); });
             if (prevBtn) prevBtn.addEventListener('click', () => { currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; updateSlider(); });
             if (totalSlides > 0) updateSlider();
-
 
             // --- LOGIKA TOC ---
             const contentContainer = document.querySelector('.prose');
@@ -386,29 +369,28 @@
                         },
                         body: JSON.stringify({ answers })
                     })
-                        .then(res => res.json())
-                        .then(data => {
-                            resultDiv.classList.remove('hidden');
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = "Periksa Jawaban";
-                            if (data.success && data.passed) {
-                                resultDiv.className = 'mt-6 text-center p-4 rounded-xl bg-green-100 text-green-800 border-2 border-green-300';
-                                resultDiv.innerHTML = `🌟 Lulus! Skor: ${data.percentage}%`;
-                                const nextBtnAction = document.getElementById('nextStepBtn');
-                                if (nextBtnAction) {
-                                    nextBtnAction.classList.remove('opacity-50', 'cursor-not-allowed');
-                                    nextBtnAction.classList.add('hover:scale-105', 'bg-green-600');
-                                    nextBtnAction.setAttribute('href', `/step/${nextBtnAction.dataset.nextId}`);
-                                }
-                            } else {
-                                resultDiv.className = 'mt-6 text-center p-4 rounded-xl bg-red-100 text-red-800 border-2 border-red-300';
-                                resultDiv.innerHTML = `❌ Gagal. Skor: ${data.percentage}%. Coba lagi.`;
+                    .then(res => res.json())
+                    .then(data => {
+                        resultDiv.classList.remove('hidden');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = "Periksa Jawaban";
+                        if (data.success && data.passed) {
+                            resultDiv.className = 'mt-6 text-center p-4 rounded-xl bg-green-100 text-green-800 border-2 border-green-300';
+                            resultDiv.innerHTML = `🌟 Lulus! Skor: ${data.percentage}%`;
+                            const nextBtnAction = document.getElementById('nextStepBtn');
+                            if (nextBtnAction) {
+                                nextBtnAction.classList.remove('opacity-50', 'cursor-not-allowed');
+                                nextBtnAction.classList.add('hover:scale-105', 'bg-green-600');
+                                nextBtnAction.setAttribute('href', `/step/${nextBtnAction.dataset.nextId}`);
                             }
-                        });
+                        } else {
+                            resultDiv.className = 'mt-6 text-center p-4 rounded-xl bg-red-100 text-red-800 border-2 border-red-300';
+                            resultDiv.innerHTML = `❌ Gagal. Skor: ${data.percentage}%. Coba lagi.`;
+                        }
+                    });
                 });
             }
         });
     </script>
 </body>
-
 </html>
