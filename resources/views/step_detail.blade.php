@@ -1,20 +1,57 @@
 @php 
-    use Illuminate\Support\Facades\Storage;
+     use Illuminate\Support\Facades\Storage;
     use Illuminate\Support\Str;
 
-    $materi = $step->materi;
-    $segment = $materi->fase->segment; 
+@endphp
 
-    $segmentsUrl = route('segments.index'); 
-    $segmentDetailUrl = route('segment.show', $segment->id);
-    $materiUrl = route('materi.show', $materi->id);
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Langkah {{ $step->order }}: {{ $step->title }} | PrimeLearn</title>
+    {{-- Asumsi Anda menggunakan asset() untuk memuat CSS Tailwind Anda --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Konfigurasi Tailwind CSS untuk mengaktifkan typography
+        tailwind.config = {
+            theme: {
+                extend: {},
+            },
+            // Tambahkan plugin typography jika Anda menggunakannya (memerlukan instalasi jika tidak via CDN)
+            // plugins: [
+            //     require('@tailwindcss/typography'), 
+            // ],
+        }
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen">
 
+    {{-- Anda perlu memastikan komponen ini ada atau ganti dengan HTML navbar statis Anda --}}
+    {{-- @include('components.navbar') --}} 
+
+@php  
+    // Tentukan apakah tombol next harus dinonaktifkan (karena ada kuis)
+    $quizData = $quizData ?? [];
+    $externalLinks = $externalLinks ?? [];
+    $isQuizRequired = !empty($quizData);
+
+
+    // Ambil data untuk breadcrumb
     $segmentName = $segment->name ?? 'Course';
+
+    $faseTitleRaw = $fase->title ?? 'Fase';
+    $displayFase = Str::contains(strtolower($faseTitleRaw), 'fase')
+        ? $faseTitleRaw
+        : 'Fase ' . $faseTitleRaw;
+
     $materiTitle = $materi->title ?? 'Materi';
 
+    // Ambil data external links & kuis
     $externalLinks = $step->external_links ?? ($step->materi->externalLinks ?? []);
     $quizData = $step->quiz_data ?? [];
 
+    // === LOGIKA TRANSFORMASI VIDEO YOUTUBE ===
     $videoEmbedUrl = $step->video_url;
     if ($videoEmbedUrl) {
         if (Str::contains($videoEmbedUrl, 'youtube.com/watch?v=')) {
@@ -24,178 +61,293 @@
         }
     }
 
+    // Logika Navigasi
     $isQuizRequired = !empty($quizData);
+    $nextRoute = $nextStep ? route('step.show', ['stepId' => $nextStep->id]) : '#';
 @endphp
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Step {{ $step->order }}: {{ $step->title }} | {{ $segmentName }}</title>
+    <title>Langkah {{ $step->order }}: {{ $step->title }} | {{ $segmentName }}</title>
+
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
     <script>
         tailwind.config = {
-            theme: { extend: { colors: { brand: '#1e3a8a' } } },
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#1e3a8a',
+                    }
+                },
+            },
         }
     </script>
+
     <style>
-        .prose p { margin-bottom: 1.5em !important; }
-        html { scroll-behavior: smooth; }
-        #sliderWrapper { scroll-snap-type: x mandatory; -ms-overflow-style: none; scrollbar-width: none; }
-        #sliderWrapper::-webkit-scrollbar { display: none; }
-        .slide-item { scroll-snap-align: start; }
-        #scroll-toast { transition: all 0.5s ease; transform: translateY(100px); opacity: 0; }
-        #scroll-toast.show { transform: translateY(0); opacity: 1; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .prose p {
+            margin-bottom: 1.5em !important;
+        }
+
+        .prose ul {
+            list-style-type: disc;
+        }
+
+        .prose ol {
+            list-style-type: decimal;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        #sliderWrapper {
+            scroll-snap-type: x mandatory;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        #sliderWrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .slide-item {
+            scroll-snap-align: start;
+        }
+
+        /* Animasi untuk notifikasi auto-complete */
+        #scroll-toast {
+            transition: all 0.5s ease-in-out;
+            transform: translateY(100px);
+            opacity: 0;
+        }
+
+        #scroll-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
     </style>
 </head>
 
 <body class="bg-gray-100 min-h-screen font-sans antialiased text-gray-900">
 
-    <div id="scroll-toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-full shadow-2xl flex items-center space-x-3">
+    {{-- Notifikasi Kecil saat Auto-Complete (Scroll) --}}
+    <div id="scroll-toast"
+        class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-full shadow-2xl flex items-center space-x-3">
         <span>✅ Progress Disimpan</span>
     </div>
 
     <main class="max-w-7xl mx-auto p-4 md:p-10 md:flex md:space-x-8">
 
-        {{-- SIDEBAR KIRI (Daftar Isi & Referensi) --}}
-        <aside class="md:w-1/4 mb-6 md:mb-0 hidden md:block sticky top-10 self-start space-y-6">
-            
-            {{-- DAFTAR ISI --}}
+        {{-- KOLOM KIRI: DAFTAR ISI --}}
+        <aside class="md:w-1/4 mb-6 md:mb-0 hidden md:block sticky top-10 self-start">
             <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
                 <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2 flex items-center">
                     <span class="mr-2">📖</span> Daftar Isi
                 </h3>
-                <nav><ul id="tocList" class="space-y-2 text-sm text-gray-600"></ul></nav>
+                <nav>
+                    <ul id="tocList" class="space-y-2 text-sm text-gray-600"></ul>
+                </nav>
             </div>
 
-            {{-- REFERENSI (Dipindah ke sini) --}}
-            @if(count($externalLinks) > 0)
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                    <h3 class="text-sm font-bold text-blue-900 mb-4 border-b pb-2 flex items-center">
-                        <span class="mr-2">🔗</span> Referensi Luar
+            {{-- Bagian External Links --}}
+            @if (!empty($externalLinks))
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mt-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
+                        Sumber Daya Eksternal 🔗
                     </h3>
-                    <div class="space-y-3">
-                        @foreach($externalLinks as $link)
-                            <a href="{{ is_array($link) ? $link['url'] : $link }}" target="_blank" 
-                               class="block p-3 bg-blue-50 border border-blue-100 rounded-lg hover:bg-blue-100 transition-all text-xs">
-                                <span class="text-blue-700 font-medium line-clamp-2">
-                                    {{ is_array($link) ? $link['title'] : 'Lihat Referensi' }}
-                                </span>
-                            </a>
+                    <ul class="space-y-2 text-sm">
+                        @foreach ($externalLinks as $link)
+                            <li>
+                                <a href="{{ $link['url'] }}" target="_blank" rel="noopener noreferrer" 
+                                class="text-blue-500 hover:text-blue-700 block transition-colors leading-tight">
+                                    {{ $link['title'] }}
+                                </a>
+                                @if (isset($link['description']))
+                                   {{ Str::limit($link['description'], 50) }}
+                                @endif
+                            </li>
                         @endforeach
-                    </div>
+                    </ul>
                 </div>
             @endif
+
         </aside>
 
-        {{-- KONTEN UTAMA --}}
+        {{-- KOLOM KANAN: KONTEN UTAMA --}}
         <div class="w-full md:w-3/4">
 
             {{-- BREADCRUMB --}}
+            {{-- BREADCRUMB TERBARU --}}
             <nav class="flex items-center text-xs md:text-sm text-gray-500 mb-6 space-x-2 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar">
                 <div class="flex items-center">
-                    <a href="{{ $segmentsUrl }}" class="hover:text-blue-600 transition-colors flex items-center">
-                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
-                        Segments
+                    <a href="/" class="hover:text-blue-600 transition-colors flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                        </svg>
+                        Home
                     </a>
                 </div>
+
                 <div class="flex items-center">
-                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
-                    <a href="{{ $segmentDetailUrl }}" class="ml-1 hover:text-blue-600">{{ Str::limit($segmentName, 20) }}</a>
+                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <a href="{{ route('materi.show', $step->materi->id) }}" class="ml-1 hover:text-blue-600 transition-colors">{{ Str::limit($materiTitle, 20) }}</a>
                 </div>
+
                 <div class="flex items-center">
-                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
-                    <a href="{{ $materiUrl }}" class="ml-1 hover:text-blue-600">{{ Str::limit($materiTitle, 20) }}</a>
-                </div>
-                <div class="flex items-center">
-                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
-                    <span class="ml-1 text-gray-700 font-bold italic truncate">Step {{ $step->order }}</span>
+                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="ml-1 text-gray-800 font-bold italic truncate">{{ Str::limit($step->title, 20) }}</span>
                 </div>
             </nav>
 
-            <article class="bg-white p-6 md:p-10 rounded-2xl shadow-xl border border-gray-100">
-                <h1 class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-4">{{ $step->title }}</h1>
+            <article class="bg-white p-6 md:p-10 rounded-2xl shadow-xl border border-gray-100" id="main-article">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-4 leading-tight">
+                    {{ $step->title }}
+                </h1>
                 <div class="w-20 h-1 bg-blue-600 rounded-full mb-8"></div>
 
-                {{-- SLIDER --}}
+                {{-- SLIDER GAMBAR --}}
                 @if ($step->images && $step->images->count() > 0)
-                    <div class="relative mb-10 group overflow-hidden rounded-xl shadow-lg bg-gray-900">
-                        <div id="sliderWrapper" class="flex transition-transform duration-500">
-                            @foreach ($step->images as $img)
-                                <div class="w-full flex-shrink-0 flex justify-center items-center slide-item">
-                                    <img src="{{ asset('storage/' . $img->path) }}" class="object-contain max-h-[500px] w-full" alt="Slide">
+                    <div class="relative mb-10 group">
+                        <div
+                            class="relative w-full overflow-hidden bg-gray-900 rounded-xl border border-gray-200 shadow-lg">
+                            <div id="sliderWrapper" class="flex transition-transform duration-500 ease-in-out">
+                                @foreach ($step->images as $img)
+                                    <div class="w-full flex-shrink-0 flex justify-center items-center bg-black slide-item">
+                                        <img src="{{ asset('storage/' . $img->path) }}"
+                                            class="object-contain max-h-[500px] w-full" alt="Gambar Langkah">
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            @if($step->images->count() > 1)
+                                <button id="prevBtn"
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white p-3 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+                                <button id="nextBtn"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white p-3 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                                    @foreach ($step->images as $index => $img)
+                                        <div class="dot w-2 h-2 rounded-full bg-white/50 transition-all" data-index="{{ $index }}">
+                                        </div>
+                                    @endforeach
                                 </div>
-                            @endforeach
+                            @endif
                         </div>
-                        @if($step->images->count() > 1)
-                            <button id="prevBtn" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all">←</button>
-                            <button id="nextBtn" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all">→</button>
-                        @endif
                     </div>
                 @endif
 
-                {{-- VIDEO --}}
+                {{-- VIDEO YOUTUBE --}}
                 @if ($videoEmbedUrl)
-                    <div class="mb-10 aspect-video rounded-xl overflow-hidden shadow-lg border-4 border-white">
-                        <iframe width="100%" height="100%" src="{{ $videoEmbedUrl }}" frameborder="0" allowfullscreen></iframe>
+                    <div class="mb-10 overflow-hidden rounded-xl shadow-lg aspect-video bg-black border-4 border-white">
+                        <iframe width="100%" height="100%" src="{{ $videoEmbedUrl }}" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen class="w-full">
+                        </iframe>
                     </div>
                 @endif
 
-                {{-- CONTENT --}}
+                {{-- KONTEN RICH EDITOR --}}
                 <div class="prose prose-blue prose-lg max-w-none text-gray-800">
                     {!! $step->content !!}
                 </div>
 
                 {{-- KUIS --}}
                 @if ($isQuizRequired)
-                    <div class="mt-16 p-6 md:p-8 bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl" id="quiz-section">
-                        <h2 class="text-2xl font-bold text-yellow-900 mb-6">❓ Uji Pemahaman</h2>
+                    <div class="mt-16 p-6 md:p-8 bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl shadow-inner"
+                        id="quiz-section">
+                        <h2 class="text-2xl font-bold text-yellow-900 mb-6 flex items-center">
+                            <span class="mr-3 p-2 bg-yellow-200 rounded-lg">❓</span> Uji Pemahaman Anda
+                        </h2>
                         <form id="quiz-form" data-step-id="{{ $step->id }}">
                             @csrf
-                            @foreach ($quizData as $idx => $quiz)
-                                <div class="mb-8 p-5 bg-white rounded-xl shadow-sm">
-                                    <p class="font-medium text-gray-800 mb-4">{{ $quiz['question'] }}</p>
-                                    <div class="grid gap-2">
-                                        @foreach ($quiz['options'] as $opt)
-                                            <label class="flex items-center p-3 rounded-lg border border-gray-100 cursor-pointer hover:bg-blue-50 transition-all">
-                                                <input type="radio" name="answers[{{ $idx }}]" value="{{ $opt['option'] }}" class="w-4 h-4 text-blue-600">
-                                                <span class="ml-3 text-gray-700">{{ $opt['option'] }}</span>
+                            @foreach ($quizData as $index => $quiz)
+                                <div class="mb-8 p-5 bg-white rounded-xl shadow-sm border border-yellow-100">
+                                    <p class="text-sm font-bold text-orange-600 uppercase mb-2">Pertanyaan {{ $index + 1 }}</p>
+                                    <p class="text-lg font-medium text-gray-800 mb-5">{{ $quiz['question'] }}</p>
+                                    <div class="grid gap-3">
+                                        @foreach ($quiz['options'] as $option)
+                                            <label
+                                                class="flex items-center p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all group">
+                                                <input type="radio" name="answers[{{ $index }}]" value="{{ $option['option'] }}"
+                                                    class="w-5 h-5 text-blue-600">
+                                                <span
+                                                    class="ml-4 text-gray-700 group-hover:text-blue-900 font-medium">{{ $option['option'] }}</span>
                                             </label>
                                         @endforeach
                                     </div>
                                 </div>
                             @endforeach
-                            <button type="submit" id="submitQuizBtn" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg">Periksa Jawaban</button>
-                            <div id="quiz-result" class="mt-6 text-center p-4 rounded-xl font-bold hidden"></div>
+                            <div class="flex flex-col items-center">
+                                <button type="submit" id="submitQuizBtn"
+                                    class="w-full md:w-64 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-xl transition-all transform hover:-translate-y-1">
+                                    Periksa Jawaban
+                                </button>
+                                <div id="quiz-result" class="mt-6 w-full text-center p-4 rounded-xl font-bold hidden"></div>
+                            </div>
                         </form>
                     </div>
                 @endif
             </article>
 
-            {{-- NAVIGASI BAWAH --}}
-            <div class="flex flex-col md:flex-row justify-between items-center mt-12 p-6 bg-white rounded-2xl shadow-lg border border-gray-100 gap-4">
+            {{-- NAVIGASI STEPS --}}
+            <div
+                class="flex flex-col md:flex-row justify-between items-center mt-12 p-6 bg-white rounded-2xl shadow-lg border border-gray-100 gap-4">
                 @if ($prevStep)
-                    <a href="{{ route('step.show', $prevStep->id) }}" class="text-blue-600 font-bold px-6 py-3">← Kembali</a>
+                    <a href="{{ route('step.show', $prevStep->id) }}"
+                        class="flex items-center px-6 py-3 text-blue-600 font-bold hover:bg-blue-50 rounded-xl transition">
+                        <span class="mr-2 text-xl">←</span> {{ Str::limit($prevStep->title, 15) }}
+                    </a>
                 @else
-                    <span class="text-gray-400 italic">Awal Materi</span>
+                    <span class="text-gray-400 italic text-sm">Awal Materi</span>
                 @endif
 
                 @if ($nextStep)
+                    {{-- JIKA ADA KUIS: Link biasa tapi diproteksi JS --}}
                     @if($isQuizRequired)
-                        <a href="#" id="nextStepBtn" data-next-id="{{ $nextStep->id }}" class="bg-green-500 text-white font-bold py-4 px-12 rounded-xl opacity-50 cursor-not-allowed">Lanjut →</a>
+                        <a href="#" id="nextStepBtn" data-next-id="{{ $nextStep->id }}"
+                            class="w-full md:w-auto text-center bg-green-500 text-white font-bold py-4 px-12 rounded-xl shadow-lg transition opacity-50 cursor-not-allowed">
+                            Lanjut →
+                        </a>
                     @else
-                        <form action="{{ route('step.complete', $step->id) }}" method="POST">
+                        {{-- JIKA TIDAK ADA KUIS: Langsung Form POST agar session tercatat --}}
+                        <form action="{{ route('step.complete', $step->id) }}" method="POST" class="w-full md:w-auto">
                             @csrf
                             <input type="hidden" name="next_step_id" value="{{ $nextStep->id }}">
-                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-12 rounded-xl transition transform hover:scale-105">Lanjut →</button>
+                            <button type="submit"
+                                class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-12 rounded-xl shadow-lg transition transform hover:scale-105">
+                                Lanjut →
+                            </button>
                         </form>
                     @endif
                 @else
-                    <form action="{{ route('materi.complete', ['stepId' => $step->id]) }}" method="POST">
+                    {{-- LANGKAH TERAKHIR --}}
+                    <form action="{{ route('materi.complete', ['stepId' => $step->id]) }}" method="POST"
+                        class="w-full md:w-auto">
                         @csrf
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-12 rounded-xl">Selesai 🎉</button>
+                        <button type="submit"
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-12 rounded-xl shadow-lg transition transform hover:scale-105">
+                            Selesai 🎉
+                        </button>
                     </form>
                 @endif
             </div>
@@ -204,26 +356,126 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // TOC Logic
-            const headings = document.querySelector('.prose').querySelectorAll('h2, h3');
-            const tocList = document.getElementById('tocList');
-            headings.forEach((h, i) => {
-                h.id = `section-${i}`;
-                const li = document.createElement('li');
-                li.innerHTML = `<a href="#section-${i}" class="hover:text-blue-600 block py-1">${h.innerText}</a>`;
-                if(h.tagName === 'H3') li.classList.add('ml-4', 'text-xs');
-                tocList.appendChild(li);
-            });
+            // --- LOGIKA AUTO-COMPLETE ON SCROLL (HANYA JIKA TIDAK ADA KUIS) ---
+            @if(!$isQuizRequired)
+                let finished = false;
+                window.addEventListener('scroll', () => {
+                    if (!finished && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                        finished = true;
 
-            // Slider
+                        // Munculkan toast notifikasi
+                        const toast = document.getElementById('scroll-toast');
+                        toast.classList.add('show');
+                        setTimeout(() => toast.classList.remove('show'), 3000);
+
+                        // Kirim background request ke server untuk simpan session
+                        fetch("{{ route('step.complete', $step->id) }}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                "Accept": "application/json",
+                                "Content-Type": "application/json"
+                            }
+                        }).then(response => console.log("Progress saved via scroll."));
+                    }
+                });
+            @endif
+
+            // --- LOGIKA SLIDER GAMBAR ---
             const wrapper = document.getElementById('sliderWrapper');
-            const totalSlides = {{ $step->images ? $step->images->count() : 0 }};
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const dots = document.querySelectorAll('.dot');
             let currentIndex = 0;
-            if (wrapper && totalSlides > 1) {
-                document.getElementById('nextBtn').onclick = () => { currentIndex = (currentIndex + 1) % totalSlides; wrapper.style.transform = `translateX(-${currentIndex * 100}%)`; };
-                document.getElementById('prevBtn').onclick = () => { currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; wrapper.style.transform = `translateX(-${currentIndex * 100}%)`; };
+            const totalSlides = {{ $step->images ? $step->images->count() : 0 }};
+
+            function updateSlider() {
+                if (!wrapper) return;
+                wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('bg-white', i === currentIndex);
+                    dot.classList.toggle('w-4', i === currentIndex);
+                    dot.classList.toggle('bg-white/50', i !== currentIndex);
+                    dot.classList.toggle('w-2', i !== currentIndex);
+                });
+            }
+
+            if (nextBtn) nextBtn.addEventListener('click', () => { currentIndex = (currentIndex + 1) % totalSlides; updateSlider(); });
+            if (prevBtn) prevBtn.addEventListener('click', () => { currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; updateSlider(); });
+            if (totalSlides > 0) updateSlider();
+
+
+            // --- LOGIKA TOC ---
+            const contentContainer = document.querySelector('.prose');
+            const tocList = document.getElementById('tocList');
+            if (contentContainer && tocList) {
+                const headings = contentContainer.querySelectorAll('h2, h3');
+                headings.forEach((heading) => {
+                    let id = heading.textContent.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+                    heading.id = id;
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a href="#${id}" class="hover:text-blue-600 block truncate py-1 border-l-2 border-transparent hover:border-blue-400 pl-2 transition-all">${heading.textContent}</a>`;
+                    if (heading.tagName === 'H3') li.classList.add('ml-4', 'text-xs');
+                    tocList.appendChild(li);
+                });
+            }
+
+            // --- LOGIKA KUIS AJAX ---
+            const quizForm = document.getElementById('quiz-form');
+            if (quizForm) {
+                quizForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const resultDiv = document.getElementById('quiz-result');
+                    const submitBtn = document.getElementById('submitQuizBtn');
+                    const formData = new FormData(this);
+                    const answers = {};
+                    formData.forEach((value, key) => {
+                        if (key.includes('answers')) {
+                            const match = key.match(/\[(\d+)\]/);
+                            if (match) answers[match[1]] = value;
+                        }
+                    });
+
+                    if (Object.keys(answers).length < {{ count($quizData) }}) {
+                        alert('Harap jawab semua pertanyaan!');
+                        return;
+                    }
+
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = "🌀 Mengecek...";
+
+                    fetch(`/step/${this.dataset.stepId}/quiz`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ answers })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            resultDiv.classList.remove('hidden');
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = "Periksa Jawaban";
+                            if (data.success && data.passed) {
+                                resultDiv.className = 'mt-6 text-center p-4 rounded-xl bg-green-100 text-green-800 border-2 border-green-300';
+                                resultDiv.innerHTML = `🌟 Lulus! Skor: ${data.percentage}%`;
+                                const nextBtnAction = document.getElementById('nextStepBtn');
+                                if (nextBtnAction) {
+                                    nextBtnAction.classList.remove('opacity-50', 'cursor-not-allowed');
+                                    nextBtnAction.classList.add('hover:scale-105', 'bg-green-600');
+                                    nextBtnAction.setAttribute('href', `/step/${nextBtnAction.dataset.nextId}`);
+                                }
+                            } else {
+                                resultDiv.className = 'mt-6 text-center p-4 rounded-xl bg-red-100 text-red-800 border-2 border-red-300';
+                                resultDiv.innerHTML = `❌ Gagal. Skor: ${data.percentage}%. Coba lagi.`;
+                            }
+                        });
+                });
             }
         });
     </script>
 </body>
+
 </html>

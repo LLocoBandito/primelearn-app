@@ -20,71 +20,6 @@
             height: auto !important;
         }
 
-        /* ================= STYLE NAVBAR POPUP (REVISI) ================= */
-        :root {
-            --header-bg: #0a1d37; 
-            --nav-bg: #32628d;
-        }
-
-        .main-header {
-            background-color: var(--header-bg);
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: sticky;
-            top: 0;
-            width: 100%;
-            z-index: 1001;
-        }
-
-        .site-title {
-            color: white;
-            font-size: 1.8rem;
-            font-weight: 800;
-        }
-
-        .menu-icon {
-            position: absolute;
-            right: 30px;
-            color: white;
-            font-size: 1.8rem;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .secondary-nav {
-            display: none; 
-            background-color: var(--nav-bg);
-            padding: 18px 0;
-            position: fixed; 
-            top: 70px;
-            left: 0;
-            right: 0;
-            margin-left: auto;
-            margin-right: auto;
-            width: 90%;
-            max-width: 550px;
-            justify-content: center;
-            gap: 40px;
-            z-index: 9999;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            border-radius: 0 0 15px 15px;
-        }
-
-        .secondary-nav.show {
-            display: flex;
-            animation: slideInCenter 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-        }
-
-        .nav-item {
-            color: white;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-        }
-
         @keyframes slideInCenter {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -99,10 +34,11 @@
     <div class="menu-icon" id="menuBtn">☰</div>
 </header>
 
-<nav class="secondary-nav" id="navMenu">
-    <a href="{{ route('segments.index') }}" class="nav-item">HOME</a>
-    <a href="{{ route('about') }}" class="nav-item">ABOUT US</a>
-    <a href="{{ route('faq') }}" class="nav-item">FAQ</a>
+<nav class="secondary-nav">
+    <a href="{{ route('segments.index') }}"
+            class="nav-item {{ request()->routeIs('segments.index') ? 'active' : '' }}">HOME</a>
+    <a href="{{ route('about') }}" class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">ABOUT US</a>
+    <a href="{{ route('faq') }}" class="nav-item {{ request()->routeIs('faq') ? 'active' : '' }}">FAQ</a>
 </nav>
 
 <section class="relative bg-gradient-to-br from-blue-900 to-teal-600 text-white">
@@ -214,9 +150,9 @@
 <script>
     AOS.init({ duration: 900, once: false });
 
-    // SCRIPT NAVBAR POPUP
-    const menuBtn = document.getElementById('menuBtn');
-    const navMenu = document.getElementById('navMenu');
+    document.querySelector('.menu-icon').addEventListener('click', () => {
+                document.querySelector('.secondary-nav').classList.toggle('show');
+            });
 
     menuBtn.addEventListener('click', (e) => {
         navMenu.classList.toggle('show');

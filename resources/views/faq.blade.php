@@ -7,6 +7,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}"> 
 
     <style>
         :root {
@@ -24,79 +25,6 @@
             flex-direction: column;
             margin: 0;
             color: #334155;
-        }
-
-        /* ================= HEADER (TIDAK BERUBAH) ================= */
-        .main-header {
-            background: #06192A; 
-            color: white;
-            padding: 1.2rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-
-        .site-title {
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: #ffffff;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        #menu-toggle span {
-            background: white;
-            height: 3px;
-            width: 28px;
-            border-radius: 3px;
-            transition: 0.3s;
-        }
-
-        /* ================= NAVBAR (TIDAK BERUBAH LOGIKA & WARNA) ================= */
-        #top-nav {
-            position: fixed;
-            top: 72px;
-            left: 0;
-            right: 0;
-            background: #20558bff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            padding: 12px 0;
-            width: 100%;
-            max-width: 400px;
-            transform: translateY(-100%);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 50;
-            margin-left: auto;
-            margin-right: auto;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 83, 138, 0.2);
-        }
-
-        #top-nav.show { transform: translateY(0); }
-
-        #top-nav a {
-            color: rgba(255,255,255,0.9);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            padding: 10px 24px;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-
-        #top-nav a:hover,
-        #top-nav a.active-link {
-            background: #1abbabff;
-            color: white;
         }
 
         /* ================= INFO CARDS ================= */
@@ -211,18 +139,14 @@
 
 <header class="main-header">
     <div class="site-title">PrimeLearn</div>
-
-    <button id="menu-toggle" class="flex flex-col gap-1.5 focus:outline-none">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
+    <div class="menu-icon" id="menuBtn">☰</div>
 </header>
 
-<nav id="top-nav">
-    <a href="{{ route('segments.index') }}" class="{{ request()->routeIs('segments.index') ? 'active-link' : '' }}">Home</a>
-    <a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active-link' : '' }}">About Us</a>
-    <a href="{{ route('faq') }}" class="{{ request()->routeIs('faq') ? 'active-link' : '' }}">FAQ</a>
+<nav class="secondary-nav">
+    <a href="{{ route('segments.index') }}"
+            class="nav-item {{ request()->routeIs('segments.index') ? 'active' : '' }}">HOME</a>
+    <a href="{{ route('about') }}" class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">ABOUT US</a>
+    <a href="{{ route('faq') }}" class="nav-item {{ request()->routeIs('faq') ? 'active' : '' }}">FAQ</a>
 </nav>
 
 <section class="container mx-auto max-w-6xl px-6 py-12">
@@ -352,23 +276,32 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    const toggleMenu = document.getElementById("menu-toggle");
-    const nav = document.getElementById("top-nav");
+    // 1. Perbaikan Navigasi Mobile
+    const menuBtn = document.getElementById('menuBtn');
+    const secondaryNav = document.querySelector('.secondary-nav');
 
-    toggleMenu.addEventListener("click", () => {
-        toggleMenu.classList.toggle("active");
-        nav.classList.toggle("show");
-    });
+    if (menuBtn && secondaryNav) {
+        menuBtn.addEventListener('click', () => {
+            secondaryNav.classList.toggle('show');
+            // Opsional: ganti ikon ☰ menjadi ✕ saat terbuka
+            menuBtn.textContent = secondaryNav.classList.contains('show') ? '✕' : '☰';
+        });
+    }
 
+    // 2. Logika Akordeon FAQ
     document.querySelectorAll(".accordion-toggle").forEach(button => {
         button.addEventListener("click", () => {
             const content = button.nextElementSibling;
+            
+            // Menutup akordeon lain yang sedang terbuka (Fitur Single Open)
             document.querySelectorAll(".accordion-content.open").forEach(openContent => {
                 if (openContent !== content) {
                     openContent.classList.remove("open");
                     openContent.previousElementSibling.classList.remove("active-toggle");
                 }
             });
+
+            // Toggle item yang diklik
             content.classList.toggle("open");
             button.classList.toggle("active-toggle");
         });
