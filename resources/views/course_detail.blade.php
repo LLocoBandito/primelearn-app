@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learning Path: {{ $segmentData->name }} | PrimeLearn</title>
 
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 
@@ -17,7 +15,7 @@
             font-family: 'Poppins', sans-serif;
         }
 
-        /* GRID KHUSUS HALAMAN (AMAN DARI NAVBAR) */
+        /* PAGE-SPECIFIC GRID (SAFE FROM NAVBAR) */
         .course-layout-grid {
             display: grid;
             grid-template-columns: 320px 1fr;
@@ -51,7 +49,6 @@
 
 <main class="max-w-7xl mx-auto px-6 md:px-10 py-10">
 
-    <!-- HEADER -->
     <header class="mb-10">
         <h1 class="text-3xl md:text-4xl font-extrabold text-blue-800 mb-3">
             🎯 {{ $segmentData->name }}
@@ -63,10 +60,9 @@
 
     <div class="course-layout-grid">
 
-        <!-- SIDEBAR -->
         <aside class="bg-white p-5 rounded-xl shadow-lg lg:sticky lg:top-6 h-fit">
             <h2 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">
-                📍 Peta Jalan Pembelajaran
+                📍 Learning Roadmap
             </h2>
 
             @foreach ($segmentData->fases as $fase)
@@ -77,7 +73,6 @@
             @endforeach
         </aside>
 
-        <!-- MAIN CONTENT -->
         <section class="space-y-14">
 
             @foreach ($segmentData->fases as $fase)
@@ -90,7 +85,6 @@
 
                     <div class="bg-white p-6 md:p-7 rounded-2xl shadow-lg border-t-4 border-teal-500">
 
-                        <!-- IMAGE -->
                         <div class="h-64 rounded-xl overflow-hidden mb-6 bg-gray-200">
                             @if ($fase->featured_image)
                                 <img src="{{ asset('storage/' . $fase->featured_image) }}"
@@ -103,9 +97,8 @@
                             @endif
                         </div>
 
-                        <!-- MATERI -->
                         <p class="font-semibold text-lg text-gray-800 mb-4">
-                            📚 Materi Inti dalam Fase Ini
+                            📚 Core Materials in This Phase
                         </p>
 
                         <ul class="space-y-3">
@@ -139,7 +132,6 @@
     &copy; {{ date('Y') }} PrimeLearn. All Rights Reserved.
 </footer>
 
-<!-- ACTIVE SIDEBAR SCROLL -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('.fase-sidebar-item');

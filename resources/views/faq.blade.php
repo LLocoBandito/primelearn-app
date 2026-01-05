@@ -38,7 +38,7 @@
         }
         .info-card:hover { transform: translateY(-5px); }
 
-        /* ================= ACCORDION ELEGAN (DIPERCANTIK) ================= */
+        /* ================= ELEGANT ACCORDION ================= */
         .accordion-item {
             border: 1px solid rgba(0,0,0,0.05);
             border-radius: 16px;
@@ -62,14 +62,12 @@
             position: relative;
         }
 
-        /* Warna saat ditekan: Lebih Elegan dengan Soft Gradient & Garis Samping */
         .accordion-toggle.active-toggle {
             background: linear-gradient(to right, #f0fdfa, #ffffff);
             color: #0f766e;
-            padding-left: 2rem; /* Geser sedikit teks ke kanan */
+            padding-left: 2rem;
         }
 
-        /* Menambahkan garis aksen di sisi kiri saat aktif */
         .accordion-toggle.active-toggle::before {
             content: '';
             position: absolute;
@@ -95,7 +93,6 @@
             border-top: 1px solid #f1f5f9;
         }
 
-        /* Lingkaran Ikon Panah */
         .arrow-icon { 
             color: #94a3b8;
             background: #f1f5f9;
@@ -115,7 +112,6 @@
             box-shadow: 0 4px 10px rgba(26, 188, 156, 0.3);
         }
 
-        /* ================= FOOTER (TIDAK BERUBAH) ================= */
         footer {
             margin-top: auto;
             background: #06192A; 
@@ -152,23 +148,23 @@
 <section class="container mx-auto max-w-6xl px-6 py-12">
     <div class="text-center mb-12">
         <h2 class="text-4xl font-extrabold text-[#062743] mb-4">
-            Pusat Bantuan <span style="background: var(--grad-button); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PrimeLearn</span>
+            <span style="background: var(--grad-button); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PrimeLearn</span> Help Center
         </h2>
-        <p class="text-slate-500">Kami siap membantu menjawab segala keraguan Anda.</p>
+        <p class="text-slate-500">We are here to help answer all your questions.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <div class="info-card text-center border-b-4 border-emerald-500">
             <h3 class="text-3xl font-bold text-emerald-500 mb-1">24/7</h3>
-            <p class="text-sm text-slate-500 font-medium uppercase tracking-wider">Dukungan Teknis</p>
+            <p class="text-sm text-slate-500 font-medium uppercase tracking-wider">Technical Support</p>
         </div>
         <div class="info-card text-center border-b-4 border-blue-500">
             <h3 class="text-3xl font-bold text-blue-500 mb-1">500+</h3>
-            <p class="text-sm text-slate-500 font-medium uppercase tracking-wider">Artikel Panduan</p>
+            <p class="text-sm text-slate-500 font-medium uppercase tracking-wider">Guide Articles</p>
         </div>
         <div class="info-card text-center border-b-4 border-purple-500">
             <h3 class="text-3xl font-bold text-purple-500 mb-1">100%</h3>
-            <p class="text-sm text-slate-500 font-medium uppercase tracking-wider">Akses Seumur Hidup</p>
+            <p class="text-sm text-slate-500 font-medium uppercase tracking-wider">Lifetime Access</p>
         </div>
     </div>
 
@@ -176,30 +172,30 @@
         
         <div class="lg:col-span-1 space-y-6">
             <div class="bg-[#062743] text-white p-8 rounded-3xl shadow-xl">
-                <h4 class="text-xl font-bold mb-4">Butuh Bantuan Lebih?</h4>
-                <p class="text-sm opacity-80 mb-6 leading-relaxed">Jika Anda tidak menemukan jawaban yang dicari, tim kami siap membantu Anda secara langsung melalui WhatsApp.</p>
+                <h4 class="text-xl font-bold mb-4">Need More Help?</h4>
+                <p class="text-sm opacity-80 mb-6 leading-relaxed">If you can't find the answer you're looking for, our team is ready to assist you directly via WhatsApp.</p>
                 
-                <a href="https://wa.me/6281936204176?text=Halo%20Admin%20PrimeLearn,%20saya%20ingin%20bertanya%20tentang..." 
+                <a href="https://wa.me/6281936204176?text=Hello%20PrimeLearn%20Admin,%20I%20have%20a%20question%20about..." 
                 target="_blank" 
                 class="block w-full py-3 rounded-xl font-bold text-sm bg-white text-center text-[#062743] hover:bg-emerald-500 hover:text-white transition-all shadow-lg">
-                    Hubungi Support
+                    Contact Support
                 </a>
             </div>
             
             <div class="info-card">
-                <h4 class="font-bold mb-4 text-[#062743]">Tips Belajar</h4>
+                <h4 class="font-bold mb-4 text-[#062743]">Learning Tips</h4>
                 <ul class="text-sm space-y-3 text-slate-600">
                     <li class="flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                        Tentukan target harian
+                        Set daily targets
                     </li>
                     <li class="flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                        Bergabung di komunitas
+                        Join the community
                     </li>
                     <li class="flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                        Praktikkan materi segera
+                        Practice materials immediately
                     </li>
                 </ul>
             </div>
@@ -208,61 +204,61 @@
         <div class="lg:col-span-2 space-y-4">
             <div class="accordion-item">
                 <div class="accordion-toggle">
-                    <p>Bagaimana cara mendaftar kursus di PrimeLearn?</p>
+                    <p>How do I enroll in a course at PrimeLearn?</p>
                     <span class="arrow-icon">&#10095;</span>
                 </div>
                 <div class="accordion-content">
-                    <p class="text-slate-600 leading-relaxed">Anda cukup membuat akun melalui tombol daftar, memilih katalog kursus, dan menyelesaikan pembayaran secara aman.</p>
+                    <p class="text-slate-600 leading-relaxed">Simply create an account via the sign-up button, choose from our course catalog, and complete the secure payment process.</p>
                 </div>
             </div>
 
             <div class="accordion-item">
                 <div class="accordion-toggle">
-                    <p>Apakah PrimeLearn menyediakan sertifikat?</p>
+                    <p>Does PrimeLearn provide certificates?</p>
                     <span class="arrow-icon">&#10095;</span>
                 </div>
                 <div class="accordion-content">
-                    <p class="text-slate-600 leading-relaxed">Ya, sertifikat digital eksklusif diberikan otomatis setelah Anda menyelesaikan seluruh materi kursus.</p>
+                    <p class="text-slate-600 leading-relaxed">Yes, exclusive digital certificates are automatically issued after you complete all course materials.</p>
                 </div>
             </div>
 
             <div class="accordion-item">
                 <div class="accordion-toggle">
-                    <p>Berapa lama akses materi kursus?</p>
+                    <p>How long can I access the course material?</p>
                     <span class="arrow-icon">&#10095;</span>
                 </div>
                 <div class="accordion-content">
-                    <p class="text-slate-600 leading-relaxed">Kami memberikan Akses Seumur Hidup agar Anda bisa belajar kapan saja tanpa batasan waktu.</p>
+                    <p class="text-slate-600 leading-relaxed">We provide Lifetime Access so you can learn anytime without any time constraints.</p>
                 </div>
             </div>
 
             <div class="accordion-item">
                 <div class="accordion-toggle">
-                    <p>Metode pembayaran apa saja yang tersedia?</p>
+                    <p>What payment methods are available?</p>
                     <span class="arrow-icon">&#10095;</span>
                 </div>
                 <div class="accordion-content">
-                    <p class="text-slate-600 leading-relaxed">Kami mendukung VA Bank, Kartu Kredit, hingga E-Wallet seperti GoPay, OVO, dan Dana.</p>
+                    <p class="text-slate-600 leading-relaxed">We support Bank Transfers (VA), Credit Cards, and E-Wallets such as GoPay, OVO, and Dana.</p>
                 </div>
             </div>
 
             <div class="accordion-item">
                 <div class="accordion-toggle">
-                    <p>Apakah ada batas waktu penyelesaian?</p>
+                    <p>Is there a deadline to finish the course?</p>
                     <span class="arrow-icon">&#10095;</span>
                 </div>
                 <div class="accordion-content">
-                    <p class="text-slate-600 leading-relaxed">Tidak ada. Anda bebas menentukan kecepatan belajar Anda sendiri (Self-paced).</p>
+                    <p class="text-slate-600 leading-relaxed">No, there is no deadline. You are free to determine your own learning speed (Self-paced).</p>
                 </div>
             </div>
 
             <div class="accordion-item">
                 <div class="accordion-toggle">
-                    <p>Bagaimana jika saya butuh bantuan teknis?</p>
+                    <p>What if I need technical assistance?</p>
                     <span class="arrow-icon">&#10095;</span>
                 </div>
                 <div class="accordion-content">
-                    <p class="text-slate-600 leading-relaxed">Tim support kami tersedia 24/7 melalui fitur Live Chat atau email bantuan kami.</p>
+                    <p class="text-slate-600 leading-relaxed">Our support team is available 24/7 via the Live Chat feature or our help email.</p>
                 </div>
             </div>
         </div>
@@ -271,29 +267,28 @@
 
 <footer>
     <span class="footer-brand">PrimeLearn</span>
-    <p class="opacity-90">&copy; 2026 PrimeLearn Academy. Seluruh Hak Cipta Dilindungi.</p>
+    <p class="opacity-90">&copy; 2026 PrimeLearn Academy. All Rights Reserved.</p>
 </footer>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Perbaikan Navigasi Mobile
+    // 1. Mobile Navigation Fix
     const menuBtn = document.getElementById('menuBtn');
     const secondaryNav = document.querySelector('.secondary-nav');
 
     if (menuBtn && secondaryNav) {
         menuBtn.addEventListener('click', () => {
             secondaryNav.classList.toggle('show');
-            // Opsional: ganti ikon ☰ menjadi ✕ saat terbuka
             menuBtn.textContent = secondaryNav.classList.contains('show') ? '✕' : '☰';
         });
     }
 
-    // 2. Logika Akordeon FAQ
+    // 2. FAQ Accordion Logic
     document.querySelectorAll(".accordion-toggle").forEach(button => {
         button.addEventListener("click", () => {
             const content = button.nextElementSibling;
             
-            // Menutup akordeon lain yang sedang terbuka (Fitur Single Open)
+            // Single Open Feature
             document.querySelectorAll(".accordion-content.open").forEach(openContent => {
                 if (openContent !== content) {
                     openContent.classList.remove("open");
@@ -301,7 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // Toggle item yang diklik
+            // Toggle clicked item
             content.classList.toggle("open");
             button.classList.toggle("active-toggle");
         });

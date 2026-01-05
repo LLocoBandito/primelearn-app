@@ -1,81 +1,15 @@
 @php 
-     use Illuminate\Support\Facades\Storage;
+    use Illuminate\Support\Facades\Storage;
     use Illuminate\Support\Str;
-
 @endphp
 
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Langkah {{ $step->order }}: {{ $step->title }} | PrimeLearn</title>
-    {{-- Asumsi Anda menggunakan asset() untuk memuat CSS Tailwind Anda --}}
+    <title>Step {{ $step->order }}: {{ $step->title }} | PrimeLearn</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        // Konfigurasi Tailwind CSS untuk mengaktifkan typography
-        tailwind.config = {
-            theme: {
-                extend: {},
-            },
-            // Tambahkan plugin typography jika Anda menggunakannya (memerlukan instalasi jika tidak via CDN)
-            // plugins: [
-            //     require('@tailwindcss/typography'), 
-            // ],
-        }
-    </script>
-</head>
-<body class="bg-gray-100 min-h-screen">
-
-    {{-- Anda perlu memastikan komponen ini ada atau ganti dengan HTML navbar statis Anda --}}
-    {{-- @include('components.navbar') --}} 
-
-@php  
-    // Tentukan apakah tombol next harus dinonaktifkan (karena ada kuis)
-    $quizData = $quizData ?? [];
-    $externalLinks = $externalLinks ?? [];
-    $isQuizRequired = !empty($quizData);
-
-
-    // Ambil data untuk breadcrumb
-    $segmentName = $segment->name ?? 'Course';
-
-    $faseTitleRaw = $fase->title ?? 'Fase';
-    $displayFase = Str::contains(strtolower($faseTitleRaw), 'fase')
-        ? $faseTitleRaw
-        : 'Fase ' . $faseTitleRaw;
-
-    $materiTitle = $materi->title ?? 'Materi';
-
-    // Ambil data external links & kuis
-    $externalLinks = $step->external_links ?? ($step->materi->externalLinks ?? []);
-    $quizData = $step->quiz_data ?? [];
-
-    // === LOGIKA TRANSFORMASI VIDEO YOUTUBE ===
-    $videoEmbedUrl = $step->video_url;
-    if ($videoEmbedUrl) {
-        if (Str::contains($videoEmbedUrl, 'youtube.com/watch?v=')) {
-            $videoEmbedUrl = Str::replace('watch?v=', 'embed/', $videoEmbedUrl);
-        } elseif (Str::contains($videoEmbedUrl, 'youtu.be/')) {
-            $videoEmbedUrl = 'https://www.youtube.com/embed/' . Str::afterLast($videoEmbedUrl, '/');
-        }
-    }
-
-    // Logika Navigasi
-    $isQuizRequired = !empty($quizData);
-    $nextRoute = $nextStep ? route('step.show', ['stepId' => $nextStep->id]) : '#';
-@endphp
-
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Langkah {{ $step->order }}: {{ $step->title }} | {{ $segmentName }}</title>
-
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-
     <script>
         tailwind.config = {
             theme: {
@@ -87,102 +21,102 @@
             },
         }
     </script>
-
     <style>
-        .prose p {
-            margin-bottom: 1.5em !important;
-        }
-
-        .prose ul {
-            list-style-type: disc;
-        }
-
-        .prose ol {
-            list-style-type: decimal;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        .prose p { margin-bottom: 1.5em !important; }
+        .prose ul { list-style-type: disc; }
+        .prose ol { list-style-type: decimal; }
+        html { scroll-behavior: smooth; }
         #sliderWrapper {
             scroll-snap-type: x mandatory;
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-
-        #sliderWrapper::-webkit-scrollbar {
-            display: none;
-        }
-
-        .slide-item {
-            scroll-snap-align: start;
-        }
-
-        /* Animasi untuk notifikasi auto-complete */
+        #sliderWrapper::-webkit-scrollbar { display: none; }
+        .slide-item { scroll-snap-align: start; }
         #scroll-toast {
             transition: all 0.5s ease-in-out;
             transform: translateY(100px);
             opacity: 0;
         }
-
         #scroll-toast.show {
             transform: translateY(0);
             opacity: 1;
         }
+        /* For breadcrumb horizontal scroll */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 
+@php  
+    $quizData = $quizData ?? [];
+    $externalLinks = $externalLinks ?? [];
+    $isQuizRequired = !empty($quizData);
+
+    $segmentName = $segment->name ?? 'Course';
+    $materiTitle = $materi->title ?? 'Module';
+
+    $externalLinks = $step->external_links ?? ($step->materi->externalLinks ?? []);
+    
+    // YOUTUBE VIDEO TRANSFORMATION LOGIC
+    $videoEmbedUrl = $step->video_url;
+    if ($videoEmbedUrl) {
+        if (Str::contains($videoEmbedUrl, 'youtube.com/watch?v=')) {
+            $videoEmbedUrl = Str::replace('watch?v=', 'embed/', $videoEmbedUrl);
+        } elseif (Str::contains($videoEmbedUrl, 'youtu.be/')) {
+            $videoEmbedUrl = 'https://www.youtube.com/embed/' . Str::afterLast($videoEmbedUrl, '/');
+        }
+    }
+@endphp
+
 <body class="bg-gray-100 min-h-screen font-sans antialiased text-gray-900">
 
-    {{-- Notifikasi Kecil saat Auto-Complete (Scroll) --}}
+    {{-- Auto-Complete Toast Notification --}}
     <div id="scroll-toast"
         class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-full shadow-2xl flex items-center space-x-3">
-        <span>✅ Progress Disimpan</span>
+        <span>✅ Progress Saved</span>
     </div>
 
     <main class="max-w-7xl mx-auto p-4 md:p-10 md:flex md:space-x-8">
 
-        {{-- KOLOM KIRI: DAFTAR ISI --}}
+        {{-- LEFT COLUMN: TABLE OF CONTENTS --}}
         <aside class="md:w-1/4 mb-6 md:mb-0 hidden md:block sticky top-10 self-start">
             <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
                 <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2 flex items-center">
-                    <span class="mr-2">📖</span> Daftar Isi
+                    <span class="mr-2">📖</span> Table of Contents
                 </h3>
                 <nav>
                     <ul id="tocList" class="space-y-2 text-sm text-gray-600"></ul>
                 </nav>
             </div>
 
-            {{-- Bagian External Links --}}
+            {{-- External Resources Section --}}
             @if (!empty($externalLinks))
                 <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mt-6">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">
-                        Sumber Daya Eksternal 🔗
+                        External Resources 🔗
                     </h3>
                     <ul class="space-y-2 text-sm">
                         @foreach ($externalLinks as $link)
                             <li>
                                 <a href="{{ $link['url'] }}" target="_blank" rel="noopener noreferrer" 
-                                class="text-blue-500 hover:text-blue-700 block transition-colors leading-tight">
+                                class="text-blue-500 hover:text-blue-700 block transition-colors leading-tight font-medium">
                                     {{ $link['title'] }}
                                 </a>
                                 @if (isset($link['description']))
-                                   {{ Str::limit($link['description'], 50) }}
+                                   <p class="text-xs text-gray-500 mt-1">{{ Str::limit($link['description'], 50) }}</p>
                                 @endif
                             </li>
                         @endforeach
                     </ul>
                 </div>
             @endif
-
         </aside>
 
-        {{-- KOLOM KANAN: KONTEN UTAMA --}}
+        {{-- RIGHT COLUMN: MAIN CONTENT --}}
         <div class="w-full md:w-3/4">
 
             {{-- BREADCRUMB --}}
-            {{-- BREADCRUMB TERBARU --}}
             <nav class="flex items-center text-xs md:text-sm text-gray-500 mb-6 space-x-2 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar">
                 <div class="flex items-center">
                     <a href="/" class="hover:text-blue-600 transition-colors flex items-center">
@@ -214,16 +148,15 @@
                 </h1>
                 <div class="w-20 h-1 bg-blue-600 rounded-full mb-8"></div>
 
-                {{-- SLIDER GAMBAR --}}
+                {{-- IMAGE SLIDER --}}
                 @if ($step->images && $step->images->count() > 0)
                     <div class="relative mb-10 group">
-                        <div
-                            class="relative w-full overflow-hidden bg-gray-900 rounded-xl border border-gray-200 shadow-lg">
+                        <div class="relative w-full overflow-hidden bg-gray-900 rounded-xl border border-gray-200 shadow-lg">
                             <div id="sliderWrapper" class="flex transition-transform duration-500 ease-in-out">
                                 @foreach ($step->images as $img)
                                     <div class="w-full flex-shrink-0 flex justify-center items-center bg-black slide-item">
                                         <img src="{{ asset('storage/' . $img->path) }}"
-                                            class="object-contain max-h-[500px] w-full" alt="Gambar Langkah">
+                                            class="object-contain max-h-[500px] w-full" alt="Step Image">
                                     </div>
                                 @endforeach
                             </div>
@@ -231,24 +164,19 @@
                             @if($step->images->count() > 1)
                                 <button id="prevBtn"
                                     class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white p-3 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 19l-7-7 7-7" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                                     </svg>
                                 </button>
                                 <button id="nextBtn"
                                     class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/50 text-white p-3 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5l7 7-7 7" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                     </svg>
                                 </button>
                                 <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
                                     @foreach ($step->images as $index => $img)
-                                        <div class="dot w-2 h-2 rounded-full bg-white/50 transition-all" data-index="{{ $index }}">
-                                        </div>
+                                        <div class="dot w-2 h-2 rounded-full bg-white/50 transition-all" data-index="{{ $index }}"></div>
                                     @endforeach
                                 </div>
                             @endif
@@ -256,7 +184,7 @@
                     </div>
                 @endif
 
-                {{-- VIDEO YOUTUBE --}}
+                {{-- YOUTUBE VIDEO --}}
                 @if ($videoEmbedUrl)
                     <div class="mb-10 overflow-hidden rounded-xl shadow-lg aspect-video bg-black border-4 border-white">
                         <iframe width="100%" height="100%" src="{{ $videoEmbedUrl }}" frameborder="0"
@@ -266,32 +194,29 @@
                     </div>
                 @endif
 
-                {{-- KONTEN RICH EDITOR --}}
+                {{-- RICH EDITOR CONTENT --}}
                 <div class="prose prose-blue prose-lg max-w-none text-gray-800">
                     {!! $step->content !!}
                 </div>
 
-                {{-- KUIS --}}
+                {{-- QUIZ SECTION --}}
                 @if ($isQuizRequired)
                     <div class="mt-16 p-6 md:p-8 bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl shadow-inner"
                         id="quiz-section">
                         <h2 class="text-2xl font-bold text-yellow-900 mb-6 flex items-center">
-                            <span class="mr-3 p-2 bg-yellow-200 rounded-lg">❓</span> Uji Pemahaman Anda
+                            <span class="mr-3 p-2 bg-yellow-200 rounded-lg">❓</span> Test Your Understanding
                         </h2>
                         <form id="quiz-form" data-step-id="{{ $step->id }}">
                             @csrf
                             @foreach ($quizData as $index => $quiz)
                                 <div class="mb-8 p-5 bg-white rounded-xl shadow-sm border border-yellow-100">
-                                    <p class="text-sm font-bold text-orange-600 uppercase mb-2">Pertanyaan {{ $index + 1 }}</p>
+                                    <p class="text-sm font-bold text-orange-600 uppercase mb-2">Question {{ $index + 1 }}</p>
                                     <p class="text-lg font-medium text-gray-800 mb-5">{{ $quiz['question'] }}</p>
                                     <div class="grid gap-3">
                                         @foreach ($quiz['options'] as $option)
-                                            <label
-                                                class="flex items-center p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all group">
-                                                <input type="radio" name="answers[{{ $index }}]" value="{{ $option['option'] }}"
-                                                    class="w-5 h-5 text-blue-600">
-                                                <span
-                                                    class="ml-4 text-gray-700 group-hover:text-blue-900 font-medium">{{ $option['option'] }}</span>
+                                            <label class="flex items-center p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all group">
+                                                <input type="radio" name="answers[{{ $index }}]" value="{{ $option['option'] }}" class="w-5 h-5 text-blue-600">
+                                                <span class="ml-4 text-gray-700 group-hover:text-blue-900 font-medium">{{ $option['option'] }}</span>
                                             </label>
                                         @endforeach
                                     </div>
@@ -300,7 +225,7 @@
                             <div class="flex flex-col items-center">
                                 <button type="submit" id="submitQuizBtn"
                                     class="w-full md:w-64 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-xl transition-all transform hover:-translate-y-1">
-                                    Periksa Jawaban
+                                    Check Answers
                                 </button>
                                 <div id="quiz-result" class="mt-6 w-full text-center p-4 rounded-xl font-bold hidden"></div>
                             </div>
@@ -309,44 +234,39 @@
                 @endif
             </article>
 
-            {{-- NAVIGASI STEPS --}}
-            <div
-                class="flex flex-col md:flex-row justify-between items-center mt-12 p-6 bg-white rounded-2xl shadow-lg border border-gray-100 gap-4">
+            {{-- STEPS NAVIGATION --}}
+            <div class="flex flex-col md:flex-row justify-between items-center mt-12 p-6 bg-white rounded-2xl shadow-lg border border-gray-100 gap-4">
                 @if ($prevStep)
                     <a href="{{ route('step.show', $prevStep->id) }}"
                         class="flex items-center px-6 py-3 text-blue-600 font-bold hover:bg-blue-50 rounded-xl transition">
                         <span class="mr-2 text-xl">←</span> {{ Str::limit($prevStep->title, 15) }}
                     </a>
                 @else
-                    <span class="text-gray-400 italic text-sm">Awal Materi</span>
+                    <span class="text-gray-400 italic text-sm">Start of Module</span>
                 @endif
 
                 @if ($nextStep)
-                    {{-- JIKA ADA KUIS: Link biasa tapi diproteksi JS --}}
                     @if($isQuizRequired)
                         <a href="#" id="nextStepBtn" data-next-id="{{ $nextStep->id }}"
                             class="w-full md:w-auto text-center bg-green-500 text-white font-bold py-4 px-12 rounded-xl shadow-lg transition opacity-50 cursor-not-allowed">
-                            Lanjut →
+                            Next →
                         </a>
                     @else
-                        {{-- JIKA TIDAK ADA KUIS: Langsung Form POST agar session tercatat --}}
                         <form action="{{ route('step.complete', $step->id) }}" method="POST" class="w-full md:w-auto">
                             @csrf
                             <input type="hidden" name="next_step_id" value="{{ $nextStep->id }}">
                             <button type="submit"
                                 class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-12 rounded-xl shadow-lg transition transform hover:scale-105">
-                                Lanjut →
+                                Next →
                             </button>
                         </form>
                     @endif
                 @else
-                    {{-- LANGKAH TERAKHIR --}}
-                    <form action="{{ route('materi.complete', ['stepId' => $step->id]) }}" method="POST"
-                        class="w-full md:w-auto">
+                    <form action="{{ route('materi.complete', ['stepId' => $step->id]) }}" method="POST" class="w-full md:w-auto">
                         @csrf
                         <button type="submit"
                             class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-12 rounded-xl shadow-lg transition transform hover:scale-105">
-                            Selesai 🎉
+                            Complete 🎉
                         </button>
                     </form>
                 @endif
@@ -356,19 +276,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- LOGIKA AUTO-COMPLETE ON SCROLL (HANYA JIKA TIDAK ADA KUIS) ---
+            // --- AUTO-COMPLETE ON SCROLL LOGIC ---
             @if(!$isQuizRequired)
                 let finished = false;
                 window.addEventListener('scroll', () => {
                     if (!finished && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
                         finished = true;
-
-                        // Munculkan toast notifikasi
                         const toast = document.getElementById('scroll-toast');
                         toast.classList.add('show');
                         setTimeout(() => toast.classList.remove('show'), 3000);
 
-                        // Kirim background request ke server untuk simpan session
                         fetch("{{ route('step.complete', $step->id) }}", {
                             method: "POST",
                             headers: {
@@ -381,7 +298,7 @@
                 });
             @endif
 
-            // --- LOGIKA SLIDER GAMBAR ---
+            // --- IMAGE SLIDER LOGIC ---
             const wrapper = document.getElementById('sliderWrapper');
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
@@ -404,8 +321,7 @@
             if (prevBtn) prevBtn.addEventListener('click', () => { currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; updateSlider(); });
             if (totalSlides > 0) updateSlider();
 
-
-            // --- LOGIKA TOC ---
+            // --- TOC GENERATOR LOGIC ---
             const contentContainer = document.querySelector('.prose');
             const tocList = document.getElementById('tocList');
             if (contentContainer && tocList) {
@@ -420,7 +336,7 @@
                 });
             }
 
-            // --- LOGIKA KUIS AJAX ---
+            // --- AJAX QUIZ LOGIC ---
             const quizForm = document.getElementById('quiz-form');
             if (quizForm) {
                 quizForm.addEventListener('submit', function (e) {
@@ -437,12 +353,12 @@
                     });
 
                     if (Object.keys(answers).length < {{ count($quizData) }}) {
-                        alert('Harap jawab semua pertanyaan!');
+                        alert('Please answer all questions!');
                         return;
                     }
 
                     submitBtn.disabled = true;
-                    submitBtn.innerHTML = "🌀 Mengecek...";
+                    submitBtn.innerHTML = "🌀 Checking...";
 
                     fetch(`/step/${this.dataset.stepId}/quiz`, {
                         method: 'POST',
@@ -453,29 +369,28 @@
                         },
                         body: JSON.stringify({ answers })
                     })
-                        .then(res => res.json())
-                        .then(data => {
-                            resultDiv.classList.remove('hidden');
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = "Periksa Jawaban";
-                            if (data.success && data.passed) {
-                                resultDiv.className = 'mt-6 text-center p-4 rounded-xl bg-green-100 text-green-800 border-2 border-green-300';
-                                resultDiv.innerHTML = `🌟 Lulus! Skor: ${data.percentage}%`;
-                                const nextBtnAction = document.getElementById('nextStepBtn');
-                                if (nextBtnAction) {
-                                    nextBtnAction.classList.remove('opacity-50', 'cursor-not-allowed');
-                                    nextBtnAction.classList.add('hover:scale-105', 'bg-green-600');
-                                    nextBtnAction.setAttribute('href', `/step/${nextBtnAction.dataset.nextId}`);
-                                }
-                            } else {
-                                resultDiv.className = 'mt-6 text-center p-4 rounded-xl bg-red-100 text-red-800 border-2 border-red-300';
-                                resultDiv.innerHTML = `❌ Gagal. Skor: ${data.percentage}%. Coba lagi.`;
+                    .then(res => res.json())
+                    .then(data => {
+                        resultDiv.classList.remove('hidden');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = "Check Answers";
+                        if (data.success && data.passed) {
+                            resultDiv.className = 'mt-6 text-center p-4 rounded-xl bg-green-100 text-green-800 border-2 border-green-300';
+                            resultDiv.innerHTML = `🌟 Passed! Score: ${data.percentage}%`;
+                            const nextBtnAction = document.getElementById('nextStepBtn');
+                            if (nextBtnAction) {
+                                nextBtnAction.classList.remove('opacity-50', 'cursor-not-allowed');
+                                nextBtnAction.classList.add('hover:scale-105', 'bg-green-600');
+                                nextBtnAction.setAttribute('href', `/step/${nextBtnAction.dataset.nextId}`);
                             }
-                        });
+                        } else {
+                            resultDiv.className = 'mt-6 text-center p-4 rounded-xl bg-red-100 text-red-800 border-2 border-red-300';
+                            resultDiv.innerHTML = `❌ Failed. Score: ${data.percentage}%. Please try again.`;
+                        }
+                    });
                 });
             }
         });
     </script>
 </body>
-
 </html>

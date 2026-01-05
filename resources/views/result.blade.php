@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hasil Peminatan IT | PRIME LEARN</title>
+    <title>IT Specialization Results | PRIME LEARN</title>
 
     {{-- Tailwind CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -49,7 +49,7 @@
                 Your IT Strength Profile
             </h1>
             <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-                Berdasarkan pola jawaban Anda, kami menganalisis kecenderungan minat dan kekuatan utama Anda di bidang Teknologi Informasi.
+                Based on your answer patterns, we have analyzed your interest tendencies and core strengths in the field of Information Technology.
             </p>
         </header>
 
@@ -65,7 +65,7 @@
                 </h2>
 
                 <p class="text-blue-100 text-base md:text-lg max-w-xl">
-                    Bidang ini menunjukkan skor tertinggi dan konsistensi minat Anda. Sangat direkomendasikan sebagai fokus utama pembelajaran dan pengembangan karier Anda.
+                    This field shows your highest score and interest consistency. It is highly recommended as the primary focus for your learning and career development.
                 </p>
             </div>
         </section>
@@ -98,9 +98,9 @@
 
                         <p class="text-sm text-gray-600 leading-relaxed">
                             @if ($isMatch)
-                                Bidang ini menunjukkan kecocokan yang kuat berdasarkan pola jawaban Anda dan berpotensi dikembangkan lebih lanjut.
+                                This field shows a strong match based on your response patterns and has great potential for further development.
                             @else
-                                Bidang ini masih bisa dipelajari, namun bukan fokus utama minat Anda saat ini.
+                                This field can still be explored, but it is not your primary focus of interest at this time.
                             @endif
                         </p>
                     </div>

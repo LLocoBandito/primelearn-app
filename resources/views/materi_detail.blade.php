@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -14,7 +14,7 @@
             overflow: hidden;
             -webkit-line-clamp: 3;
         }
-        /* Menghilangkan scrollbar tapi fungsi scroll tetap ada */
+        /* Hide scrollbar while maintaining functionality */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -30,13 +30,13 @@
             use Illuminate\Support\Str;
             use Illuminate\Support\Facades\Storage;
             
-            // Inisialisasi data untuk mempermudah pemanggilan
+            // Initialize data for easier access
             $segment = $fase->segment;
             $completedSteps = session()->get('completed_steps', []);
             $sortedSteps = $currentMateri->steps->sortBy('order')->values();
         @endphp
 
-        {{-- BREADCRUMB (Gaya disamakan dengan Step Detail) --}}
+        {{-- BREADCRUMB --}}
         <nav class="flex items-center text-xs md:text-sm text-gray-500 mb-6 space-x-2 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar">
             <div class="flex items-center">
                 <a href="{{ route('segments.index') }}" class="hover:text-blue-600 transition-colors flex items-center">
@@ -69,13 +69,13 @@
         <h1 class="text-3xl md:text-4xl font-extrabold text-blue-800 mb-2">
             📖 {{ $currentMateri->title }}
         </h1>
-        <p class="text-gray-600 mb-8">Detail pembelajaran langkah demi langkah untuk materi ini.</p>
+        <p class="text-gray-600 mb-8">Step-by-step learning details for this module.</p>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            {{-- KOLOM KIRI: MATERI LAIN --}}
+            {{-- LEFT COLUMN: OTHER MODULES --}}
             <aside class="lg:col-span-1 bg-white p-5 rounded-lg shadow-xl lg:sticky lg:top-4 lg:h-fit">
-                <h2 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">Materi Lainnya</h2>
+                <h2 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">Other Modules</h2>
 
                 <ul class="space-y-2">
                     @foreach ($fase->materis as $materi)
@@ -90,9 +90,9 @@
                 </ul>
             </aside>
 
-            {{-- KOLOM TENGAH/UTAMA: DAFTAR LANGKAH (STEPS) --}}
+            {{-- MAIN COLUMN: STEPS LIST --}}
             <section class="lg:col-span-2 main-content-area">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6">Langkah-Langkah Pembelajaran:</h2>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">Learning Steps:</h2>
 
                 @forelse ($sortedSteps as $index => $step)
                     @php
@@ -111,12 +111,12 @@
                     @endif
 
                         <h3 class="text-xl font-bold {{ $isUnlocked ? 'text-blue-700' : 'text-gray-500' }} mb-3 flex items-center gap-2">
-                            Langkah {{ $step->order }}: {{ $step->title }}
+                            Step {{ $step->order }}: {{ $step->title }}
                             @if($isCompleted)
-                                <span class="text-green-500 text-sm bg-green-100 px-2 py-1 rounded">✓ Selesai</span>
+                                <span class="text-green-500 text-sm bg-green-100 px-2 py-1 rounded">✓ Completed</span>
                             @endif
                             @if(!$isUnlocked)
-                                <span class="text-gray-500 text-sm">🔒 Terkunci</span>
+                                <span class="text-gray-500 text-sm">🔒 Locked</span>
                             @endif
                         </h3>
 
@@ -126,7 +126,7 @@
                             </div>
                         @else
                             <div class="h-40 md:h-64 bg-gray-100 rounded-lg mb-4 flex items-center justify-center border border-dashed border-gray-400">
-                                <span class="text-gray-500 italic text-sm">Ilustrasi Tidak Tersedia</span>
+                                <span class="text-gray-500 italic text-sm">Illustration Not Available</span>
                             </div>
                         @endif
 
@@ -135,9 +135,9 @@
                         </p>
 
                         @if($isUnlocked)
-                            <p class="mt-4 text-sm font-semibold text-blue-600">Baca Selengkapnya →</p>
+                            <p class="mt-4 text-sm font-semibold text-blue-600">Read More →</p>
                         @else
-                            <p class="mt-4 text-sm font-semibold text-gray-500 italic">Selesaikan langkah sebelumnya untuk membuka</p>
+                            <p class="mt-4 text-sm font-semibold text-gray-500 italic">Complete the previous step to unlock</p>
                         @endif
 
                     @if($isUnlocked)
@@ -148,7 +148,7 @@
 
                 @empty
                     <div class="p-6 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded">
-                        Belum ada langkah-langkah detail yang ditambahkan untuk materi ini.
+                        No detailed steps have been added for this module yet.
                     </div>
                 @endforelse
             </section>

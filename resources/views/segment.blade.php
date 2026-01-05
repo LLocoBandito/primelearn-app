@@ -187,7 +187,6 @@
             margin-top: 0.4rem;
         }
 
-        /* Style untuk langkah terkunci */
         .step-locked {
             background: #f1f5f9;
             border-left: 4px solid #94a3b8;
@@ -297,7 +296,7 @@
     <main class="container">
         <div class="search-bar">
             <form action="{{ route('segments.index') }}" method="GET" class="search-form-flex">
-                <input type="text" name="query" placeholder="Cari segmen, fase, materi, atau langkah..."
+                <input type="text" name="query" placeholder="Search segments, phases, materials, or steps..."
                     value="{{ request('query') }}">
                 <button type="submit">🔍</button>
             </form>
@@ -308,24 +307,23 @@
 
                 <h2 class="main-segment-title">
                     @if ($query)
-                        Hasil Pencarian: <span>"{{ $query }}"</span>
+                        Search Results: <span>"{{ $query }}"</span>
                     @elseif (isset($isFilteredByRecommendation) && $isFilteredByRecommendation)
-                        Rekomendasi Terbaik Untuk Anda
+                        Best Recommendations For You
                     @else
-                        Jelajahi Segmen Pembelajaran
+                        Explore Learning Segments
                     @endif
                 </h2>
 
                 @if (isset($recommendation) && !$query)
                     <div class="recommendation-notif">
-                        <strong>Rekomendasi:</strong> {{ $recommendation }}! Segmen di bawah ini paling cocok dengan minat
-                        Anda.
+                        <strong>Recommendation:</strong> {{ $recommendation }}! The segments below best match your interests.
                     </div>
                 @endif
 
                 @if ($segments->isNotEmpty())
                     @if ($query)
-                    <h3 class="search-result-title">Segmen Ditemukan ({{ $segments->count() }})</h3>@endif
+                    <h3 class="search-result-title">Segments Found ({{ $segments->count() }})</h3>@endif
                     <div class="segment-cards-grid">
                         @foreach ($segments as $segment)
                             <a href="{{ route('course.show', ['segment' => $segment->name]) }}" class="segment-post-item">
@@ -343,30 +341,30 @@
                 @endif
 
                 @if ($query && isset($fases) && $fases->isNotEmpty())
-                    <h3 class="search-result-title">Fase Ditemukan ({{ $fases->count() }})</h3>
+                    <h3 class="search-result-title">Phases Found ({{ $fases->count() }})</h3>
                     <div class="small-post-list">
                         @foreach ($fases as $fase)
                             <div class="small-post-item">
                                 <a href="{{ route('fase.show', $fase->id) }}">
-                                    <p><strong>[FASE] {{ $fase->title }}</strong></p>
+                                    <p><strong>[PHASE] {{ $fase->title }}</strong></p>
                                 </a>
-                                <small>Segmen: {{ $fase->segment->name ?? 'N/A' }}</small>
+                                <small>Segment: {{ $fase->segment->name ?? 'N/A' }}</small>
                             </div>
                         @endforeach
                     </div>
                 @endif
 
                 @if ($query && isset($materis) && $materis->isNotEmpty())
-                    <h3 class="search-result-title">Materi Ditemukan ({{ $materis->count() }})</h3>
+                    <h3 class="search-result-title">Materials Found ({{ $materis->count() }})</h3>
                     <div class="small-post-list">
                         @foreach ($materis as $materi)
                             <div class="small-post-item">
                                 <a href="{{ route('materi.show', $materi->id) }}">
-                                    <p><strong>[MATERI] {{ $materi->title }}</strong></p>
+                                    <p><strong>[MATERIAL] {{ $materi->title }}</strong></p>
                                 </a>
                                 <small>
-                                    Fase: {{ $materi->fase->title ?? 'N/A' }} |
-                                    Segmen: {{ $materi->fase->segment->name ?? 'N/A' }}
+                                    Phase: {{ $materi->fase->title ?? 'N/A' }} |
+                                    Segment: {{ $materi->fase->segment->name ?? 'N/A' }}
                                 </small>
                                 <small>{{ Str::limit($materi->description, 80) }}</small>
                             </div>
@@ -375,23 +373,23 @@
                 @endif
 
                 @if ($query && isset($steps) && $steps->isNotEmpty())
-                    <h3 class="search-result-title">Langkah Pembelajaran Ditemukan ({{ $steps->count() }})</h3>
+                    <h3 class="search-result-title">Learning Steps Found ({{ $steps->count() }})</h3>
                     <div class="small-post-list">
                         @foreach ($steps as $step)
                             @php $isUnlocked = $step->isUnlocked(); @endphp
                             <div class="small-post-item {{ !$isUnlocked ? 'step-locked' : '' }}">
                                 @if($isUnlocked)
                                     <a href="{{ route('materi.show', $step->materi->id) }}">
-                                        <p><strong>[LANGKAH] {{ $step->title }}</strong></p>
+                                        <p><strong>[STEP] {{ $step->title }}</strong></p>
                                         <small style="color: var(--primary); font-weight: 500;">
-                                            Dari Materi → {{ $step->materi->title }}
+                                            From Material → {{ $step->materi->title }}
                                         </small>
                                     </a>
                                 @else
                                     <div>
-                                        <p><strong>[TERKUNCI] {{ $step->title }}</strong></p>
+                                        <p><strong>[LOCKED] {{ $step->title }}</strong></p>
                                         <small style="color: #ef4444; font-weight: 500;">
-                                            Selesaikan langkah sebelumnya di materi: {{ $step->materi->title }}
+                                            Complete previous steps in material: {{ $step->materi->title }}
                                         </small>
                                     </div>
                                 @endif
@@ -403,15 +401,15 @@
 
                 @if ($query && $segments->isEmpty() && (!isset($fases) || $fases->isEmpty()) && (!isset($materis) || $materis->isEmpty()) && (!isset($steps) || $steps->isEmpty()))
                     <div class="no-result-box">
-                        Maaf, tidak ditemukan hasil untuk "<strong>{{ $query }}</strong>".<br>
-                        Coba gunakan kata kunci lain seperti "perangkat lunak", "hardware", atau "setup".
+                        Sorry, no results found for "<strong>{{ $query }}</strong>".<br>
+                        Try using other keywords like "software", "hardware", or "setup".
                     </div>
                 @endif
 
             </section>
 
             <aside class="sidebar">
-                <h3 class="sidebar-title">Materi Menarik Lainnya</h3>
+                <h3 class="sidebar-title">Other Interesting Materials</h3>
                 <div class="small-post-list">
                     @forelse ($sidebarCourses as $course)
                         <div class="small-post-item">
@@ -422,11 +420,11 @@
                         </div>
                     @empty
                         <div class="small-post-item">
-                            <p>Belum ada materi terbaru.</p>
+                            <p>No new materials available yet.</p>
                         </div>
                     @endforelse
                 </div>
-                <a href="#" class="read-more-link">Selengkapnya →</a>
+                <a href="#" class="read-more-link">View More →</a>
             </aside>
         </div>
     </main>
@@ -455,7 +453,7 @@
                     if (loadMoreBtn.disabled) return;
 
                     const originalText = loadMoreBtn.textContent;
-                    loadMoreBtn.textContent = 'Memuat...';
+                    loadMoreBtn.textContent = 'Loading...';
                     loadMoreBtn.classList.add('loading');
                     currentPage++;
 
@@ -464,11 +462,11 @@
                         .then(data => {
                             smallPostList.insertAdjacentHTML('beforeend', data.html);
                             loadMoreBtn.classList.remove('loading');
-                            loadMoreBtn.textContent = data.hasMore ? originalText : 'Semua Materi Dimuat';
+                            loadMoreBtn.textContent = data.hasMore ? originalText : 'All Content Loaded';
                             if (!data.hasMore) { loadMoreBtn.disabled = true; loadMoreBtn.style.opacity = '0.7'; }
                         })
                         .catch(() => {
-                            loadMoreBtn.textContent = 'Gagal Memuat';
+                            loadMoreBtn.textContent = 'Failed to Load';
                             loadMoreBtn.classList.remove('loading');
                         });
                 });

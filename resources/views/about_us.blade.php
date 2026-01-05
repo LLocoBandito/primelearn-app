@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>About Us - PrimeLearn</title>
@@ -47,17 +47,17 @@
     
     <div class="max-w-7xl mx-auto px-6 py-24 text-center">
         <h2 class="text-4xl md:text-5xl font-bold mb-6" data-aos="fade-down">
-            Belajar dengan Cara yang Lebih Bermakna
+            Learn in a More Meaningful Way
         </h2>
         <p class="max-w-3xl mx-auto text-lg text-white/90 mb-10" data-aos="fade-up">
-            PrimeLearn menjembatani teori akademik dan praktik nyata untuk menciptakan
-            pengalaman belajar yang relevan dengan kebutuhan industri modern.
+            PrimeLearn bridges the gap between academic theory and real-world practice to create 
+            a learning experience that is relevant to modern industry needs.
         </p>
         <div class="flex justify-center gap-4" data-aos="fade-up" data-aos-delay="200">
             <a href="{{ route('segments.index') }}"
             class="group px-8 py-4 rounded-full bg-white text-blue-900 font-semibold shadow-md transition-all duration-500 hover:shadow-xl hover:-translate-y-0.5">
                 <span class="inline-flex items-center gap-2">
-                    Mulai Belajar Sekarang →
+                    Start Learning Now →
                 </span>
             </a>
         </div>
@@ -67,20 +67,20 @@
 <section class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-16 items-center">
     <div>
         <h3 class="text-3xl font-bold text-blue-900 mb-6" data-aos="fade-right">
-            Mengapa PrimeLearn Dibangun?
+            Why was PrimeLearn Built?
         </h3>
         <p class="text-gray-600 leading-relaxed mb-4" data-aos="fade-right">
-            Banyak platform pembelajaran masih berfokus pada teori tanpa memberikan konteks
-            penerapan di dunia nyata. Hal ini membuat pembelajar kesulitan beradaptasi
-            dengan kebutuhan industri.
+            Many learning platforms still focus heavily on theory without providing the context 
+            of real-world application. This makes it difficult for learners to adapt 
+            to the actual demands of the industry.
         </p>
         <p class="text-gray-600 leading-relaxed" data-aos="fade-right">
-            PrimeLearn hadir sebagai solusi dengan pendekatan pembelajaran terstruktur,
-            kontekstual, dan berbasis pemecahan masalah nyata.
+            PrimeLearn serves as a solution by offering a structured, contextual, 
+            and problem-solving based learning approach.
         </p>
     </div>
     <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80"
-     alt="Diskusi Tim PrimeLearn" data-aos="fade-left"
+     alt="PrimeLearn Team Discussion" data-aos="fade-left"
      class="w-full max-w-md mx-auto aspect-[4/3] object-cover rounded-3xl shadow-2xl">
 </section>
 
@@ -90,24 +90,24 @@
 
     <div class="relative max-w-7xl mx-auto px-6">
         <h3 class="text-3xl md:text-4xl font-bold text-center text-blue-900 mb-4" data-aos="fade-up">
-            Visi & <span class=" text-teal-600">Misi </span>
+            Vision & <span class=" text-teal-600">Mission </span>
         </h3>
         <div class="grid md:grid-cols-2 gap-12 mt-12">
             <div class="bg-white p-12 rounded-3xl shadow-xl hover:-translate-y-2 transition" data-aos="zoom-in">
                 <div class="flex items-center gap-4 mb-6">
                     <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-teal-100 text-2xl">🎯</div>
-                    <h4 class="text-2xl font-semibold text-blue-900">Visi</h4>
+                    <h4 class="text-2xl font-semibold text-blue-900">Vision</h4>
                 </div>
-                <p class="text-gray-600 text-lg">Menjadi platform pembelajaran digital yang unggul dalam membentuk pembelajar yang kritis dan adaptif.</p>
+                <p class="text-gray-600 text-lg">To become a leading digital learning platform in shaping critical and adaptive learners.</p>
             </div>
             <div class="bg-white p-12 rounded-3xl shadow-xl hover:-translate-y-2 transition" data-aos="zoom-in" data-aos-delay="150">
                 <div class="flex items-center gap-4 mb-6">
                     <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-blue-100 text-2xl">🚀</div>
-                    <h4 class="text-2xl font-semibold text-teal-600">Misi</h4>
+                    <h4 class="text-2xl font-semibold text-teal-600">Mission</h4>
                 </div>
                 <ul class="space-y-4 text-gray-600 text-lg">
-                    <li>✓ Materi terstruktur & aplikatif</li>
-                    <li>✓ Studi kasus dunia nyata</li>
+                    <li>✓ Structured & applicable materials</li>
+                    <li>✓ Real-world case studies</li>
                 </ul>
             </div>
         </div>
@@ -116,15 +116,15 @@
 
 <section class="relative bg-gray-50 py-24 overflow-hidden">
     <div class="relative max-w-6xl mx-auto px-6">
-        <h3 class="text-3xl font-bold text-center text-blue-900 mb-16" data-aos="fade-up">Tim di Balik PrimeLearn</h3>
+        <h3 class="text-3xl font-bold text-center text-blue-900 mb-16" data-aos="fade-up">The Team Behind PrimeLearn</h3>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-10 justify-center text-center">
             @php
                 $team = [
                     ['name' => 'Mas Heri', 'img' => 'heri.webp', 'role' => 'Admin'],
-                    ['name' => 'Nyoman Bagus', 'img' => 'william.webp', 'role' => 'Backend'],
-                    ['name' => 'Dinda Dev', 'img' => 'dinda.webp', 'role' => 'UI/UX'],
-                    ['name' => 'Yasa', 'img' => 'yasa.webp', 'role' => 'Fullstack'],
-                    ['name' => 'Satya', 'img' => 'satya.webp', 'role' => 'Database'],
+                    ['name' => 'Nyoman Bagus', 'img' => 'william.webp', 'role' => 'Backend Developer'],
+                    ['name' => 'Dinda Dev', 'img' => 'dinda.webp', 'role' => 'UI/UX Designer'],
+                    ['name' => 'Yasa', 'img' => 'yasa.webp', 'role' => 'Fullstack Developer'],
+                    ['name' => 'Satya', 'img' => 'satya.webp', 'role' => 'Database Engineer'],
                 ];
             @endphp
 
@@ -150,9 +150,8 @@
 <script>
     AOS.init({ duration: 900, once: false });
 
-    document.querySelector('.menu-icon').addEventListener('click', () => {
-                document.querySelector('.secondary-nav').classList.toggle('show');
-            });
+    const menuBtn = document.getElementById('menuBtn');
+    const navMenu = document.querySelector('.secondary-nav');
 
     menuBtn.addEventListener('click', (e) => {
         navMenu.classList.toggle('show');
